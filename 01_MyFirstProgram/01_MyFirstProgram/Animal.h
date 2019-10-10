@@ -5,5 +5,5 @@ public:
 	int legs;
 	Animal();
 	~Animal();
-	void countLegs() {};
+	void countLegs();
 };

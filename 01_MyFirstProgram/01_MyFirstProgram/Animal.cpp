@@ -9,5 +9,5 @@ Animal::~Animal(){
 }
 
 void Animal::countLegs() {
-	std::cout << "This animal has " << legs << " legs!";
+	std::cout << "This animal has " << legs << " legs!" << std::endl;
 }

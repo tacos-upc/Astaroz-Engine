@@ -231,6 +231,5 @@ $RECYCLE.BIN/
 *.lnk
 
 #Personal ignores
-01_MyFirstProgram/.vs/01_MyFirstProgram/v15/Browse.VC.db
-01_MyFirstProgram/.vs/01_MyFirstProgram/v15/Browse.VC.opendb
 *.db
+*.opendb

@@ -5,12 +5,13 @@
 
 using namespace std;
 
+template <typename T>
 class Vec3
 {
 public:
-	float x;
-	float y;
-	float z;
+	T x;
+	T y;
+	T z;
 
 	Vec3() {
 		cout << "Called Vec3 constructor without params" << endl;
@@ -18,7 +19,7 @@ public:
 		y = 0;
 		z = 0;
 	};
-	Vec3(float x, float y, float z) {
+	Vec3(T x, T y, T z) {
 		cout << "Called Vec3 constructor with 3 float params" << endl;
 		this -> x = x;
 		this -> y = y;

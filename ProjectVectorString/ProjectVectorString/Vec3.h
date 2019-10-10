@@ -1,5 +1,7 @@
 #pragma once
+
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -25,5 +27,24 @@ public:
 	void Display() {
 		cout << "x = " << x << ", y = " << y << ", z = " << z << endl;
 	}
-	void Normalize();
+	Vec3 Sum(Vec3 v) {
+		Vec3 summation;
+		summation.x = this->x + v.x;
+		summation.y = this->y + v.y;
+		summation.z = this->z + v.z;
+		return summation;
+	}
+	void Normalize() {
+		float mod = sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
+		if (mod < 0) {
+			mod = mod * -1;
+		}
+		this->x = this->x / mod;
+		this->y = this->y / mod;
+		this->z = this->z / mod;
+	};
+	void distance_to(Vec3 v) {
+		float distance = sqrt(pow(this->x - v.x, 2) + pow(this->y - v.y, 2) + pow(this->z - v.z, 2));
+		cout << "The distance between the vectors is " << distance << endl;
+	}
 };

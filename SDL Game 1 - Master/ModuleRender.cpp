@@ -35,6 +35,13 @@ bool ModuleRender::Init()
 	return ret;
 }
 
+update_status ModuleRender::PreUpdate()
+{
+	//SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	//SDL_RenderClear(renderer);
+	return UPDATE_CONTINUE;
+}
+
 // Called every draw update
 update_status ModuleRender::Update()
 {
@@ -45,6 +52,13 @@ update_status ModuleRender::Update()
 	SDL_RenderPresent(renderer);
 	return UPDATE_CONTINUE;
 }
+
+update_status ModuleRender::PostUpdate()
+{
+	//SDL_RenderPresent(renderer);
+	return UPDATE_CONTINUE;
+}
+
 
 // Called before quitting
 bool ModuleRender::CleanUp()

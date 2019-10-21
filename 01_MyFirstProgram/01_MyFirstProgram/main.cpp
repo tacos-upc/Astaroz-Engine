@@ -16,6 +16,14 @@ int main() {
 	dog.legs = 4;
 	dog.countLegs();
 
+	//Animal *cat;													// --> this CAN'T be done. We need to use NEW to initialize the pointer (line 21).
+
+	Animal *animal = new Animal();									// --> we can use NEW to create a pointer of our class type, allocating the memory for it.
+	animal->legs = 8;												// --> when using a pointer, we need to use ARROW to access member variables or functions.
+	animal->countLegs();											
+	delete animal;													// --> NEW allocates memory for the variable and is never destroyed. We always need to call DELETE when using new.
+
+
 	string b;
 	getline(cin, b);												// --> CIN is used to read the user's input in the next line.
 	return 0;														// --> with this CIN structure, we will not need to pause or create a debugging point and we can break the pause with just 'ENTER'.

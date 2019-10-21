@@ -8,6 +8,7 @@ class ModuleRender;
 class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
+class ModuleSceneLuffy;
 
 class Application
 {
@@ -26,6 +27,7 @@ public:
 	ModuleWindow* window;
 	ModuleTextures* textures;
 	ModuleInput* input;
+	ModuleSceneLuffy* scene;
 
 private:
 

@@ -16,6 +16,7 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 
 	// TODO 7: Create a new "scene" module that loads a texture and draws it on the screen
+	modules.push_back(scene = new ModuleSceneLuffy());
 
 	// Homework: Create a new module to handle music and sound effects
 }
@@ -23,6 +24,11 @@ Application::Application()
 Application::~Application()
 {
 	// TODO 6: Free module memory and check the result in Dr. Memory
+	for (list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it) {
+		if (*it != nullptr) {
+			delete *it;
+		}
+	}
 }
 
 bool Application::Init()

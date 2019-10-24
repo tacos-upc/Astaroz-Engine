@@ -52,8 +52,9 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
-	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	//SDL_GetWindowSize();
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+	glViewport(0, 0, w, h);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -21,10 +21,10 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 
 	// TODO 2 : setup the foreground (red ship) with
 	// coordinates x,y,w,h from ken_stage.png
-	ship.x = 0;
-	ship.y = 300;
-	ship.w = 475;
-	ship.h = 176;
+	ship.x = 8;
+	ship.y = 23;
+	ship.w = 530;
+	ship.h = 185;
 
 	// Background / sky
 	background.x = 72;

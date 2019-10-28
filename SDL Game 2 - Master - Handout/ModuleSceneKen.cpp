@@ -21,6 +21,10 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 
 	// TODO 2 : setup the foreground (red ship) with
 	// coordinates x,y,w,h from ken_stage.png
+	ship.x = 0;
+	ship.y = 300;
+	ship.w = 475;
+	ship.h = 176;
 
 	// Background / sky
 	background.x = 72;
@@ -50,6 +54,7 @@ bool ModuleSceneKen::Start()
 
 	// TODO 7: Enable the player module
 	// TODO 0: trigger background music
+	App->audio->PlayMusic("ken.ogg");
 	
 	return true;
 }
@@ -72,10 +77,11 @@ update_status ModuleSceneKen::Update()
 
 	// Draw everything --------------------------------------
 	// TODO 1: Tweak the movement speed of the sea&sky + flag to your taste
-	App->renderer->Blit(graphics, 0, 0, &background, 1.0f); // sea and sky
-	App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 1.0f); // flag animation
+	App->renderer->Blit(graphics, 0, 0, &background, 1.5f); // sea and sky
+	App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 1.5f); // flag animation
 
 	// TODO 3: Draw the ship. Be sure to tweak the speed.
+	App->renderer->Blit(graphics, 0, 0, &ship);
 
 	// TODO 6: Draw the girl. Make sure it follows the ship movement!
 	

@@ -20,7 +20,8 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 
+public:
+	SDL_GLContext glcontext;
 private:
 	void* context;
-	SDL_GLContext glcontext;
 };

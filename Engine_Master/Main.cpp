@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include "Application.h"
 #include "ModuleRender.h"
+#include "ModuleEditor.h"
 #include "Globals.h"
+
 
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
@@ -86,11 +88,12 @@ int main(int argc, char ** argv)
 
 		SDL_Event sdlEvent;
 
-		while (SDL_PollEvent(&sdlEvent) != 0)
-		{
+		while (SDL_PollEvent(&sdlEvent) != 0){
+
+			App->editor->processEvent(sdlEvent);
+
 			// Esc button is pressed
-			switch (sdlEvent.type)
-			{
+			switch (sdlEvent.type){
 			case SDL_QUIT:
 				state = MAIN_FINISH;
 				break;

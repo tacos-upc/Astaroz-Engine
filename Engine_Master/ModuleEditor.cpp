@@ -44,20 +44,33 @@ bool ModuleEditor::Init() {
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsClassic();
 
-	ImGui_ImplOpenGL3_Init();
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
+	ImGui_ImplOpenGL3_Init();
 	return true;
 }
 
 update_status ModuleEditor::PreUpdate() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(App->window->window);
+	ImGui::NewFrame();
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::Update() {
+	ImGui::ShowDemoWindow();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate() {
+	
+
+	
+	//SDL_GL_SwapWindow(App->window->window);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -71,3 +84,8 @@ bool ModuleEditor::CleanUp(){
 
 	return true;
 }
+
+void ModuleEditor::processEvent(SDL_Event event){
+	ImGui_ImplSDL2_ProcessEvent(&event);
+}
+

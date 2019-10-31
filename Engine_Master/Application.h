@@ -10,6 +10,7 @@ class ModuleTextures;
 class ModuleInput;
 class ModuleRenderExercise;
 class ModuleTriangle;
+class ModuleEditor;
 
 class Application
 {
@@ -27,6 +28,7 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleTriangle* triangle = nullptr;
+	ModuleEditor* editor = nullptr;
 
 private:
 

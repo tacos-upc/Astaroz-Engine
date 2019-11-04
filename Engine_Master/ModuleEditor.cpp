@@ -3,9 +3,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 
-#include "ImGUI/imgui.h"
-#include "ImGUI/imgui_impl_sdl.h"
-#include "ImGUI/imgui_impl_opengl3.h"
+
 
 
 ModuleEditor::ModuleEditor(){
@@ -46,6 +44,10 @@ bool ModuleEditor::Init() {
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
 	ImGui_ImplOpenGL3_Init();
+
+	//flags to show windows
+	show_demo_window = true;
+	show_log_window = true;
 	return true;
 }
 
@@ -58,7 +60,18 @@ update_status ModuleEditor::PreUpdate() {
 }
 
 update_status ModuleEditor::Update() {
-	ImGui::ShowDemoWindow();
+
+	if (show_demo_window) {
+		ImGui::ShowDemoWindow();
+	}
+	if (show_log_window) {
+		ImGui::Begin("Logger Console", &show_log_window);
+		ImGui::TextUnformatted(myBuffer.begin());
+		if (scrollToBottom)
+			ImGui::SetScrollHere(1.0f);
+		scrollToBottom = false;
+		ImGui::End();
+	}
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

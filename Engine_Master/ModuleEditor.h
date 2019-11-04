@@ -3,6 +3,10 @@
 #include "Globals.h"
 #include "SDL/include/SDL.h"
 
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
+
 
 class ModuleEditor : public Module{
 public:
@@ -15,5 +19,11 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	void processEvent(SDL_Event);
+
+public:
+	bool scrollToBottom;
+	bool show_demo_window;
+	bool show_log_window;
+	ImGuiTextBuffer myBuffer;
 };
 

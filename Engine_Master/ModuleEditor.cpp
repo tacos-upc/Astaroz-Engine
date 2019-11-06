@@ -48,6 +48,7 @@ bool ModuleEditor::Init() {
 	//flags to show windows
 	show_demo_window = true;
 	show_log_window = true;
+	show_about_window = true;
 	return true;
 }
 
@@ -72,6 +73,19 @@ update_status ModuleEditor::Update() {
 		scrollToBottom = false;
 		ImGui::End();
 	}
+	if (show_about_window) {
+		ImGui::Begin("About...", &show_about_window);
+		ImGui::BulletText("Engine name: MyOwnEngine");
+		ImGui::Text("This engine was performed in UPC master - game programming");
+		ImGui::BulletText("Author: Pau Casas");
+		ImGui::BulletText("Free license");
+		ImGui::Text("Libraries:");
+		ImGui::BulletText("SDL");
+		ImGui::BulletText("OpenGL");
+		ImGui::BulletText("MathGeoLib");
+		ImGui::BulletText("ImGUI");		
+		ImGui::End();
+	}
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -80,8 +94,6 @@ update_status ModuleEditor::Update() {
 
 update_status ModuleEditor::PostUpdate() {
 	
-
-	
 	//SDL_GL_SwapWindow(App->window->window);
 
 	return UPDATE_CONTINUE;
@@ -89,7 +101,6 @@ update_status ModuleEditor::PostUpdate() {
 
 // Called before quitting
 bool ModuleEditor::CleanUp(){
-
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();

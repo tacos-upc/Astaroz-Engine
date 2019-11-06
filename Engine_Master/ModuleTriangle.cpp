@@ -16,9 +16,11 @@ ModuleTriangle::~ModuleTriangle(){
 }
 
 bool ModuleTriangle::Init() {
-	float buffer_data[] = {-1.0f, -1.0f, 0.0f,
+	float buffer_data[] = {
+		-1.0f, -1.0f, 0.0f,
 		1.0f, -1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f };
+		0.0f, 1.0f, 0.0f
+	};
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -29,6 +31,7 @@ bool ModuleTriangle::Init() {
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	float aspect = w / h;
 
+	//TODO empty triangle module and move frustum to EditorCamera module
 	Frustum frustum;
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3::zero;

@@ -123,6 +123,7 @@
     <ClCompile Include="ImGUI\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleEditorCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -337,6 +338,7 @@
     <ClInclude Include="ImGUI\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleEditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

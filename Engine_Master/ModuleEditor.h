@@ -24,6 +24,7 @@ public:
 	bool scrollToBottom;
 	bool show_demo_window;
 	bool show_log_window;
+	bool show_about_window;
 	ImGuiTextBuffer myBuffer;
 };
 

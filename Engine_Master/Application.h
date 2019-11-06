@@ -11,6 +11,7 @@ class ModuleInput;
 class ModuleRenderExercise;
 class ModuleTriangle;
 class ModuleEditor;
+class ModuleEditorCamera;
 
 class Application
 {
@@ -29,11 +30,10 @@ public:
 	ModuleInput* input = nullptr;
 	ModuleTriangle* triangle = nullptr;
 	ModuleEditor* editor = nullptr;
+	ModuleEditorCamera* editorCamera = nullptr;
 
 private:
-
 	std::list<Module*> modules;
-
 };
 
 extern Application* App;

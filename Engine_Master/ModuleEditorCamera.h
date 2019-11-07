@@ -16,6 +16,6 @@ public:
 	bool CleanUp();
 
 public:
-	Frustum myFrustum;
+	//Frustum myFrustum;
 };
 

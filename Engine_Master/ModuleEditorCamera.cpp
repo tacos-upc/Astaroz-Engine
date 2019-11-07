@@ -23,7 +23,7 @@ update_status ModuleEditorCamera::PreUpdate() {
 }
 
 update_status ModuleEditorCamera::Update() {
-
+	
 	//Grid
 	glLineWidth(1.0f);
 	float d = 200.0f;
@@ -36,7 +36,7 @@ update_status ModuleEditorCamera::Update() {
 		glVertex3f(d, 0.0f, i);
 	}
 	glEnd();
-
+	/*
 	//Axis
 	glLineWidth(2.0f);
 	glBegin(GL_LINES);
@@ -59,7 +59,7 @@ update_status ModuleEditorCamera::Update() {
 	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
 	glEnd();
 	glLineWidth(1.0f);
-
+	*/
 	return UPDATE_CONTINUE;
 }
 

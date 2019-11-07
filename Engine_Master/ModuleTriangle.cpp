@@ -57,6 +57,7 @@ update_status ModuleTriangle::PreUpdate(){
 }
 
 update_status ModuleTriangle::Update() {
+	
 	glEnableVertexAttribArray(0); // attribute 0
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(

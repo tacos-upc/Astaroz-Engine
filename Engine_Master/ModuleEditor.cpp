@@ -46,7 +46,7 @@ bool ModuleEditor::Init() {
 	ImGui_ImplOpenGL3_Init();
 
 	//flags to show windows
-	show_demo_window = true;
+	show_demo_window = false;
 	show_log_window = true;
 	show_about_window = true;
 	return true;

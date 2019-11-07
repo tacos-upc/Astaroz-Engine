@@ -13,6 +13,16 @@ ModuleEditorCamera::~ModuleEditorCamera() {
 }
 
 bool ModuleEditorCamera::Init() {
+	
+	return true;
+}
+
+update_status ModuleEditorCamera::PreUpdate() {
+
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleEditorCamera::Update() {
 
 	//Grid
 	glLineWidth(1.0f);
@@ -49,16 +59,6 @@ bool ModuleEditorCamera::Init() {
 	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
 	glEnd();
 	glLineWidth(1.0f);
-	
-	return true;
-}
-
-update_status ModuleEditorCamera::PreUpdate() {
-
-	return UPDATE_CONTINUE;
-}
-
-update_status ModuleEditorCamera::Update() {
 
 	return UPDATE_CONTINUE;
 }

@@ -57,7 +57,7 @@ update_status ModuleTriangle::PreUpdate(){
 }
 
 update_status ModuleTriangle::Update() {
-	
+	/*
 	glEnableVertexAttribArray(0); // attribute 0
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(
@@ -71,6 +71,7 @@ update_status ModuleTriangle::Update() {
 	glDrawArrays(GL_TRIANGLES, 0, 3); // start at 0 and 3 tris
 	glDisableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	*/
 
 	return UPDATE_CONTINUE;
 }

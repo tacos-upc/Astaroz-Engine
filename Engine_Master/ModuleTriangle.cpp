@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleProgramShader.h"
-#include "Geometry/Frustum.h"
 
 
 
@@ -26,7 +25,6 @@ bool ModuleTriangle::Init() {
 	float aspect = w / h;
 
 	//TODO empty triangle module and move frustum to EditorCamera module
-	Frustum frustum;
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3::zero;
 	frustum.front = -float3::unitZ;
@@ -37,11 +35,13 @@ bool ModuleTriangle::Init() {
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
 
 
-	float4x4 proj = frustum.ProjectionMatrix();
-	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
-	float4x4 view =	LookAt(float3(0.0f, 1.f, 4.0f),	float3(0.0f, 0.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
-	float4x4 transform = proj * view * float4x4(model);
+	proj = frustum.ProjectionMatrix();
+	model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
+	view =	LookAt(float3(0.0f, 1.f, 4.0f),	float3(0.0f, 0.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
 
+	/* 
+	*****************DONE IN SHADER NOW*******************
+	float4x4 transform = proj * view * float4x4(model);
 	float4 tmp;
 	tmp = transform * float4(v0.x, v0.y, v0.z, 1.0);
 	v0 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
@@ -51,7 +51,7 @@ bool ModuleTriangle::Init() {
 
 	tmp = transform * float4(v2.x, v2.y, v2.z, 1.0);
 	v2 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
-
+	*/
 
 	float3 buffer_data[] = {
 		v0, v1, v2
@@ -72,6 +72,7 @@ update_status ModuleTriangle::PreUpdate(){
 update_status ModuleTriangle::Update() {
 	//Use our ModuleProgramShader's program
 	glUseProgram(App->programShader->myProgram);
+
 	//Assign buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0); // attribute 0 --> ID
@@ -83,6 +84,10 @@ update_status ModuleTriangle::Update() {
 		0, // stride
 		(void*)0 // array buffer offset
 	);
+	//Uniforms
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "model"), 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "view"), 1, GL_TRUE, &view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "proj"), 1, GL_TRUE, &proj[0][0]);
 
 	//Draw
 	glDrawArrays(GL_TRIANGLES, 0, 3); // start at 0 and 3 tris

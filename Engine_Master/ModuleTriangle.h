@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "SDL.h"
+#include "Geometry/Frustum.h"
 #include "Math/MathAll.h"
 
 class ModuleTriangle :	public Module{
@@ -17,5 +18,7 @@ public:
 
 private:
 	GLuint vbo;
+	float4x4 proj, view, model;
+	Frustum frustum;
 };
 

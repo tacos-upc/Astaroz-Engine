@@ -58,6 +58,7 @@ std::string ModuleProgramShader::parseShader(const std::string& filepath)
 	catch (std::ifstream::failure e)
 	{
 		//LOG(e.code);
+		LOG("There was an error parsing the shader!");
 	}
 	return shaderCode;
 }

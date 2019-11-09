@@ -1,6 +1,7 @@
 #include "ModuleTriangle.h"
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleProgramShader.h"
 #include "Geometry/Frustum.h"
 
 
@@ -69,8 +70,11 @@ update_status ModuleTriangle::PreUpdate(){
 }
 
 update_status ModuleTriangle::Update() {
-	glEnableVertexAttribArray(0); // attribute 0
+	//Use our ModuleProgramShader's program
+	glUseProgram(App->programShader->myProgram);
+	//Assign buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableVertexAttribArray(0); // attribute 0 --> ID
 	glVertexAttribPointer(
 		0, // attribute 0
 		3, // number of componentes (3 floats)
@@ -79,7 +83,11 @@ update_status ModuleTriangle::Update() {
 		0, // stride
 		(void*)0 // array buffer offset
 	);
+
+	//Draw
 	glDrawArrays(GL_TRIANGLES, 0, 3); // start at 0 and 3 tris
+
+	//Clean buffer
 	glDisableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

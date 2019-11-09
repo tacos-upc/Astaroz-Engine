@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleInput.h"
 #include "ModuleTriangle.h"
+#include "ModuleProgramShader.h"
 #include "ModuleEditor.h"
 #include "ModuleEditorCamera.h"
 
@@ -16,6 +17,7 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(triangle = new ModuleTriangle());
+	modules.push_back(programShader = new ModuleProgramShader());
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 }

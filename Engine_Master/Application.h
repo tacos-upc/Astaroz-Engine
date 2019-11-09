@@ -10,6 +10,7 @@ class ModuleTextures;
 class ModuleInput;
 class ModuleRenderExercise;
 class ModuleTriangle;
+class ModuleProgramShader;
 class ModuleEditor;
 class ModuleEditorCamera;
 
@@ -29,6 +30,7 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleTriangle* triangle = nullptr;
+	ModuleProgramShader* programShader = nullptr;
 	ModuleEditor* editor = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
 

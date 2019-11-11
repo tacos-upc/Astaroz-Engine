@@ -125,6 +125,8 @@
     </ClCompile>
     <ClCompile Include="ModuleEditorCamera.cpp" />
     <ClCompile Include="ModuleProgramShader.cpp" />
+    <ClCompile Include="MsTimer.cpp" />
+    <ClCompile Include="MicroTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -341,6 +343,8 @@
     </ClInclude>
     <ClInclude Include="ModuleEditorCamera.h" />
     <ClInclude Include="ModuleProgramShader.h" />
+    <ClInclude Include="MsTimer.h" />
+    <ClInclude Include="MicroTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

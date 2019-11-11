@@ -7,6 +7,7 @@
 #include "ModuleProgramShader.h"
 #include "ModuleEditor.h"
 #include "ModuleEditorCamera.h"
+#include "MsTimer.h"
 
 using namespace std;
 
@@ -34,8 +35,14 @@ bool Application::Init()
 {
 	bool ret = true;
 
+	MsTimer timer;
+	timer.start();
+
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
+
+	timer.stop();
+	LOG("init total time: %d ms", timer.read());
 
 	return ret;
 }

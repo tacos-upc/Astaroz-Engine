@@ -69,7 +69,6 @@ update_status ModuleEditor::Update() {
 		ImGui::Begin("Logger Console", &show_log_window);
 		//Menu
 
-
 		//Console
 		ImGui::TextUnformatted(myBuffer.begin());
 		if (scrollToBottom)

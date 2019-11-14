@@ -67,6 +67,10 @@ update_status ModuleEditor::Update() {
 	}
 	if (show_log_window) {
 		ImGui::Begin("Logger Console", &show_log_window);
+		//Menu
+
+
+		//Console
 		ImGui::TextUnformatted(myBuffer.begin());
 		if (scrollToBottom)
 			ImGui::SetScrollHere(1.0f);
@@ -74,6 +78,22 @@ update_status ModuleEditor::Update() {
 		ImGui::End();
 	}
 	if (show_about_window) {
+		//Menu
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+				ImGui::Separator();
+				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+		//About
 		ImGui::Begin("About...", &show_about_window);
 		ImGui::BulletText("Engine name: MyOwnEngine");
 		ImGui::Text("This engine was performed in UPC master - game programming");

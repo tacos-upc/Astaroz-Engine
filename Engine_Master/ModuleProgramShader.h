@@ -19,4 +19,3 @@ public:
 public:
 	GLuint myProgram;
 };
-

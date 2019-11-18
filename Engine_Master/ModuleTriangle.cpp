@@ -98,6 +98,7 @@ update_status ModuleTriangle::Update() {
 
 	//Clean buffer
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	return UPDATE_CONTINUE;

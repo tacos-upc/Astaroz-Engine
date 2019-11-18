@@ -4,12 +4,9 @@
 #include "ModuleRender.h"
 
 
-
-
 ModuleEditor::ModuleEditor(){
 
 }
-
 
 ModuleEditor::~ModuleEditor(){
 
@@ -47,8 +44,8 @@ bool ModuleEditor::Init() {
 
 	//flags to show windows
 	show_demo_window = false;
-	show_log_window = true;
-	show_about_window = true;
+	show_log_window = false;
+	show_about_window = false;
 	return true;
 }
 
@@ -61,38 +58,37 @@ update_status ModuleEditor::PreUpdate() {
 }
 
 update_status ModuleEditor::Update() {
-
+	//Menu
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Tools"))
+		{
+			ImGui::MenuItem("Demo window", NULL, &show_demo_window);
+			ImGui::MenuItem("Logger console", NULL, &show_log_window);
+			ImGui::EndMenu();
+		};
+		if (ImGui::BeginMenu("Help"))
+		{
+			ImGui::MenuItem("About", NULL, &show_about_window);
+			ImGui::EndMenu();
+		};
+		ImGui::EndMainMenuBar();
+	}
+	//Demo flag
 	if (show_demo_window) {
 		ImGui::ShowDemoWindow();
 	}
+	//Log flag
 	if (show_log_window) {
 		ImGui::Begin("Logger Console", &show_log_window);
-		//Menu
-
-		//Console
 		ImGui::TextUnformatted(myBuffer.begin());
 		if (scrollToBottom)
 			ImGui::SetScrollHere(1.0f);
 		scrollToBottom = false;
 		ImGui::End();
 	}
+	//About flag
 	if (show_about_window) {
-		//Menu
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("Edit"))
-			{
-				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-				ImGui::Separator();
-				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
-		//About
 		ImGui::Begin("About...", &show_about_window);
 		ImGui::BulletText("Engine name: MyOwnEngine");
 		ImGui::Text("This engine was performed in UPC master - game programming");
@@ -105,6 +101,8 @@ update_status ModuleEditor::Update() {
 		ImGui::BulletText("ImGUI");		
 		ImGui::End();
 	}
+
+	//Draw
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -112,9 +110,6 @@ update_status ModuleEditor::Update() {
 }
 
 update_status ModuleEditor::PostUpdate() {
-	
-	//SDL_GL_SwapWindow(App->window->window);
-
 	return UPDATE_CONTINUE;
 }
 

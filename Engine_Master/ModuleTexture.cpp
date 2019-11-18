@@ -13,21 +13,31 @@ ModuleTexture::~ModuleTexture()
 
 bool ModuleTexture::Init()
 {
+	//Init IL
 	ilInit();
 	iluInit();
 	ilutInit();
-	ilGenImages(1, &Lena);
-	ilBindImage(Lena);
+
+	//Image
+	ilGenImages(1, &myLena);
+	ilBindImage(myLena);
 	if (!ilLoadImage("textures/lenna.png"))
+	{
+		//Errors
+		ILenum err = ilGetError();
 		LOG("Failed loading image");
-	ILenum Error;
-	Error = ilGetError();
-	Width = ilGetInteger(IL_IMAGE_WIDTH);
-	Height = ilGetInteger(IL_IMAGE_HEIGHT);
+	}
+
+	//Il renderer
 	ilutRenderer(ILUT_OPENGL);
-	Data = ilGetData();
-	Texture = ilutGLBindTexImage();
-	ilDeleteImages(1, &Lena);
+
+	//Assign member variables
+	myData = ilGetData();
+	myTexture = ilutGLBindTexImage();
+
+	//Once assigned, we can 'unbind' the image
+	ilDeleteImages(1, &myLena);
+
 	return true;
 }
 

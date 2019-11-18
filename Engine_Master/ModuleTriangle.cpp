@@ -1,18 +1,18 @@
 #include "ModuleTriangle.h"
 
 
-
-ModuleTriangle::ModuleTriangle(){
-
-}
-
-
-ModuleTriangle::~ModuleTriangle(){
+ModuleTriangle::ModuleTriangle()
+{
 
 }
 
-bool ModuleTriangle::Init() {
+ModuleTriangle::~ModuleTriangle()
+{
 
+}
+
+bool ModuleTriangle::Init()
+{
 	float3 v0 = { -1.0f, -1.0f, 0.0f };
 	float3 v1 = { 1.0f, -1.0f, 0.0f };
 	float3 v2 = { 0.0f, 1.0f, 0.0f };
@@ -35,9 +35,20 @@ bool ModuleTriangle::Init() {
 		v0, v1, v2
 	};
 
+	//texture
+	float new_buffer_data[] = {
+		-1.0f, -1.0f, 0.0f, // v0 pos
+		1.0f, -1.0f, 0.0f,  // v1 pos
+		0.0f,  1.0f, 0.0f,  // v2 pos
+
+		0.0f, 0.0f,         // v0 texcoord   
+		1.0f, 0.0f,         // v1 texcoord
+		0.5f, 1.0f          // v2 texcoord
+	};
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(new_buffer_data), new_buffer_data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	return true;
@@ -62,7 +73,22 @@ update_status ModuleTriangle::Update() {
 		0, // stride
 		(void*)0 // array buffer offset
 	);
+	glEnableVertexAttribArray(1); // attribute 1 --> Texture
+	glVertexAttribPointer(
+		1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)(3 * 3 * sizeof(float)) // buffer offset
+	);
+
+	//Textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, App->texture->myTexture);
+
 	//Uniforms
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "texture0"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "model"), 1, GL_TRUE, &App->editorCamera->model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "view"), 1, GL_TRUE, &App->editorCamera->view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "proj"), 1, GL_TRUE, &App->editorCamera->proj[0][0]);

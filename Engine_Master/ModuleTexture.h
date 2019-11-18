@@ -18,9 +18,8 @@ public:
 	bool CleanUp();
 
 public:
-	ILuint Lena;
-	ILuint Width, Height;
-	GLuint Texture;
-	ILubyte *Data;
+	ILuint myLena;
+	GLuint myTexture;
+	ILubyte* myData;
 };
 

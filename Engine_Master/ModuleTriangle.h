@@ -4,7 +4,9 @@
 #include "Math/MathAll.h"
 #include "Application.h"
 #include "ModuleProgramShader.h"
+#include "ModuleTexture.h"
 #include "ModuleEditorCamera.h"
+
 
 class ModuleTriangle :	public Module{
 public:

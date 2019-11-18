@@ -1,5 +1,8 @@
 #include "ModuleEditor.h"
 
+#include "IL/il.h"
+#include "IL/ilut.h"
+#include "IL/ilu.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -119,7 +122,7 @@ update_status ModuleEditor::Update()
 			App->editorCamera->changeFOV(fov);
 		}
 		float position = App->editorCamera->myFrustum.pos.x;
-		if (ImGui::SliderFloat("Position", &position, 0.01f, 10.0f, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("Position", &position, 0.01f, 20.0f, "%.2f", 1.0f))
 		{
 			App->editorCamera->changePosition(position);
 		}

@@ -7,6 +7,7 @@
 #include "ModuleProgramShader.h"
 #include "ModuleEditor.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleTexture.h"
 #include "MsTimer.h"
 
 using namespace std;
@@ -19,7 +20,7 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(triangle = new ModuleTriangle());
 	modules.push_back(programShader = new ModuleProgramShader());
-	//moduleTexture
+	modules.push_back(texture = new ModuleTexture());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(editor = new ModuleEditor());
 }

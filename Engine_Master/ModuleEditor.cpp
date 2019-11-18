@@ -1,18 +1,18 @@
 #include "ModuleEditor.h"
-#include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
 
 
-ModuleEditor::ModuleEditor(){
+ModuleEditor::ModuleEditor()
+{
 
 }
 
-ModuleEditor::~ModuleEditor(){
+ModuleEditor::~ModuleEditor()
+{
 
 }
 
-bool ModuleEditor::Init() {
+bool ModuleEditor::Init()
+{
 	// Initialize OpenGL loader
 	#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 	bool err = gl3wInit() != 0;
@@ -46,10 +46,13 @@ bool ModuleEditor::Init() {
 	show_demo_window = false;
 	show_log_window = false;
 	show_about_window = false;
+	show_camera_window = false;
+
 	return true;
 }
 
-update_status ModuleEditor::PreUpdate() {
+update_status ModuleEditor::PreUpdate()
+{
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
@@ -57,7 +60,8 @@ update_status ModuleEditor::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleEditor::Update() {
+update_status ModuleEditor::Update()
+{
 	//Menu
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -65,6 +69,7 @@ update_status ModuleEditor::Update() {
 		{
 			ImGui::MenuItem("Demo window", NULL, &show_demo_window);
 			ImGui::MenuItem("Logger console", NULL, &show_log_window);
+			ImGui::MenuItem("Camera management", NULL, &show_camera_window);
 			ImGui::EndMenu();
 		};
 		if (ImGui::BeginMenu("Help"))
@@ -75,11 +80,13 @@ update_status ModuleEditor::Update() {
 		ImGui::EndMainMenuBar();
 	}
 	//Demo flag
-	if (show_demo_window) {
+	if (show_demo_window) 
+	{
 		ImGui::ShowDemoWindow();
 	}
 	//Log flag
-	if (show_log_window) {
+	if (show_log_window) 
+	{
 		ImGui::Begin("Logger Console", &show_log_window);
 		ImGui::TextUnformatted(myBuffer.begin());
 		if (scrollToBottom)
@@ -88,7 +95,8 @@ update_status ModuleEditor::Update() {
 		ImGui::End();
 	}
 	//About flag
-	if (show_about_window) {
+	if (show_about_window) 
+	{
 		ImGui::Begin("About...", &show_about_window);
 		ImGui::BulletText("Engine name: MyOwnEngine");
 		ImGui::Text("This engine was performed in UPC master - game programming");
@@ -101,6 +109,22 @@ update_status ModuleEditor::Update() {
 		ImGui::BulletText("ImGUI");		
 		ImGui::End();
 	}
+	//Camera flag
+	if (show_camera_window) 
+	{
+		ImGui::Begin("Camera management", &show_camera_window);
+		float fov = App->editorCamera->myFrustum.verticalFov;
+		if (ImGui::SliderFloat("Change vertical FOV", &fov, 0.01f, 2.5f, "%.2f", 1.0f))
+		{
+			App->editorCamera->changeFOV(fov);
+		}
+		float position = App->editorCamera->myFrustum.pos.x;
+		if (ImGui::SliderFloat("Position", &position, 0.01f, 10.0f, "%.2f", 1.0f))
+		{
+			App->editorCamera->changePosition(position);
+		}
+		ImGui::End();
+	}
 
 	//Draw
 	ImGui::Render();
@@ -109,12 +133,14 @@ update_status ModuleEditor::Update() {
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleEditor::PostUpdate() {
+update_status ModuleEditor::PostUpdate()
+{
 	return UPDATE_CONTINUE;
 }
 
 // Called before quitting
-bool ModuleEditor::CleanUp(){
+bool ModuleEditor::CleanUp()
+{
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -123,7 +149,8 @@ bool ModuleEditor::CleanUp(){
 	return true;
 }
 
-void ModuleEditor::processEvent(SDL_Event event){
+void ModuleEditor::processEvent(SDL_Event event)
+{
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 

@@ -23,10 +23,13 @@ public:
 
 	float4x4 LookAt(float3 target, float3 eye, float3 up);
 	void changeFOV(float fov);
-	void ModuleEditorCamera::changePosition(float position);
+	void ModuleEditorCamera::changePositionX(const float position);
+	void ModuleEditorCamera::changePositionY(const float position);
+	void ModuleEditorCamera::changePositionZ(const float position);
 
 public:
 	Frustum myFrustum;
 	float4x4 proj, view, model;
+	float speed;
 };
 

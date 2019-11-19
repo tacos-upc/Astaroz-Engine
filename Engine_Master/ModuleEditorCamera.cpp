@@ -14,6 +14,9 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init() 
 {
+	//Init speed
+	speed = 1.0f;
+
 	//Calculate aspect ratio
 	int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);
@@ -81,17 +84,57 @@ update_status ModuleEditorCamera::Update()
 	glLineWidth(1.0f);
 
 
-	//get inputs
+	//Get input
 	const Uint8* keyboard = App->input->getKeyboard();
-	if (keyboard[SDL_SCANCODE_RIGHT] && keyboard[SDL_SCANCODE_UP]) {
-		LOG("Right and Up Keys Pressed.\n");
+
+	//Speed
+	if (keyboard[SDL_SCANCODE_LSHIFT])
+	{
+		speed = 2.0f;
 	}
-	
+	else if (keyboard[SDL_SCANCODE_LALT])
+	{
+		speed = 0.25f;
+	}
+	else
+	{
+		speed = 1.0f;
+	}
+
+	//Movement
+	if (keyboard[SDL_SCANCODE_UP])
+	{
+		changePositionY(0.05f);
+	}
+	if (keyboard[SDL_SCANCODE_DOWN])
+	{
+		changePositionY(-0.05f);
+	}
+	if (keyboard[SDL_SCANCODE_RIGHT])
+	{
+		changePositionX(0.05f);
+	}
+	if (keyboard[SDL_SCANCODE_LEFT])
+	{
+		changePositionX(-0.05f);
+	}
+	if (keyboard[SDL_SCANCODE_KP_PLUS])
+	{
+		changePositionZ(0.05f);
+	}
+	if (keyboard[SDL_SCANCODE_KP_MINUS])
+	{
+		changePositionZ(-0.05f);
+	}
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditorCamera::PostUpdate() 
 {
+	//Update view matrix in order to update camera position
+	view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -144,7 +187,17 @@ void ModuleEditorCamera::changeFOV(float fov)
 	proj = myFrustum.ProjectionMatrix();
 }
 
-void ModuleEditorCamera::changePosition(float position)
+void ModuleEditorCamera::changePositionX(const float position)
 {
-	myFrustum.pos.x = position;
+	myFrustum.pos += position * speed * myFrustum.WorldRight();
+}
+
+void ModuleEditorCamera::changePositionY(const float position)
+{
+	myFrustum.pos += position * speed * myFrustum.up;
+}
+
+void ModuleEditorCamera::changePositionZ(const float position)
+{
+	myFrustum.pos -= position * speed * myFrustum.WorldRight().Cross(float3(0,1,0));
 }

@@ -121,11 +121,11 @@ update_status ModuleEditor::Update()
 		{
 			App->editorCamera->changeFOV(fov);
 		}
-		float position = App->editorCamera->myFrustum.pos.x;
+		/*float position = App->editorCamera->myFrustum.pos.x;
 		if (ImGui::SliderFloat("Position", &position, 0.01f, 20.0f, "%.2f", 1.0f))
 		{
 			App->editorCamera->changePosition(position);
-		}
+		}*/
 		ImGui::End();
 	}
 

@@ -79,6 +79,13 @@ update_status ModuleEditorCamera::Update()
 	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
 	glEnd();
 	glLineWidth(1.0f);
+
+
+	//get inputs
+	const Uint8* keyboard = App->input->getKeyboard();
+	if (keyboard[SDL_SCANCODE_RIGHT] && keyboard[SDL_SCANCODE_UP]) {
+		LOG("Right and Up Keys Pressed.\n");
+	}
 	
 	return UPDATE_CONTINUE;
 }

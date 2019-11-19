@@ -43,3 +43,8 @@ bool ModuleInput::CleanUp()
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }
+
+const Uint8* ModuleInput::getKeyboard()
+{
+	return keyboard;
+}

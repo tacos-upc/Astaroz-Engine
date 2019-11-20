@@ -126,6 +126,33 @@ update_status ModuleEditorCamera::Update()
 	{
 		changePositionZ(-0.05f);
 	}
+	
+	//Rotation
+	if (keyboard[SDL_SCANCODE_A])
+	{
+		changeRotationZ(0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_D])
+	{
+		changeRotationZ(-0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_W])
+	{
+		changeRotationX(0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_S])
+	{
+		changeRotationX(-0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_Q])
+	{
+		changeRotationY(0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_E])
+	{
+		changeRotationY(-0.01f);
+	}
+
 
 	return UPDATE_CONTINUE;
 }
@@ -200,4 +227,20 @@ void ModuleEditorCamera::changePositionY(const float position)
 void ModuleEditorCamera::changePositionZ(const float position)
 {
 	myFrustum.pos -= position * speed * myFrustum.WorldRight().Cross(float3(0,1,0));
+}
+
+void ModuleEditorCamera::changeRotationX(const float rotation)
+{
+	myFrustum.front = float3x3::RotateX(rotation * speed).Transform(myFrustum.front).Normalized();
+}
+
+void ModuleEditorCamera::changeRotationY(const float rotation)
+{
+	myFrustum.front = math::float3x3::RotateY(rotation * speed).Transform(myFrustum.front).Normalized();
+	myFrustum.up = math::float3x3::RotateY(rotation * speed).Transform(myFrustum.up).Normalized();
+}
+
+void ModuleEditorCamera::changeRotationZ(const float rotation)
+{
+	myFrustum.front = float3x3::RotateZ(rotation * speed).Transform(myFrustum.front).Normalized();
 }

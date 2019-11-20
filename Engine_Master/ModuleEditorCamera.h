@@ -26,6 +26,9 @@ public:
 	void ModuleEditorCamera::changePositionX(const float position);
 	void ModuleEditorCamera::changePositionY(const float position);
 	void ModuleEditorCamera::changePositionZ(const float position);
+	void ModuleEditorCamera::changeRotationX(const float rotation);
+	void ModuleEditorCamera::changeRotationY(const float rotation);
+	void ModuleEditorCamera::changeRotationZ(const float rotation);
 
 public:
 	Frustum myFrustum;

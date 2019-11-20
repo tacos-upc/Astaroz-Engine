@@ -102,57 +102,56 @@ update_status ModuleEditorCamera::Update()
 	}
 
 	//Movement
-	if (keyboard[SDL_SCANCODE_UP])
-	{
-		changePositionY(0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_DOWN])
-	{
-		changePositionY(-0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_RIGHT])
-	{
-		changePositionX(0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_LEFT])
+	if (keyboard[SDL_SCANCODE_A])
 	{
 		changePositionX(-0.05f);
 	}
-	if (keyboard[SDL_SCANCODE_KP_PLUS])
-	{
-		changePositionZ(0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_KP_MINUS])
-	{
-		changePositionZ(-0.05f);
-	}
-	
-	//Rotation
-	if (keyboard[SDL_SCANCODE_A])
-	{
-		changeRotationZ(0.01f);
-	}
 	if (keyboard[SDL_SCANCODE_D])
 	{
-		changeRotationZ(-0.01f);
+		changePositionX(0.05f);
 	}
 	if (keyboard[SDL_SCANCODE_W])
 	{
-		changeRotationX(0.01f);
+		changePositionZ(0.05f);
 	}
 	if (keyboard[SDL_SCANCODE_S])
 	{
-		changeRotationX(-0.01f);
+		changePositionZ(-0.05f);
 	}
 	if (keyboard[SDL_SCANCODE_Q])
 	{
-		changeRotationY(0.01f);
+		changePositionY(0.05f);
 	}
 	if (keyboard[SDL_SCANCODE_E])
 	{
-		changeRotationY(-0.01f);
+		changePositionY(-0.05f);
 	}
 
+	//Rotation
+	if (keyboard[SDL_SCANCODE_UP])
+	{
+		changeRotationX(0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_DOWN])
+	{
+		changeRotationX(-0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_RIGHT])
+	{
+		changeRotationY(-0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_LEFT])
+	{
+		changeRotationY(0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_KP_PLUS])
+	{
+		changeRotationZ(-0.01f);
+	}
+	if (keyboard[SDL_SCANCODE_KP_MINUS])
+	{
+		changeRotationZ(0.01f);
+	}
 
 	return UPDATE_CONTINUE;
 }

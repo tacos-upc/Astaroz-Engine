@@ -7,7 +7,6 @@
 #include "ModuleEditor.h"
 #include "Mesh.h"
 
-//#include <vector>
 #include "Importer.hpp"
 #include "scene.h"
 #include "postprocess.h"

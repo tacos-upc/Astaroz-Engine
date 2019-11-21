@@ -46,7 +46,6 @@ void ModuleModelLoader::LoadModel(const char* path)
 	processNode(scene->mRootNode, scene);
 }
 
-
 void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
 {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -108,10 +107,10 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 		vertices.push_back(vertex);
 	}
 
-	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+	for (unsigned int i=0; i<mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
+		for (unsigned int j=0; j<face.mNumIndices; j++)
 			indices.push_back(face.mIndices[j]);
 	}
 
@@ -137,13 +136,12 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 		textureType = textures[0].type;
 	}
 	// 4. height maps
-
 	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	textureWidth = textures[0].width;//TODO, IMPROVE CODE
-	textureHeight = textures[0].height;//TODO, IMPROVE CODE
-	textureId = textures[0].id;//TODO, IMPROVE CODE
+	textureWidth = textures[0].width; //
+	textureHeight = textures[0].height;
+	textureId = textures[0].id;
 	numPolys /= 3;
 	return Mesh(vertices, indices, textures);
 }
@@ -151,12 +149,12 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
 {
 	std::vector<Texture> textures;
-	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+	for (unsigned int i=0; i<mat->GetTextureCount(type); i++)
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
 		bool skip = false;
-		for (unsigned int j = 0; j < texturesLoaded.size(); j++)
+		for (unsigned int j=0; j<texturesLoaded.size(); j++)
 		{
 			if (std::strcmp(texturesLoaded[j].path, str.C_Str()) == 0)
 			{
@@ -166,8 +164,9 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 			}
 		}
 		if (!skip)
-		{
-			Texture texture = App->texture->LoadTexture(str.C_Str());
+		{	// if texture hasn't been loaded already, load it
+			//Texture texture = App->texture->LoadTexture(str.C_Str());
+			Texture texture = App->texture->LoadTexture("Baker_house.png");
 			texture.type = typeName;
 			textures.push_back(texture);
 			texturesLoaded.push_back(texture);

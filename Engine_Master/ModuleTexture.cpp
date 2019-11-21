@@ -1,5 +1,7 @@
 #include "ModuleTexture.h";
 
+#include "glew.h";
+
 
 ModuleTexture::ModuleTexture()
 {
@@ -66,18 +68,25 @@ bool ModuleTexture::CleanUp()
 Texture ModuleTexture::LoadTexture(const char* path)
 {
 	Texture texture;
-	ilLoadImage(path);
+	//LOG(path);
+	if (!ilLoadImage("Baker_house.png"))
+	{
+		//Errors
+		ILenum Error = ilGetError();
+
+		const char* string_error = iluErrorString(IL_NO_ERROR);
+
+		//LOG();
+	}
+	//ilLoadImage(path);
 	iluGetImageInfo(&imageInfo);
 	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
-	{
 		iluFlipImage();
-	}
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
 	texture.data = ilGetData();
 	texture.path = path;
-
 
 	return texture;
 }

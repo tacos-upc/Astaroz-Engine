@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h";
 
-#include "glew.h";
 #include "IL/il.h";
 #include "IL/ilut.h";
 #include "IL/ilu.h";

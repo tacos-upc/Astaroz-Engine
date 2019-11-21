@@ -62,3 +62,22 @@ bool ModuleTexture::CleanUp()
 	// Cleanup
 	return true;
 }
+
+Texture ModuleTexture::LoadTexture(const char* path)
+{
+	Texture texture;
+	ilLoadImage(path);
+	iluGetImageInfo(&imageInfo);
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+	{
+		iluFlipImage();
+	}
+	texture.id = ilutGLBindTexImage();
+	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
+	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
+	texture.data = ilGetData();
+	texture.path = path;
+
+
+	return texture;
+}

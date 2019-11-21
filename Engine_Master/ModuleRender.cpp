@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
+#include "ModuleModelLoader.h"
+#include "ModuleProgramShader.h"
 #include "glew.h";
 
 ModuleRender::ModuleRender()
@@ -47,6 +49,8 @@ bool ModuleRender::Init()
 	glEnable(GL_TEXTURE_2D);
 	glViewport(0, 0, 1024, 768);
 
+	App->modelLoader->LoadModel("models/BakerHouse.fbx");
+
 	return true;
 }
 
@@ -62,7 +66,9 @@ update_status ModuleRender::PreUpdate()
 }
 
 // Called every draw update
-update_status ModuleRender::Update(){
+update_status ModuleRender::Update()
+{
+	App->modelLoader->Draw(App->programShader->myProgram);
 
 	return UPDATE_CONTINUE;
 }

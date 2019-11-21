@@ -129,6 +129,7 @@
     <ClCompile Include="MicroTimer.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleModelLoader.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -349,6 +350,7 @@
     <ClInclude Include="MicroTimer.h" />
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleModelLoader.h" />
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

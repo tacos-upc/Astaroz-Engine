@@ -17,9 +17,14 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
+	Texture ModuleTexture::LoadTexture(const char* path);
+
 public:
 	ILuint myLena;
 	GLuint myTexture;
 	ILubyte* myData;
+
+	//added
+	ILinfo imageInfo;
 };
 

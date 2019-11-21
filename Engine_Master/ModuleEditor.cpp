@@ -1,8 +1,5 @@
 #include "ModuleEditor.h"
 
-#include "IL/il.h"
-#include "IL/ilut.h"
-#include "IL/ilu.h"
 
 ModuleEditor::ModuleEditor()
 {

@@ -26,6 +26,6 @@ public:
 
 	ILuint myTextureId;
 	ILinfo myImageInfo;
-	GLuint texture;
+	GLuint myTexture;
 };
 

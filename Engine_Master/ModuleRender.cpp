@@ -48,7 +48,7 @@ bool ModuleRender::Init()
 	glEnable(GL_TEXTURE_2D);
 	glViewport(0, 0, 1024, 768);
 
-	App->modelLoader->LoadModel("models/BakerHouse.fbx");
+	App->modelLoader->LoadModel(MODEL_BAKER_PATH);
 
 	return true;
 }
@@ -75,7 +75,7 @@ update_status ModuleRender::Update()
 {
 	//Textures
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, App->texture->texture);
+	glBindTexture(GL_TEXTURE_2D, App->texture->myTexture);
 	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "texture0"), 0);
 
 	//Attach window and context

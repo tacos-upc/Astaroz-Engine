@@ -21,3 +21,6 @@ enum update_status
 #define RESIZABLE true
 #define VSYNC true
 #define TITLE "Super Awesome Engine"
+
+//Paths
+#define MODEL_BAKER_PATH "models/BakerHouse.fbx"

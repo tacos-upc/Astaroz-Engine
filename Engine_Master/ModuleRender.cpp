@@ -79,7 +79,7 @@ update_status ModuleRender::Update()
 	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "texture0"), 0);
 
 	//Attach window and context
-	SDL_GL_MakeCurrent(App->window->window, context);
+	SDL_GL_MakeCurrent(App->window->window, glcontext);
 
 	//Draw program shader
 	App->modelLoader->Draw(App->programShader->myProgram);
@@ -106,5 +106,6 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
+
 }
 

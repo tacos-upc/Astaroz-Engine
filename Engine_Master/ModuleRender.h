@@ -22,6 +22,4 @@ public:
 
 public:
 	SDL_GLContext glcontext;
-private:
-	void* context;
 };

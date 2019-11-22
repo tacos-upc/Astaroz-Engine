@@ -4,7 +4,26 @@
 #include "Module.h"
 #include <string>
 #include <vector>
-#include "ModuleTexture.h"
+#include "Math/float2.h"
+#include "Math/float3.h"
+
+struct Texture {
+	unsigned int id;
+	char*  type;
+	const char* path;
+	int width;
+	int height;
+	unsigned char *data;
+};
+
+struct Vertex
+{
+	float3 Position;
+	float3 Normal;
+	float2 TexCoords;
+	float3 Tangent;
+	float3 Bitangent;
+};
 
 class Mesh
 {

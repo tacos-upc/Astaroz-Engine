@@ -2,8 +2,6 @@
 #define __ModuleWindow_H__
 
 #include "Module.h"
-#include "Globals.h"
-#include "Application.h"
 
 #include "SDL/include/SDL.h"
 
@@ -23,6 +21,8 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
+
+	void ModuleWindow::ResizeWindow();
 
 public:
 	//The window we'll be rendering to

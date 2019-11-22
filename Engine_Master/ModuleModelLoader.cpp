@@ -143,6 +143,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	textureHeight = textures[0].height;
 	textureId = textures[0].id;
 	numPolys /= 3;
+
 	return Mesh(vertices, indices, textures);
 }
 
@@ -159,14 +160,13 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 			if (std::strcmp(texturesLoaded[j].path, str.C_Str()) == 0)
 			{
 				textures.push_back(texturesLoaded[j]);
-				skip = true;
+				skip = true; //enable this flag to not load the texture again from the file
 				break;
 			}
 		}
 		if (!skip)
 		{	// if texture hasn't been loaded already, load it
-			//Texture texture = App->texture->LoadTexture(str.C_Str());
-			Texture texture = App->texture->LoadTexture("Baker_house.png");
+			Texture texture = App->texture->LoadTexture(str.C_Str());
 			texture.type = typeName;
 			textures.push_back(texture);
 			texturesLoaded.push_back(texture);

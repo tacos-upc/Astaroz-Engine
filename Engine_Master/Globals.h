@@ -37,5 +37,6 @@ struct Vertex {
 #define SCREEN_WIDTH 1280 //640 original
 #define SCREEN_HEIGHT 960 //480 original
 #define FULLSCREEN false
+#define RESIZABLE true
 #define VSYNC true
 #define TITLE "Super Awesome Engine"

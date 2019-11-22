@@ -19,11 +19,11 @@ public:
 	Texture ModuleTexture::LoadTexture(const char* path);
 
 public:
-	ILuint myLena;
-	GLuint myTexture;
-	ILubyte* myData;
-
-	//added
-	ILinfo imageInfo;
+	//ILuint myLena;	--> Lenna exercise; improved code so not needed anymore
+	//GLuint myTexture; --> Lenna exercise; improved code so not needed anymore
+	//ILubyte* myData;	--> Lenna exercise; improved code so not needed anymore
+	ILuint myTextureId;
+	ILinfo myImageInfo;
+	GLuint texture;
 };
 

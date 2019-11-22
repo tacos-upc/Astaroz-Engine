@@ -13,7 +13,6 @@ ModuleRender::ModuleRender()
 // Destructor
 ModuleRender::~ModuleRender()
 {
-	SDL_GL_DeleteContext(glcontext);
 }
 
 // Called before render is available
@@ -56,10 +55,16 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
+	//Program (shaders: vertex shader + fragment shader)
+	glUseProgram(App->programShader->myProgram);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "model"), 1, GL_TRUE, &App->editorCamera->model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "view"), 1, GL_TRUE, &App->editorCamera->view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "proj"), 1, GL_TRUE, &App->editorCamera->proj[0][0]);
+
+	//Viewport using window size
 	int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	glViewport(0, 0, w, h);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UPDATE_CONTINUE;
@@ -68,6 +73,15 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	//Textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, App->texture->texture);
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "texture0"), 0);
+
+	//Attach window and context
+	SDL_GL_MakeCurrent(App->window->window, context);
+
+	//Draw program shader
 	App->modelLoader->Draw(App->programShader->myProgram);
 
 	return UPDATE_CONTINUE;
@@ -84,7 +98,8 @@ bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
 
-	//Destroy window
+	//Destroy window is done in ModuleWindow
+	SDL_GL_DeleteContext(glcontext);
 
 	return true;
 }

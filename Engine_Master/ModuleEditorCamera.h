@@ -23,12 +23,14 @@ public:
 
 	float4x4 LookAt(float3 target, float3 eye, float3 up);
 	void changeFOV(float fov);
-	void ModuleEditorCamera::changePositionX(const float position);
-	void ModuleEditorCamera::changePositionY(const float position);
-	void ModuleEditorCamera::changePositionZ(const float position);
-	void ModuleEditorCamera::changeRotationX(const float rotation);
-	void ModuleEditorCamera::changeRotationY(const float rotation);
-	void ModuleEditorCamera::changeRotationZ(const float rotation);
+	float calculateAspectRatio();
+	void setAspectFrustum();
+	void changePositionX(const float position);
+	void changePositionY(const float position);
+	void changePositionZ(const float position);
+	void changeRotationX(const float rotation);
+	void changeRotationY(const float rotation);
+	void changeRotationZ(const float rotation);
 
 public:
 	Frustum myFrustum;

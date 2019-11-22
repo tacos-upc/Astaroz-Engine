@@ -1,4 +1,8 @@
 #include "ModuleWindow.h"
+#include "Globals.h"
+#include "Application.h"
+#include "ModuleEditorCamera.h"
+
 
 ModuleWindow::ModuleWindow()
 {
@@ -32,6 +36,11 @@ bool ModuleWindow::Init()
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
+		if (RESIZABLE)
+		{
+			flags |= SDL_WINDOW_RESIZABLE;
+		}
+
 		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
@@ -41,8 +50,7 @@ bool ModuleWindow::Init()
 		}
 		else
 		{
-			//Get window surface
-			
+			//Get window surface	
 			screen_surface = SDL_GetWindowSurface(window);
 		}
 	}
@@ -65,4 +73,11 @@ bool ModuleWindow::CleanUp()
 	SDL_Quit();
 	return true;
 }
+
+//Resize window correctly by setting Aspect ratio in Camera module
+void ModuleWindow::ResizeWindow()
+{
+	App->editorCamera->setAspectFrustum();
+}
+
 

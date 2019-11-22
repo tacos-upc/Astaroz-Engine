@@ -20,9 +20,21 @@ bool ModuleTexture::Init()
 	iluInit();
 	ilutInit();
 
+	//IL renderer
+	ilutRenderer(ILUT_OPENGL);
+
+	//Image
+	ilGenImages(1, &myTextureId);
+	ilBindImage(myTextureId);
+
+
+	/* THIS PART WAS FOR THE FIRST EXERCISE WITH 'LENNA' IMAGE
+	
 	//Image
 	ilGenImages(1, &myLena);
 	ilBindImage(myLena);
+
+	//Load image
 	if (!ilLoadImage("textures/lenna.png"))
 	{
 		//Errors
@@ -39,7 +51,7 @@ bool ModuleTexture::Init()
 
 	//Once assigned, we can 'unbind' the image
 	ilDeleteImages(1, &myLena);
-
+	*/
 	return true;
 }
 
@@ -61,27 +73,25 @@ update_status ModuleTexture::PostUpdate()
 // Called before quitting
 bool ModuleTexture::CleanUp()
 {
-	// Cleanup
+	//Once assigned, we can 'unbind' the image
+	ilDeleteImages(1, &myTextureId);
+
 	return true;
 }
 
 Texture ModuleTexture::LoadTexture(const char* path)
 {
 	Texture texture;
-	//LOG(path);
-	if (!ilLoadImage("Baker_house.png"))
+	if (!ilLoadImage(path))
 	{
 		//Errors
-		ILenum Error = ilGetError();
-
-		const char* string_error = iluErrorString(IL_NO_ERROR);
-
-		//LOG();
+		ILenum Error = ilGetError(); //Take the error code
+		const char* string_error = iluErrorString(IL_NO_ERROR); //-->iluErrorString is not working correctly and throws exception. Get the error code and look for it in DevIL documentation
 	}
-	//ilLoadImage(path);
-	iluGetImageInfo(&imageInfo);
-	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+	iluGetImageInfo(&myImageInfo);
+	if (myImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 		iluFlipImage();
+
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);

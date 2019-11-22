@@ -18,9 +18,7 @@ bool ModuleEditorCamera::Init()
 	speed = 1.0f;
 
 	//Calculate aspect ratio
-	int w, h;
-	SDL_GetWindowSize(App->window->window, &w, &h);
-	float aspect = w / h;
+	float aspect = calculateAspectRatio();
 
 	//Frustum
 	myFrustum.type = FrustumType::PerspectiveFrustum;
@@ -35,7 +33,7 @@ bool ModuleEditorCamera::Init()
 	//Matrices
 	proj = myFrustum.ProjectionMatrix();
 	model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
-	view = LookAt(float3(0.0f, 1.f, 4.0f), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 1.0f, 0.0f));
+	view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up);
 
 	return true;
 }
@@ -201,15 +199,28 @@ float4x4 ModuleEditorCamera::LookAt(float3 eye, float3 target, float3 up)
 void ModuleEditorCamera::changeFOV(float fov)
 {
 	//Calculate aspect ratio
-	int w, h;
-	SDL_GetWindowSize(App->window->window, &w, &h);
-	float aspect = w / h;
+	float aspect = calculateAspectRatio();
 
 	//Change FOV
 	myFrustum.verticalFov = fov;
 	myFrustum.horizontalFov = 2.f * atanf(tanf(myFrustum.verticalFov * 0.5f) * aspect);
 
 	//Reasign projection matrix
+	proj = myFrustum.ProjectionMatrix();
+}
+
+float ModuleEditorCamera::calculateAspectRatio()
+{
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	return w / h;
+}
+
+void ModuleEditorCamera::setAspectFrustum()
+{
+	float aspect = calculateAspectRatio();
+	myFrustum.horizontalFov = 2.0f * atanf(tanf(myFrustum.verticalFov * 0.5f) * aspect);
 	proj = myFrustum.ProjectionMatrix();
 }
 

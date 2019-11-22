@@ -13,43 +13,43 @@ ModuleTriangle::~ModuleTriangle()
 
 bool ModuleTriangle::Init()
 {
-	float3 v0 = { -1.0f, -1.0f, 0.0f };
-	float3 v1 = { 1.0f, -1.0f, 0.0f };
-	float3 v2 = { 0.0f, 1.0f, 0.0f };
+	//float3 v0 = { -1.0f, -1.0f, 0.0f };
+	//float3 v1 = { 1.0f, -1.0f, 0.0f };
+	//float3 v2 = { 0.0f, 1.0f, 0.0f };
 
-	/* 
-	*****************DONE IN SHADER NOW*******************
-	float4x4 transform = proj * view * float4x4(model);
-	float4 tmp;
-	tmp = transform * float4(v0.x, v0.y, v0.z, 1.0);
-	v0 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
+	///* 
+	//*****************DONE IN SHADER NOW*******************
+	//float4x4 transform = proj * view * float4x4(model);
+	//float4 tmp;
+	//tmp = transform * float4(v0.x, v0.y, v0.z, 1.0);
+	//v0 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
 
-	tmp = transform * float4(v1.x, v1.y, v1.z, 1.0);
-	v1 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
+	//tmp = transform * float4(v1.x, v1.y, v1.z, 1.0);
+	//v1 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
 
-	tmp = transform * float4(v2.x, v2.y, v2.z, 1.0);
-	v2 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
-	*/
+	//tmp = transform * float4(v2.x, v2.y, v2.z, 1.0);
+	//v2 = float3(tmp.x / tmp.w, tmp.y / tmp.w, tmp.z / tmp.w);
+	//*/
 
-	float3 buffer_data[] = {
-		v0, v1, v2
-	};
+	//float3 buffer_data[] = {
+	//	v0, v1, v2
+	//};
 
-	//texture
-	float new_buffer_data[] = {
-		-1.0f, -1.0f, 0.0f, // v0 pos
-		1.0f, -1.0f, 0.0f,  // v1 pos
-		0.0f,  1.0f, 0.0f,  // v2 pos
+	////texture
+	//float new_buffer_data[] = {
+	//	-1.0f, -1.0f, 0.0f, // v0 pos
+	//	1.0f, -1.0f, 0.0f,  // v1 pos
+	//	0.0f,  1.0f, 0.0f,  // v2 pos
 
-		0.0f, 0.0f,         // v0 texcoord   
-		1.0f, 0.0f,         // v1 texcoord
-		0.5f, 1.0f          // v2 texcoord
-	};
+	//	0.0f, 0.0f,         // v0 texcoord   
+	//	1.0f, 0.0f,         // v1 texcoord
+	//	0.5f, 1.0f          // v2 texcoord
+	//};
 
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(new_buffer_data), new_buffer_data, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glGenBuffers(1, &vbo);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(new_buffer_data), new_buffer_data, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	return true;
 }
@@ -59,6 +59,9 @@ update_status ModuleTriangle::PreUpdate(){
 }
 
 update_status ModuleTriangle::Update() {
+
+	/*THIS WAS USED IN THE FIRST TRIANGLE EXAMPLE / EXERCISE
+
 	//Use our ModuleProgramShader's program
 	glUseProgram(App->programShader->myProgram);
 
@@ -100,6 +103,7 @@ update_status ModuleTriangle::Update() {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	*/
 
 	return UPDATE_CONTINUE;
 }

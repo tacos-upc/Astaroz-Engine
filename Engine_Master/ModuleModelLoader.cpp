@@ -139,7 +139,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	textureWidth = textures[0].width; //
+	textureWidth = textures[0].width;
 	textureHeight = textures[0].height;
 	textureId = textures[0].id;
 	numPolys /= 3;

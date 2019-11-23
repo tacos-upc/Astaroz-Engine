@@ -24,4 +24,5 @@ enum update_status
 
 //Paths
 #define TEXTURES_PATH "textures/"
+#define MODELS_PATH "models/"
 #define MODEL_BAKER_PATH "models/BakerHouse.fbx"

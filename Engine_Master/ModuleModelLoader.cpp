@@ -168,6 +168,7 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		}
 		//if texture hasn't been loaded already, load it
 		if (!skip)
+		{
 			Texture texture = App->texture->LoadTexture(str.C_Str());
 			texture.type = typeName;
 			textures.push_back(texture);

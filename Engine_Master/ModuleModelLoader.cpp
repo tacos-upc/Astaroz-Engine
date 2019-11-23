@@ -154,6 +154,8 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
+		
+		//This flag will be used to know if the texture was previously loaded or not
 		bool skip = false;
 		for (unsigned int j=0; j<texturesLoaded.size(); j++)
 		{
@@ -164,8 +166,8 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 				break;
 			}
 		}
+		//if texture hasn't been loaded already, load it
 		if (!skip)
-		{	// if texture hasn't been loaded already, load it
 			Texture texture = App->texture->LoadTexture(str.C_Str());
 			texture.type = typeName;
 			textures.push_back(texture);

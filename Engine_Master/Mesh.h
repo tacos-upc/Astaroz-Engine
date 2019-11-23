@@ -7,7 +7,8 @@
 #include "Math/float2.h"
 #include "Math/float3.h"
 
-struct Texture {
+struct Texture
+{
 	unsigned int id;
 	char*  type;
 	const char* path;
@@ -35,13 +36,12 @@ public:
 
 	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
 	~Mesh();
-	/*  Functions  */
-	void Init();
 
+	void Init();
 	void Draw(unsigned int program) const;
+
 private:
-	/*  Render data  */
 	unsigned int VAO, VBO, EBO;
-	/*  Functions    */
+
 	void setupMesh();
 };

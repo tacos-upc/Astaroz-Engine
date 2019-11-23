@@ -2,10 +2,9 @@
 #include "Module.h"
 #include "Globals.h"
 #include "Application.h"
-#include "ModuleModelLoader.h"
+#include "Mesh.h"
 #include "ModuleTexture.h"
 #include "ModuleEditor.h"
-#include "Mesh.h"
 
 #include "Importer.hpp"
 #include "scene.h"

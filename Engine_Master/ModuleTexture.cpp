@@ -83,21 +83,30 @@ bool ModuleTexture::CleanUp()
 Texture ModuleTexture::LoadTexture(const char* path)
 {
 	Texture texture;
-	if (!ilLoadImage(path))
+
+	//The path received dos not contain my 'textures' directory, so we need to add it
+	std::string aux = TEXTURES_PATH + (std::string) path;		// --> "textures/" + path
+	const char* fullPath = aux.c_str();
+
+	//Check if the loading process is a success or not
+	if (!ilLoadImage(fullPath))
 	{
 		//Errors
 		ILenum Error = ilGetError(); //Take the error code
-		const char* string_error = iluErrorString(IL_NO_ERROR); //-->iluErrorString is not working correctly and throws exception. Get the error code and look for it in DevIL documentation
+		//const char* string_error = iluErrorString(IL_NO_ERROR); //-->iluErrorString is not working correctly and throws exception. Get the error code and look for it in DevIL documentation
 	}
 	iluGetImageInfo(&myImageInfo);
-	if (myImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
-		iluFlipImage();
 
+	//Check if the texture is correctly oriented
+	if (myImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		iluFlipImage(); //If not, flip the texture
+
+	//Fill all the texture information that will be returned
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
 	texture.data = ilGetData();
-	texture.path = path;
+	texture.path = fullPath;
 
 	return texture;
 }

@@ -23,4 +23,5 @@ enum update_status
 #define TITLE "Super Awesome Engine"
 
 //Paths
+#define TEXTURES_PATH "textures/"
 #define MODEL_BAKER_PATH "models/BakerHouse.fbx"

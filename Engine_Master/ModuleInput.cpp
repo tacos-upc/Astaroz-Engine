@@ -77,7 +77,7 @@ update_status ModuleInput::PreUpdate()
 				break;
 			case SDL_WINDOWEVENT_RESIZED:
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				App->window->ResizeWindow();
+				App->window->ResizeWindow(event.window.data1, event.window.data2);
 				break;
 			}
 			break;	

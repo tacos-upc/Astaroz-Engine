@@ -22,11 +22,13 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void ModuleWindow::ResizeWindow();
+	void ModuleWindow::ResizeWindow(const unsigned int width, const unsigned int height);
 
 public:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
+	int width;
+	int height;
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;

@@ -27,8 +27,8 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		int width = SCREEN_WIDTH;
-		int height = SCREEN_HEIGHT;
+		width = SCREEN_WIDTH;
+		height = SCREEN_HEIGHT;
 		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
 
 		if(FULLSCREEN == true)
@@ -75,7 +75,9 @@ bool ModuleWindow::CleanUp()
 }
 
 //Resize window correctly by setting Aspect ratio in Camera module
-void ModuleWindow::ResizeWindow()
+void ModuleWindow::ResizeWindow(const unsigned int width, const unsigned int height)
 {
+	this->width = width;
+	this->height = height;
 	App->editorCamera->setAspectFrustum();
 }

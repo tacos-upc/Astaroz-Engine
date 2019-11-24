@@ -44,3 +44,7 @@ enum KeyState
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
 #define MODEL_BAKER_PATH "models/BakerHouse.fbx"
+
+//Utils
+#define MAX(x,y) ((x>y) ? x:y)
+#define MIN(x,y) ((x<y) ? x:y)

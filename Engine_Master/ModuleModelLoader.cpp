@@ -1,4 +1,8 @@
 #include "ModuleModelLoader.h"
+#include "ModuleEditorCamera.h"
+
+#include "cimport.h"
+#include "Importer.hpp"
 
 
 ModuleModelLoader::ModuleModelLoader()
@@ -9,6 +13,9 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
+	//Always start by loading the Baker house model
+	LoadModel(MODEL_BAKER_PATH);
+
 	return true;
 }
 
@@ -39,7 +46,14 @@ void ModuleModelLoader::LoadModel(const char* path)
 	else {
 		LOG("Path of the geometry correct.\n");
 	}
+	//Next step
 	processNode(scene->mRootNode, scene);
+
+	//Fill AABB member value
+	generateBoundingBox();
+
+	//Center camera to new model
+	App->editorCamera->focusModel();
 }
 
 void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
@@ -176,13 +190,34 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 
 void ModuleModelLoader::loadNewModel(const char* path)
 {
-	//Clear member variables
-	directory.clear();
+	//Clear lists from member variables
 	texturesLoaded.clear();
 	meshes.clear();
 
 	//Load model
 	LoadModel(path);
+}
 
-	//TODO:Center camera
+void ModuleModelLoader::generateBoundingBox()
+{
+	float3 min, max;
+	min = {100000.f, 100000.f, 100000.f};		//reference value to be replaced
+	max = {-100000.f, -100000.f, -100000.f};	//reference value to be replaced
+	for (auto mesh : meshes)
+	{
+		for (auto vertex : mesh->vertices)
+		{
+			//min
+			min.x = MIN(min.x, vertex.Position.x);
+			min.y = MIN(min.y, vertex.Position.y);
+			min.z = MIN(min.z, vertex.Position.z);
+
+			//max
+			max.x = MAX(max.x, vertex.Position.x);
+			max.y = MAX(max.y, vertex.Position.y);
+			max.z = MAX(max.z, vertex.Position.z);
+		}
+	}
+	myBoundingBox.minPoint = min;
+	myBoundingBox.maxPoint = max;
 }

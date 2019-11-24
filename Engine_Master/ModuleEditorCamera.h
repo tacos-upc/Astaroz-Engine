@@ -25,6 +25,7 @@ public:
 	void changeFOV(float fov);
 	float calculateAspectRatio();
 	void setAspectFrustum();
+	void focusModel();
 	void changePositionX(const float position);
 	void changePositionY(const float position);
 	void changePositionZ(const float position);
@@ -35,6 +36,6 @@ public:
 public:
 	Frustum myFrustum;
 	float4x4 proj, view, model;
-	float speed;
+	float speed, pitch, yaw, radius;
 };
 

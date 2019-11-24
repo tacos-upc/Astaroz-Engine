@@ -1,21 +1,21 @@
 #include "ModuleEditorCamera.h"
+#include "ModuleModelLoader.h"
 
 
 ModuleEditorCamera::ModuleEditorCamera()
-{
-
-}
+{}
 
 
 ModuleEditorCamera::~ModuleEditorCamera()
-{
-
-}
+{}
 
 bool ModuleEditorCamera::Init() 
 {
-	//Init speed
-	speed = 1.0f;
+	//Init variables
+	speed = 1.f;
+	pitch = 0.f;
+	yaw = -90.f;
+	radius = 0.f;
 
 	//Calculate aspect ratio
 	float aspect = calculateAspectRatio();
@@ -33,7 +33,7 @@ bool ModuleEditorCamera::Init()
 	//Matrices
 	proj = myFrustum.ProjectionMatrix();
 	model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
-	view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up);
+	//view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up); --> Done in PostUpdate, not needed to do it here
 
 	return true;
 }
@@ -97,6 +97,12 @@ update_status ModuleEditorCamera::Update()
 	else
 	{
 		speed = 1.0f;
+	}
+
+	//Focus model
+	if (keyboard[SDL_SCANCODE_F])
+	{
+		focusModel();
 	}
 
 	//Movement
@@ -222,6 +228,20 @@ void ModuleEditorCamera::setAspectFrustum()
 	float aspect = calculateAspectRatio();
 	myFrustum.horizontalFov = 2.0f * atanf(tanf(myFrustum.verticalFov * 0.5f) * aspect);
 	proj = myFrustum.ProjectionMatrix();
+}
+
+void ModuleEditorCamera::focusModel()
+{
+	//Get the info from the model BoundingBox
+	float3 halfSize = App->modelLoader->myBoundingBox.HalfSize();
+	float distX = halfSize.x / tanf(myFrustum.horizontalFov * 0.5f);
+	float distY = halfSize.y / tanf(myFrustum.verticalFov * 0.5f);
+	float camDist = MAX(distX, distY) + halfSize.z;
+	float3 center = App->modelLoader->myBoundingBox.FaceCenterPoint(5);
+
+	//Change camera position depending on the model
+	myFrustum.pos = center + float3(0, 0, camDist);
+	myFrustum.front = float3(0, 0, -1);
 }
 
 void ModuleEditorCamera::changePositionX(const float position)

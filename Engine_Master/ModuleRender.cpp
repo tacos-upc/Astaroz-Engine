@@ -52,8 +52,6 @@ bool ModuleRender::Init()
 	glEnable(GL_TEXTURE_2D);
 	glViewport(0, 0, 1024, 768);
 
-	App->modelLoader->LoadModel(MODEL_BAKER_PATH);
-
 	return true;
 }
 

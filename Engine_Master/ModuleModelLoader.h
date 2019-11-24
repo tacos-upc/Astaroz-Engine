@@ -6,9 +6,9 @@
 #include "ModuleTexture.h"
 #include "ModuleEditor.h"
 
-#include "Importer.hpp"
 #include "scene.h"
 #include "postprocess.h"
+#include "Geometry/AABB.h"
 
 class ModuleModelLoader : public Module
 {
@@ -26,14 +26,15 @@ public:
 	Mesh processMesh(aiMesh*, const aiScene*);
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
 	void loadNewModel(const char* path);
+	void generateBoundingBox();
 
 public:
-	//General
+	//Lists
 	std::vector<Texture> texturesLoaded;
 	std::vector<Mesh*> meshes;
-	std::string directory;
 
 	//For our model
+	AABB myBoundingBox;
 	unsigned int numMeshes = 0;
 	int numPolys = NULL;
 	unsigned int numVertices = 0;

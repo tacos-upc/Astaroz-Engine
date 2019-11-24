@@ -44,7 +44,11 @@ bool ModuleRender::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
-	glEnable(GL_CULL_FACE);
+
+	//Comment CULL_FACE to enable or disable, respectively
+	glDisable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
+
 	glEnable(GL_TEXTURE_2D);
 	glViewport(0, 0, 1024, 768);
 
@@ -102,9 +106,4 @@ bool ModuleRender::CleanUp()
 	SDL_GL_DeleteContext(glcontext);
 
 	return true;
-}
-
-void ModuleRender::WindowResized(unsigned width, unsigned height)
-{
-
 }

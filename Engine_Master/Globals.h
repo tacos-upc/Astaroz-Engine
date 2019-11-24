@@ -7,11 +7,28 @@
 
 void log(const char file[], int line, const char* format, ...);
 
+//Enums
 enum update_status
 {
 	UPDATE_CONTINUE = 1,
 	UPDATE_STOP,
 	UPDATE_ERROR
+};
+
+enum EventWindow
+{
+	WE_QUIT = 0,
+	WE_HIDE = 1,
+	WE_SHOW = 2,
+	WE_COUNT
+};
+
+enum KeyState
+{
+	KEY_IDLE = 0,
+	KEY_DOWN,
+	KEY_REPEAT,
+	KEY_UP
 };
 
 // Configuration -----------
@@ -21,6 +38,7 @@ enum update_status
 #define RESIZABLE true
 #define VSYNC true
 #define TITLE "Super Awesome Engine"
+#define MAX_KEYS 300
 
 //Paths
 #define TEXTURES_PATH "textures/"

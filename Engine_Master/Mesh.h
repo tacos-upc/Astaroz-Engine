@@ -7,6 +7,7 @@
 #include "Math/float2.h"
 #include "Math/float3.h"
 
+//Structs
 struct Texture
 {
 	unsigned int id;
@@ -26,6 +27,7 @@ struct Vertex
 	float3 Bitangent;
 };
 
+//Class
 class Mesh
 {
 public:

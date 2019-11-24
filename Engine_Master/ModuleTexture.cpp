@@ -28,7 +28,6 @@ bool ModuleTexture::Init()
 	ilGenImages(1, &myTextureId);
 	ilBindImage(myTextureId);
 
-
 	/* THIS PART WAS FOR THE FIRST EXERCISE WITH 'LENNA' IMAGE
 	
 	//Image

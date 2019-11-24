@@ -2,14 +2,10 @@
 
 
 ModuleModelLoader::ModuleModelLoader()
-{
-
-}
+{}
 
 ModuleModelLoader::~ModuleModelLoader()
-{
-
-}
+{}
 
 bool ModuleModelLoader::Init()
 {
@@ -176,4 +172,17 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		}
 	}
 	return textures;
+}
+
+void ModuleModelLoader::loadNewModel(const char* path)
+{
+	//Clear member variables
+	directory.clear();
+	texturesLoaded.clear();
+	meshes.clear();
+
+	//Load model
+	LoadModel(path);
+
+	//TODO:Center camera
 }

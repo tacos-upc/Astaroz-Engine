@@ -25,14 +25,20 @@ public:
 	void processNode(aiNode*, const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
+	void loadNewModel(const char* path);
 
 public:
+	//General
 	std::vector<Texture> texturesLoaded;
 	std::vector<Mesh*> meshes;
 	std::string directory;
+
+	//For our model
 	unsigned int numMeshes = 0;
 	int numPolys = NULL;
 	unsigned int numVertices = 0;
+
+	//For textures in our model
 	int textureWidth;
 	int textureHeight;
 	char* textureType = nullptr;

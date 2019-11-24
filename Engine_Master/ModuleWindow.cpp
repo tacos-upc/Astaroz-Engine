@@ -79,5 +79,3 @@ void ModuleWindow::ResizeWindow()
 {
 	App->editorCamera->setAspectFrustum();
 }
-
-

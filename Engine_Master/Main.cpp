@@ -86,24 +86,6 @@ int main(int argc, char ** argv)
 
 		}
 
-		SDL_Event sdlEvent;
-
-		while (SDL_PollEvent(&sdlEvent) != 0){
-
-			App->editor->processEvent(sdlEvent);
-
-			// Esc button is pressed
-			switch (sdlEvent.type){
-			case SDL_QUIT:
-				state = MAIN_FINISH;
-				break;
-
-			case SDL_WINDOWEVENT:
-				if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-					App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-					break;
-			}
-		}
 	}
 	LOG("Bye :)\n");
 	delete App;

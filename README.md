@@ -25,7 +25,11 @@ Engine accepts grag & drop of '.FBX' '.fbx' model files and '.png' '.jpg' '.png'
 Controls
 -------------
 ·While Right-clicking: WASDQE Unity-like movement and free look around
+
 ·Mouse Wheel to zoom in and out
+
 ·Alt+Left click for orbiting the model loaded
+
 ·'F' focus the camera on model loaded
+
 ·Hold shift to duplicate WASDQE movement

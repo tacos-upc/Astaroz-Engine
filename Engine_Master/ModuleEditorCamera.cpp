@@ -190,6 +190,10 @@ void ModuleEditorCamera::focusModel()
 	//Change camera position depending on the model
 	myFrustum.pos = center + float3(0, 0, camDist);
 	myFrustum.front = float3(0, 0, -1);
+
+	//Reset rotation
+	pitch = 0;
+	yaw = -90;
 }
 
 void ModuleEditorCamera::zoom(const float wheelY)

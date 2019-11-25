@@ -102,15 +102,20 @@ update_status ModuleEditor::Update()
 	if (show_about_window) 
 	{
 		ImGui::Begin("About...", &show_about_window);
-		ImGui::BulletText("Engine name: MyOwnEngine");
+		ImGui::BulletText("Engine name: Astaroz engine");
 		ImGui::Text("This engine was performed in UPC master - game programming");
 		ImGui::BulletText("Author: Pau Casas");
-		ImGui::BulletText("Free license");
-		ImGui::Text("Libraries:");
-		ImGui::BulletText("SDL");
-		ImGui::BulletText("OpenGL");
-		ImGui::BulletText("MathGeoLib");
-		ImGui::BulletText("ImGUI");		
+		ImGui::BulletText("MIT License:"); ImGui::SameLine();
+		if (ImGui::SmallButton("License"))
+		{
+			ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine/blob/master/LICENSE", nullptr, nullptr, SW_SHOWNORMAL);
+		}
+		ImGui::Separator();
+		ImGui::Text("Github repository:"); ImGui::SameLine();
+		if (ImGui::SmallButton("Astaroz engine link github"))
+		{
+			ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine", nullptr, nullptr, SW_SHOWNORMAL);
+		}
 		ImGui::End();
 	}
 	//Configuration flag

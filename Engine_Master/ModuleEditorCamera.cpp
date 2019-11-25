@@ -266,4 +266,8 @@ void ModuleEditorCamera::orbit(const float mouseMotionX, const float mouseMotion
 	//Update Yaw and Pitch (also used on rotation)
 	yaw = math::RadToDeg(atan2(myFrustum.front.z, myFrustum.front.x));
 	pitch = math::RadToDeg(asin(myFrustum.front.y));
+
+	//Update projection and view matrix from our updated frustum
+	proj = myFrustum.ProjectionMatrix();
+	view = myFrustum.ViewMatrix();
 }

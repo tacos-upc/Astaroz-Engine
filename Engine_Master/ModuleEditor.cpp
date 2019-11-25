@@ -1,6 +1,9 @@
 #include "ModuleEditor.h"
 #include "windows.h"
 
+#include "version.h"
+#include "IL/il.h"
+
 
 ModuleEditor::ModuleEditor()
 {
@@ -47,7 +50,6 @@ bool ModuleEditor::Init()
 	show_demo_window = false;
 	show_log_window = false;
 	show_about_window = false;
-	show_camera_window = false;
 	show_configuration_window = false;
 
 	return true;
@@ -71,7 +73,6 @@ update_status ModuleEditor::Update()
 		{
 			ImGui::MenuItem("Demo window", NULL, &show_demo_window);
 			ImGui::MenuItem("Logger console", NULL, &show_log_window);
-			ImGui::MenuItem("Camera management", NULL, &show_camera_window);
 			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);
 			ImGui::EndMenu();
 		};
@@ -112,17 +113,6 @@ update_status ModuleEditor::Update()
 		ImGui::BulletText("ImGUI");		
 		ImGui::End();
 	}
-	//Camera flag
-	if (show_camera_window) 
-	{
-		ImGui::Begin("Camera management", &show_camera_window);
-		float fov = App->editorCamera->myFrustum.verticalFov;
-		if (ImGui::SliderFloat("Change vertical FOV", &fov, 0.01f, 2.5f, "%.2f", 1.0f))
-		{
-			App->editorCamera->changeFOV(fov);
-		}
-		ImGui::End();
-	}
 	//Configuration flag
 	if (show_configuration_window)
 	{
@@ -150,24 +140,41 @@ update_status ModuleEditor::Update()
 			DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
 			ImGui::Text("Total virtual memory: %u KB", totalVirtualMem / 1024);
 			ImGui::Text("Virtual memory used: %u KB", virtualMemUsed / 1024);
-			ImGui::Text("----------------------------------");
+			ImGui::Separator();
 			ImGui::Text("Total physical memory: %u KB", totalPhysMem / 1024);
 			ImGui::Text("Physical memory used: %u KB", physMemUsed / 1024);
 			ImGui::TreePop();
+			ImGui::Separator();
 		}
 
 		//Hardware detection
 		if (ImGui::TreeNode("Hardware detection"))
 		{
-			//TODO
+
+			ImGui::Text("CPU cores: %d", SDL_GetCPUCount());
+			ImGui::Text("CPU cache line size : %d B", SDL_GetCPUCacheLineSize());
+			ImGui::Separator();
+			ImGui::Text("Total system RAM : %d MB", SDL_GetSystemRAM());
+			ImGui::Separator();
+			ImGui::Text("GPU: %s", glGetString(GL_RENDERER));
+			ImGui::Text("GPU company: %s", glGetString(GL_VENDOR));
 			ImGui::TreePop();
+			ImGui::Separator();
 		}
 
 		//Software versions
 		if (ImGui::TreeNode("Software versions"))
 		{
-			//TODO
+			SDL_version sdlVersion;
+			SDL_GetVersion(&sdlVersion);
+			ImGui::BulletText("SDL (version %d.%d.%d)", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+			ImGui::BulletText("Imgui (version %s)", ImGui::GetVersion());
+			ImGui::BulletText("MathGeoLib");
+			ImGui::BulletText("glew (version %s)", glewGetString(GLEW_VERSION));
+			ImGui::BulletText("Assimp (version %d.%d.%d)", aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
+			ImGui::BulletText("DevIL (version %d)", IL_VERSION);
 			ImGui::TreePop();
+			ImGui::Separator();
 		}
 		ImGui::End();
 	}

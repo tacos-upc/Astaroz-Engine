@@ -51,8 +51,6 @@ bool Application::Init()
 	return ret;
 }
 
-//TODO: Start()
-
 update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;

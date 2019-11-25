@@ -92,7 +92,9 @@ Texture ModuleTexture::LoadTexture(const char* path)
 	{
 		//Errors
 		ILenum Error = ilGetError(); //Take the error code
-		//const char* string_error = iluErrorString(IL_NO_ERROR); //-->iluErrorString is not working correctly and throws exception. Get the error code and look for it in DevIL documentation
+		const char* string_error = iluErrorString(Error); //-->iluErrorString is not working correctly and throws exception. Get the error code and look for it in DevIL documentation
+		LOG(path);
+		LOG(string_error);
 		if (Error == 1290)	//IL_COULD_NOT_OPEN_FILE == not found there
 		{
 			//Step 2 to find the texture

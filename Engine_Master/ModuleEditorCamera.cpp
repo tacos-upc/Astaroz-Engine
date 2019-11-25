@@ -12,10 +12,15 @@ ModuleEditorCamera::~ModuleEditorCamera()
 bool ModuleEditorCamera::Init() 
 {
 	//Init variables
-	speed = 1.f;
+	multiplierMovSpeed = 1.f;
+	rotSpeed = 200.f;
+	zoomSpeed = 1.5f;
 	pitch = 0.f;
 	yaw = -90.f;
 	radius = 0.f;
+	orbitX = 0.f;
+	orbitY = 0.f;
+	allowMovement = false;
 
 	//Frustum
 	myFrustum.type = FrustumType::PerspectiveFrustum;
@@ -80,71 +85,38 @@ update_status ModuleEditorCamera::Update()
 
 	//Speed
 	if (App->input->isKeyDown(SDL_SCANCODE_LSHIFT))
-	{
-		speed = 2.0f;
-	}
+		multiplierMovSpeed = 2.0f;
 	else
-	{
-		speed = 1.0f;
-	}
+		multiplierMovSpeed = 1.0f;
 
 	//Focus model
 	if (App->input->isKeyDown(SDL_SCANCODE_F))
-	{
 		focusModel();
-	}
-
+	
 	//Movement
-	if (App->input->isKeyDown(SDL_SCANCODE_A))
-		changePositionX(-0.05f);
-
-	if (App->input->isKeyDown(SDL_SCANCODE_D))
-		changePositionX(0.05f);
-
-	if (App->input->isKeyDown(SDL_SCANCODE_W))
-		changePositionZ(0.05f);
-
-	if (App->input->isKeyDown(SDL_SCANCODE_S))
-		changePositionZ(-0.05f);
-
-	if (App->input->isKeyDown(SDL_SCANCODE_Q))
-		changePositionY(-0.05f);
-
-	if (App->input->isKeyDown(SDL_SCANCODE_E))
-		changePositionY(0.05f);
-
-	/*
-	//Rotation
-	if (keyboard[SDL_SCANCODE_UP])
+	if (allowMovement)
 	{
-		changeRotationX(0.01f);
+		if (App->input->isKeyDown(SDL_SCANCODE_A))
+			changePositionX(-0.05f);
+		if (App->input->isKeyDown(SDL_SCANCODE_D))
+			changePositionX(0.05f);
+		if (App->input->isKeyDown(SDL_SCANCODE_W))
+			changePositionZ(0.05f);
+		if (App->input->isKeyDown(SDL_SCANCODE_S))
+			changePositionZ(-0.05f);
+		if (App->input->isKeyDown(SDL_SCANCODE_Q))
+			changePositionY(-0.05f);
+		if (App->input->isKeyDown(SDL_SCANCODE_E))
+			changePositionY(0.05f);
 	}
-	if (keyboard[SDL_SCANCODE_DOWN])
-	{
-		changeRotationX(-0.01f);
-	}
-	if (keyboard[SDL_SCANCODE_RIGHT])
-	{
-		changeRotationY(-0.01f);
-	}
-	if (keyboard[SDL_SCANCODE_LEFT])
-	{
-		changeRotationY(0.01f);
-	}
-	if (keyboard[SDL_SCANCODE_KP_PLUS])
-	{
-		changeRotationZ(-0.01f);
-	}
-	if (keyboard[SDL_SCANCODE_KP_MINUS])
-	{
-		changeRotationZ(0.01f);
-	}
-	*/
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditorCamera::PostUpdate() 
 {
+	proj = myFrustum.ProjectionMatrix();
+
 	//Update view matrix in order to update camera position
 	view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up);
 
@@ -220,33 +192,73 @@ void ModuleEditorCamera::focusModel()
 	myFrustum.front = float3(0, 0, -1);
 }
 
+void ModuleEditorCamera::zoom(const float wheelY)
+{
+	if (wheelY > 0)
+	{
+		myFrustum.pos += myFrustum.front * zoomSpeed;	//Zoom in
+	}
+	else if (wheelY < 0)
+	{
+		myFrustum.pos -= myFrustum.front * zoomSpeed;	//Zoom out
+	}
+}
+
 void ModuleEditorCamera::changePositionX(const float position)
 {
-	myFrustum.pos += position * speed * myFrustum.WorldRight();
+	myFrustum.pos += position * multiplierMovSpeed * myFrustum.WorldRight();
 }
 
 void ModuleEditorCamera::changePositionY(const float position)
 {
-	myFrustum.pos += position * speed * myFrustum.up;
+	myFrustum.pos += position * multiplierMovSpeed * myFrustum.up;
 }
 
 void ModuleEditorCamera::changePositionZ(const float position)
 {
-	myFrustum.pos -= position * speed * myFrustum.WorldRight().Cross(float3(0,1,0));
+	myFrustum.pos -= position * multiplierMovSpeed * myFrustum.WorldRight().Cross(float3(0,1,0));
 }
 
-void ModuleEditorCamera::changeRotationX(const float rotation)
+void ModuleEditorCamera::rotate(const float mouseMotionX, const float mouseMotionY)
 {
-	myFrustum.front = float3x3::RotateX(rotation * speed).Transform(myFrustum.front).Normalized();
+	//Pitch
+	float timePitch = mouseMotionY * rotSpeed;
+	if (timePitch < 0)
+		pitch = MAX(-89, pitch - timePitch);	//Limit rotation angles for pitch so we avoid square angles and upside down rotation
+	else
+		pitch = MIN(89, pitch - timePitch);
+
+	//Yaw
+	yaw += mouseMotionX * rotSpeed;
+
+	//Apply rotation values to frustum
+	myFrustum.front.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
+	myFrustum.front.y = sin(DegToRad(pitch));
+	myFrustum.front.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
+	myFrustum.front.Normalize();
+
+	//Update projection and view matrix from our updated frustum
+	proj = myFrustum.ProjectionMatrix();
+	view = myFrustum.ViewMatrix();
 }
 
-void ModuleEditorCamera::changeRotationY(const float rotation)
+void ModuleEditorCamera::orbit(const float mouseMotionX, const float mouseMotionY)
 {
-	myFrustum.front = math::float3x3::RotateY(rotation * speed).Transform(myFrustum.front).Normalized();
-	myFrustum.up = math::float3x3::RotateY(rotation * speed).Transform(myFrustum.up).Normalized();
-}
+	//Update orbit values on X and Y axis
+	orbitX += mouseMotionX * rotSpeed;
+	orbitY = MIN(89, orbitY + mouseMotionY * rotSpeed);
 
-void ModuleEditorCamera::changeRotationZ(const float rotation)
-{
-	myFrustum.front = float3x3::RotateZ(rotation * speed).Transform(myFrustum.front).Normalized();
+	//Update radius needed to apply orbit values to frustum
+	radius = App->modelLoader->myBoundingBox.CenterPoint().Distance(myFrustum.pos);
+
+	//Apply orbit values to frustum
+	myFrustum.pos.x = cos(math::DegToRad(orbitX)) * cos(math::DegToRad(orbitY)) * radius;
+	myFrustum.pos.y = sin(math::DegToRad(orbitY)) * radius;
+	myFrustum.pos.z = sin(math::DegToRad(orbitX)) * cos(math::DegToRad(orbitY)) * radius;
+	myFrustum.pos += App->modelLoader->myBoundingBox.CenterPoint();
+	myFrustum.front = (App->modelLoader->myBoundingBox.CenterPoint() - myFrustum.pos).Normalized();
+
+	//Update Yaw and Pitch (also used on rotation)
+	yaw = math::RadToDeg(atan2(myFrustum.front.z, myFrustum.front.x));
+	pitch = math::RadToDeg(asin(myFrustum.front.y));
 }

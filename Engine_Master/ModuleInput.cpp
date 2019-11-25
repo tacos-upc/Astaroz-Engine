@@ -80,7 +80,29 @@ update_status ModuleInput::PreUpdate()
 				App->window->ResizeWindow(event.window.data1, event.window.data2);
 				break;
 			}
-			break;	
+			break;
+
+		case SDL_MOUSEWHEEL:
+			App->editorCamera->zoom(event.wheel.y);
+			break;
+
+		case SDL_MOUSEMOTION:
+			if (event.motion.state & SDL_BUTTON_RMASK) {
+				App->editorCamera->rotate((float)event.motion.xrel / (float)App->window->width, (float)event.motion.yrel / (float)App->window->height);
+			}
+			else if ((event.motion.state & SDL_BUTTON_LMASK) && isKeyDown(SDL_SCANCODE_LALT)) {
+				App->editorCamera->orbit((float)event.motion.xrel / (float)App->window->width, (float)event.motion.yrel / (float)App->window->height);
+			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+			if (event.button.button == SDL_BUTTON_RIGHT)
+				App->editorCamera->allowMovement = false;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button == SDL_BUTTON_RIGHT)
+				App->editorCamera->allowMovement = true;
+			break;
+
 		case SDL_DROPFILE:
 			//Save filepath
 			const char* file = event.drop.file;

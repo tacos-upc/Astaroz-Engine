@@ -26,16 +26,17 @@ public:
 	float calculateAspectRatio();
 	void setAspectFrustum();
 	void focusModel();
+	void zoom(const float wheelY);
 	void changePositionX(const float position);
 	void changePositionY(const float position);
 	void changePositionZ(const float position);
-	void changeRotationX(const float rotation);
-	void changeRotationY(const float rotation);
-	void changeRotationZ(const float rotation);
+	void rotate(const float mouseMotionX, const float mouseMotionY);
+	void orbit(const float mouseMotionX, const float mouseMotionY);
 
 public:
 	Frustum myFrustum;
 	float4x4 proj, view, model;
-	float speed, pitch, yaw, radius;
+	float zoomSpeed, rotSpeed, multiplierMovSpeed, pitch, yaw, radius, orbitX, orbitY;
+	bool allowMovement;
 };
 

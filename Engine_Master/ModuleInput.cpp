@@ -109,7 +109,7 @@ update_status ModuleInput::PreUpdate()
 		}
 	}
 
-	if (keyboard[SDL_SCANCODE_ESCAPE] || GetWindowEvent(EventWindow::WE_QUIT) == true)
+	if (keyboard[SDL_SCANCODE_ESCAPE] || getWindowEvent(EventWindow::WE_QUIT) == true)
 		return UPDATE_STOP;
 	
 	return UPDATE_CONTINUE;
@@ -129,12 +129,17 @@ bool ModuleInput::CleanUp()
 	return true;
 }
 
-const Uint8* ModuleInput::getKeyboard()
-{
-	return keyboard;
-}
-
-bool ModuleInput::GetWindowEvent(EventWindow ev) const
+bool ModuleInput::getWindowEvent(EventWindow ev) const
 {
 	return windowEvents[ev];
+}
+
+KeyState ModuleInput::getKey(int id) const
+{
+	return keys[id];
+}
+
+bool ModuleInput::isKeyDown(int id) const
+{
+	return keys[id] == KEY_DOWN || keys[id] == KEY_REPEAT;
 }

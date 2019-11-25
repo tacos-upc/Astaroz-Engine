@@ -1,10 +1,10 @@
 #pragma once
-#include "Module.h";
+#include "Module.h"
 #include "Mesh.h"
 
-#include "IL/il.h";
-#include "IL/ilut.h";
-#include "IL/ilu.h";
+#include "IL/il.h"
+#include "IL/ilut.h"
+#include "IL/ilu.h"
 
 class ModuleTexture : public Module {
 public:

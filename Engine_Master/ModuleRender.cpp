@@ -4,7 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleModelLoader.h"
 #include "ModuleProgramShader.h"
-#include "glew.h";
+#include "glew.h"
 
 ModuleRender::ModuleRender()
 {

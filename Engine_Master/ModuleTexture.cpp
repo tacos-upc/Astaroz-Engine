@@ -1,6 +1,6 @@
-#include "ModuleTexture.h";
+#include "ModuleTexture.h"
 
-#include "glew.h";
+#include "glew.h"
 
 
 

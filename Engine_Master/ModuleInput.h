@@ -15,15 +15,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	KeyState GetKey(int id) const
-	{
-		return keys[id];
-	}
-
-	bool GetWindowEvent(EventWindow code) const;
-
-	//Returns our keyboard private member value
-	const Uint8* getKeyboard();
+	bool getWindowEvent(EventWindow code) const;
+	KeyState getKey(int id) const;
+	bool isKeyDown(int id) const;
 
 private:
 	const Uint8 *keyboard = NULL;

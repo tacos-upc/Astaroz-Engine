@@ -78,18 +78,10 @@ update_status ModuleEditorCamera::Update()
 	glEnd();
 	glLineWidth(1.0f);
 
-
-	//Get input
-	const Uint8* keyboard = App->input->getKeyboard();
-
 	//Speed
-	if (keyboard[SDL_SCANCODE_LSHIFT])
+	if (App->input->isKeyDown(SDL_SCANCODE_LSHIFT))
 	{
 		speed = 2.0f;
-	}
-	else if (keyboard[SDL_SCANCODE_LALT])
-	{
-		speed = 0.25f;
 	}
 	else
 	{
@@ -97,37 +89,31 @@ update_status ModuleEditorCamera::Update()
 	}
 
 	//Focus model
-	if (keyboard[SDL_SCANCODE_F])
+	if (App->input->isKeyDown(SDL_SCANCODE_F))
 	{
 		focusModel();
 	}
 
 	//Movement
-	if (keyboard[SDL_SCANCODE_A])
-	{
+	if (App->input->isKeyDown(SDL_SCANCODE_A))
 		changePositionX(-0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_D])
-	{
-		changePositionX(0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_W])
-	{
-		changePositionZ(0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_S])
-	{
-		changePositionZ(-0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_Q])
-	{
-		changePositionY(0.05f);
-	}
-	if (keyboard[SDL_SCANCODE_E])
-	{
-		changePositionY(-0.05f);
-	}
 
+	if (App->input->isKeyDown(SDL_SCANCODE_D))
+		changePositionX(0.05f);
+
+	if (App->input->isKeyDown(SDL_SCANCODE_W))
+		changePositionZ(0.05f);
+
+	if (App->input->isKeyDown(SDL_SCANCODE_S))
+		changePositionZ(-0.05f);
+
+	if (App->input->isKeyDown(SDL_SCANCODE_Q))
+		changePositionY(-0.05f);
+
+	if (App->input->isKeyDown(SDL_SCANCODE_E))
+		changePositionY(0.05f);
+
+	/*
 	//Rotation
 	if (keyboard[SDL_SCANCODE_UP])
 	{
@@ -153,7 +139,7 @@ update_status ModuleEditorCamera::Update()
 	{
 		changeRotationZ(0.01f);
 	}
-
+	*/
 	return UPDATE_CONTINUE;
 }
 
@@ -211,7 +197,7 @@ void ModuleEditorCamera::changeFOV(float fov)
 
 float ModuleEditorCamera::calculateAspectRatio()
 {
-	return App->window->width / App->window->height;
+	return (float) App->window->width / App->window->height;
 }
 
 void ModuleEditorCamera::setAspectFrustum()

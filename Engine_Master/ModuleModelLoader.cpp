@@ -4,6 +4,15 @@
 #include "cimport.h"
 #include "Importer.hpp"
 
+//Used on the assimp log debugger
+void addLog(const char* str, char* userData)
+{
+	std::string info(str);
+	info.pop_back();
+
+	//Use our LOG now
+	LOG(info.c_str());
+}
 
 ModuleModelLoader::ModuleModelLoader()
 {}
@@ -13,6 +22,11 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
+	//LOG loading process from ASSIMP
+	aiLogStream sLog = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, NULL);
+	sLog.callback = addLog;
+	aiAttachLogStream(&sLog);
+
 	//Always start by loading the Baker house model
 	LoadModel(MODEL_BAKER_PATH);
 

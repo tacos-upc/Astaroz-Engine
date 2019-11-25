@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __MsTimer_H__
+#define __MsTimer_H__
+
 #include "Globals.h"
 #include "SDL/include/SDL.h"
 
@@ -17,3 +19,4 @@ public:
 	bool running;
 };
 
+#endif __MsTimer_H__

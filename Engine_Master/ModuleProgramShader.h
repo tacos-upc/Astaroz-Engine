@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleProgramShader_H__
+#define __ModuleProgramShader_H__
+
 #include "Globals.h"
 #include "Module.h"
 
@@ -19,3 +21,5 @@ public:
 public:
 	GLuint myProgram;
 };
+
+#endif __ModuleProgramShader_H__

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleRender_H__
+#define __ModuleRender_H__
+
 #include "Module.h"
 #include "Globals.h"
 #include "SDL.h"
@@ -22,3 +24,5 @@ public:
 public:
 	SDL_GLContext glcontext;
 };
+
+#endif __ModuleRender_H__

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleEditorCamera_H__
+#define __ModuleEditorCamera_H__
+
 #include "Module.h"
 #include "Globals.h"
 #include "Application.h"
@@ -40,3 +42,4 @@ public:
 	bool allowMovement;
 };
 
+#endif __ModuleEditorCamera_H__

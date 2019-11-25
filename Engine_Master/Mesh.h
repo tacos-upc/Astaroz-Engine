@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __Mesh_H__
+#define __Mesh_H__
 
 #include "Globals.h"
 #include "Module.h"
@@ -48,3 +49,5 @@ private:
 
 	void setupMesh();
 };
+
+#endif __Mesh_H__

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleTexture_H__
+#define __ModuleTexture_H__
+
 #include "Module.h"
 #include "Mesh.h"
 
@@ -29,3 +31,4 @@ public:
 	GLuint myTexture;
 };
 
+#endif __ModuleTexture_H__

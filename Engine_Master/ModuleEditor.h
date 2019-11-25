@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleEditor_H__
+#define __ModuleEditor_H__
+
 #include "Module.h"
 #include "Globals.h"
 #include "Application.h"
@@ -31,3 +33,4 @@ public:
 	std::vector<float> fps_log;
 };
 
+#endif __ModuleEditor_H__

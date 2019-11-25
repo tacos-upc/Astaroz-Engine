@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleTriangle_H__
+#define __ModuleTriangle_H__
+
 #include "Module.h"
 #include "Globals.h"
 #include "Math/MathAll.h"
@@ -22,3 +24,4 @@ private:
 	GLuint vbo;
 };
 
+#endif __ModuleTriangle_H__

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __ModuleModelLoader_H__
+#define __ModuleModelLoader_H__
+
 #include "Module.h"
 #include "Globals.h"
 #include "Application.h"
@@ -46,3 +48,5 @@ public:
 	char* textureType = nullptr;
 	int textureId;
 };
+
+#endif __ModuleModelLoader_H__

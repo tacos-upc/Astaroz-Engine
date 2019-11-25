@@ -26,7 +26,8 @@ public:
 	void processEvent(SDL_Event);
 
 public:
-	bool scrollToBottom, show_demo_window, show_log_window, show_about_window, show_camera_window;
+	bool scrollToBottom, show_demo_window, show_log_window, show_about_window, show_camera_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
+	std::vector<float> fps_log;
 };
 

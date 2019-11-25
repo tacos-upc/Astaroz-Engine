@@ -1,4 +1,5 @@
 #include "ModuleEditor.h"
+#include "windows.h"
 
 
 ModuleEditor::ModuleEditor()
@@ -47,6 +48,7 @@ bool ModuleEditor::Init()
 	show_log_window = false;
 	show_about_window = false;
 	show_camera_window = false;
+	show_configuration_window = false;
 
 	return true;
 }
@@ -70,6 +72,7 @@ update_status ModuleEditor::Update()
 			ImGui::MenuItem("Demo window", NULL, &show_demo_window);
 			ImGui::MenuItem("Logger console", NULL, &show_log_window);
 			ImGui::MenuItem("Camera management", NULL, &show_camera_window);
+			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);
 			ImGui::EndMenu();
 		};
 		if (ImGui::BeginMenu("Help"))
@@ -117,6 +120,54 @@ update_status ModuleEditor::Update()
 		if (ImGui::SliderFloat("Change vertical FOV", &fov, 0.01f, 2.5f, "%.2f", 1.0f))
 		{
 			App->editorCamera->changeFOV(fov);
+		}
+		ImGui::End();
+	}
+	//Configuration flag
+	if (show_configuration_window)
+	{
+		ImGui::Begin("Configuration", &show_configuration_window);
+		
+		//FPS
+		fps_log.push_back(ImGui::GetIO().Framerate);
+		if (fps_log.size() > 25) //Divides graph by sections like in PDF image
+		{
+			char title[25];
+			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+			fps_log.erase(fps_log.begin());
+		}
+
+		//Memory consumption
+		if (ImGui::TreeNode("Memory consumption"))
+		{
+			MEMORYSTATUSEX memInfo;
+			memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+			GlobalMemoryStatusEx(&memInfo);
+			DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
+			DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
+			DWORDLONG totalPhysMem = memInfo.ullTotalPhys;
+			DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
+			ImGui::Text("Total virtual memory: %u KB", totalVirtualMem / 1024);
+			ImGui::Text("Virtual memory used: %u KB", virtualMemUsed / 1024);
+			ImGui::Text("----------------------------------");
+			ImGui::Text("Total physical memory: %u KB", totalPhysMem / 1024);
+			ImGui::Text("Physical memory used: %u KB", physMemUsed / 1024);
+			ImGui::TreePop();
+		}
+
+		//Hardware detection
+		if (ImGui::TreeNode("Hardware detection"))
+		{
+			//TODO
+			ImGui::TreePop();
+		}
+
+		//Software versions
+		if (ImGui::TreeNode("Software versions"))
+		{
+			//TODO
+			ImGui::TreePop();
 		}
 		ImGui::End();
 	}

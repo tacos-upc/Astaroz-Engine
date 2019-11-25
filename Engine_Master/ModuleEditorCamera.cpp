@@ -97,17 +97,17 @@ update_status ModuleEditorCamera::Update()
 	if (allowMovement)
 	{
 		if (App->input->isKeyDown(SDL_SCANCODE_A))
-			changePositionX(-0.05f);
+			changePositionX(-0.06f);
 		if (App->input->isKeyDown(SDL_SCANCODE_D))
-			changePositionX(0.05f);
+			changePositionX(0.06f);
 		if (App->input->isKeyDown(SDL_SCANCODE_W))
-			changePositionZ(0.05f);
+			changePositionZ(0.06f);
 		if (App->input->isKeyDown(SDL_SCANCODE_S))
-			changePositionZ(-0.05f);
+			changePositionZ(-0.06f);
 		if (App->input->isKeyDown(SDL_SCANCODE_Q))
-			changePositionY(-0.05f);
+			changePositionY(-0.06f);
 		if (App->input->isKeyDown(SDL_SCANCODE_E))
-			changePositionY(0.05f);
+			changePositionY(0.06f);
 	}
 
 	return UPDATE_CONTINUE;
@@ -115,10 +115,11 @@ update_status ModuleEditorCamera::Update()
 
 update_status ModuleEditorCamera::PostUpdate() 
 {
-	proj = myFrustum.ProjectionMatrix();
+	//proj = myFrustum.ProjectionMatrix();
 
 	//Update view matrix in order to update camera position
 	view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up);
+	//view = myFrustum.ViewMatrix();
 
 	return UPDATE_CONTINUE;
 }

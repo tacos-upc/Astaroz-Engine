@@ -97,10 +97,14 @@ update_status ModuleInput::PreUpdate()
 			}
 
 			//Texture
-			 if (ext == "png" || ext == "jpg" || ext == "dds")
+			if (ext == "png" || ext == "jpg" || ext == "dds")
 			{
-				App->texture->LoadTexture(file);
+				Texture texture = App->texture->LoadTexture(file);
+				//App->modelLoader->addTexture(texture); //TODO solve issue
 			}
+
+			//Free memory
+			SDL_free(event.drop.file);
 			break;
 		}
 	}

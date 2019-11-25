@@ -41,6 +41,7 @@ public:
 
 	void Init();
 	void Draw(unsigned int program) const;
+	void updateTexture(Texture texture);
 
 private:
 	unsigned int VAO, VBO, EBO;

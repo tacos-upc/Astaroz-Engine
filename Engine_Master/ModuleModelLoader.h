@@ -27,6 +27,7 @@ public:
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
 	void loadNewModel(const char* path);
 	void generateBoundingBox();
+	void addTexture(Texture texture);
 
 public:
 	//Lists

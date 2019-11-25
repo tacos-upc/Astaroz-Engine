@@ -103,3 +103,11 @@ void Mesh::Draw(unsigned int program) const
 	glBindVertexArray(0);
 	glActiveTexture(GL_TEXTURE0);
 }
+
+void Mesh::updateTexture(Texture texture)
+{
+	for (auto &lastTexture : textures)
+	{
+		lastTexture = texture;
+	}
+}

@@ -221,3 +221,12 @@ void ModuleModelLoader::generateBoundingBox()
 	myBoundingBox.minPoint = min;
 	myBoundingBox.maxPoint = max;
 }
+
+void ModuleModelLoader::addTexture(Texture texture)
+{
+	texturesLoaded.push_back(texture);
+	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+	{
+		(*it)->updateTexture(texture);
+	}
+}

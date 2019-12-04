@@ -45,7 +45,7 @@ public:
 	void updateTexture(Texture texture);
 
 private:
-	unsigned int VAO, VBO, EBO;
+	unsigned int VAO = 0, VBO = 0, EBO = 0;
 
 	void setupMesh();
 };

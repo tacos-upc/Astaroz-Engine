@@ -19,7 +19,7 @@ Mesh::~Mesh()
 	indices.clear();
 	textures.clear();
 
-	//Delete buffers if they exist at this point
+	//Delete buffers if they exist at this point in the program
 	if (VAO != 0)
 		glDeleteVertexArrays(1, &VAO);
 	if (VBO != 0)

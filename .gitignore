@@ -233,4 +233,4 @@ $RECYCLE.BIN/
 #Personal ignores
 *.db
 *.opendb
-imgui.ini
+*.ini

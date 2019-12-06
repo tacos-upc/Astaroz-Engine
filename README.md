@@ -19,7 +19,7 @@
 </p>
 
 ## Authors
-| [![Pau Casas García](https://github.com/Pacasasgar.png?size=100)]( https://github.com/Pacasasgar) | [![Vidal Melero](https://github.com/vidalmelero.png?size=100)](https://github.com/vidalmelero) | [![Luis Moyano](https://github.com/luismoyano.png?size=100)](https://github.com/luismoyano) |
+| [![Pau Casas García](https://github.com/Pacasasgar.png?size=100)]( https://github.com/Pacasasgar) | [![Vidal Melero](https://github.com/vidalmelero.png?size=50)](https://github.com/vidalmelero) | [![Luis Moyano](https://github.com/luismoyano.png?size=100)](https://github.com/luismoyano) |
 | ---- | ---- | ---- |
 | [Pau Casas García](https://github.com/Pacasasgar) | [Vidal Melero](https://github.com/vidalmelero) | [Luis Moyano](https://github.com/luismoyano)
 

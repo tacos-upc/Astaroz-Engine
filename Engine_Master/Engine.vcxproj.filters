@@ -351,6 +351,7 @@
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Point.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

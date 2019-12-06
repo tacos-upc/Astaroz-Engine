@@ -5,6 +5,8 @@
 #include "ModuleEditor.h"
 #include "ModuleTexture.h"
 #include "ModuleModelLoader.h"
+#include "Point.h"
+
 
 #include "SDL/include/SDL.h"
 
@@ -61,74 +63,82 @@ update_status ModuleInput::PreUpdate()
 		}
 	}
 
-	while (SDL_PollEvent(&event))
+	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
 	{
-		switch (event.type)
+		if (mouseButtons[i] == KEY_DOWN)
+			mouseButtons[i] = KEY_REPEAT;
+
+		if (mouseButtons[i] == KEY_UP)
+			mouseButtons[i] = KEY_IDLE;
+	}
+
+	mouseWheel = 0.0f;
+
+	while (SDL_PollEvent(&event)) ImGui_ImplSDL2_ProcessEvent(&event);
+	
+	switch (event.type)
+	{
+	case SDL_QUIT:
+		windowEvents[WE_QUIT] = true;
+		break;
+
+	case SDL_WINDOWEVENT:
+		switch (event.window.event)
 		{
-		case SDL_QUIT:
+		case SDL_WINDOWEVENT_CLOSE:
 			windowEvents[WE_QUIT] = true;
 			break;
-
-		case SDL_WINDOWEVENT:
-			switch (event.window.event)
-			{
-			case SDL_WINDOWEVENT_CLOSE:
-				windowEvents[WE_QUIT] = true;
-				break;
-			case SDL_WINDOWEVENT_RESIZED:
-			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				App->window->ResizeWindow(event.window.data1, event.window.data2);
-				break;
-			}
-			break;
-
-		case SDL_MOUSEWHEEL:
-			App->editorCamera->zoom(event.wheel.y);
-			break;
-
-		case SDL_MOUSEMOTION:
-			if (event.motion.state & SDL_BUTTON_RMASK) {
-				App->editorCamera->rotate((float)event.motion.xrel / (float)App->window->width, (float)event.motion.yrel / (float)App->window->height);
-			}
-			else if ((event.motion.state & SDL_BUTTON_LMASK) && isKeyDown(SDL_SCANCODE_LALT)) {
-				App->editorCamera->orbit((float)event.motion.xrel / (float)App->window->width, (float)event.motion.yrel / (float)App->window->height);
-			}
-			break;
-		case SDL_MOUSEBUTTONUP:
-			if (event.button.button == SDL_BUTTON_RIGHT)
-				App->editorCamera->allowMovement = false;
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			if (event.button.button == SDL_BUTTON_RIGHT)
-				App->editorCamera->allowMovement = true;
-			break;
-
-		case SDL_DROPFILE:
-			//Save filepath
-			const char* file = event.drop.file;
-
-			//We need to know if it's a model or a texture using the file extension
-			std::string ext(file);
-			std::size_t lastPoint = ext.find_last_of(".");	
-			ext = ext.substr(lastPoint + 1, ext.length());	//from last point in the name we can get the (ext)ension
-
-			//Model
-			if (ext == "fbx" || ext == "FBX")
-			{
-				App->modelLoader->loadNewModel(file);
-			}
-
-			//Texture
-			if (ext == "png" || ext == "jpg" || ext == "dds")
-			{
-				Texture texture = App->texture->LoadTexture(file);
-				//App->modelLoader->addTexture(texture);
-			}
-
-			//Free memory
-			SDL_free(event.drop.file);
+		case SDL_WINDOWEVENT_RESIZED:
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
+			App->window->ResizeWindow(event.window.data1, event.window.data2);
 			break;
 		}
+		break;
+
+	case SDL_MOUSEBUTTONDOWN:
+		mouseButtons[event.button.button - 1] = KEY_DOWN;
+		break;
+
+	case SDL_MOUSEBUTTONUP:
+		mouseButtons[event.button.button - 1] = KEY_UP;
+		break;
+
+	case SDL_MOUSEMOTION:
+		mouseMotion.x = event.motion.xrel;
+		mouseMotion.y = event.motion.yrel;
+		mouse.x = event.motion.x / SCREEN_SIZE;
+		mouse.y = event.motion.y / SCREEN_SIZE;
+		break;
+
+	case SDL_MOUSEWHEEL:
+		mouseWheel = event.wheel.y;
+		break;
+
+	case SDL_DROPFILE:
+		//Save filepath
+		const char* file = event.drop.file;
+
+		//We need to know if it's a model or a texture using the file extension
+		std::string ext(file);
+		std::size_t lastPoint = ext.find_last_of(".");	
+		ext = ext.substr(lastPoint + 1, ext.length());	//from last point in the name we can get the (ext)ension
+
+		//Model
+		if (ext == "fbx" || ext == "FBX")
+		{
+			App->modelLoader->loadNewModel(file);
+		}
+
+		//Texture
+		if (ext == "png" || ext == "jpg" || ext == "dds")
+		{
+			Texture texture = App->texture->LoadTexture(file);
+			//App->modelLoader->addTexture(texture);
+		}
+
+		//Free memory
+		SDL_free(event.drop.file);
+		break;
 	}
 
 	if (keyboard[SDL_SCANCODE_ESCAPE] || getWindowEvent(EventWindow::WE_QUIT) == true)
@@ -164,4 +174,14 @@ KeyState ModuleInput::getKey(int id) const
 bool ModuleInput::isKeyDown(int id) const
 {
 	return keys[id] == KEY_DOWN || keys[id] == KEY_REPEAT;
+}
+
+const iPoint& ModuleInput::GetMousePosition() const
+{
+	return mouse;
+}
+
+const fPoint& ModuleInput::GetMouseMotion() const
+{
+	return mouseMotion;
 }

@@ -34,6 +34,7 @@ enum KeyState
 // Configuration -----------
 #define SCREEN_WIDTH 1024 //640 original
 #define SCREEN_HEIGHT 960 //480 original
+#define SCREEN_SIZE 2
 #define FULLSCREEN false
 #define RESIZABLE true
 #define VSYNC true

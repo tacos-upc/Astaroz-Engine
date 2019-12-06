@@ -2,7 +2,7 @@
 <h3 align="center">Game Engine in development</h3>
 <p align="center">
   <a href="https://github.com/tacos-upc/Astaroz-Engine/releases">
-    <img alt="GitHub version" src="https://github.com/tacos-upc/Astaroz-Engine?include_prereleases">
+    <img alt="GitHub version" src="https://img.shields.io/github/v/release/tacos-upc/Astaroz-Engine?include_prereleases">
   </a>
   <a href="https://github.com/tacos-upc/Astaroz-Engine/stargazers/">
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/tacos-upc/Astaroz-Engine.svg">
@@ -11,10 +11,10 @@
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/tacos-upc/Astaroz-Engine.svg">
   </a>
   <a href="https://github.com/tacos-upc/Astaroz-Engine/">
-    <img alt="GitHub repo size in bytes" src="https://img.shields.io/github/repo-size/tacos-upc/Astaroz-Engine/OrionEngine.svg">
+    <img alt="GitHub repo size in bytes" src="https://img.shields.io/github/repo-size/tacos-upc/Astaroz-Engine/Astaroz-Engine.svg">
   </a>
   <a href="https://github.com/tacos-upc/Astaroz-Engine/blob/master/LICENSE">
-    <img alt="GitHub license" src="https://img.shields.io/github/license/tacos-upc/Astaroz-Engine/OrionEngine.svg">
+    <img alt="GitHub license" src="https://img.shields.io/github/license/tacos-upc/Astaroz-Engine/Astaroz-Engine.svg">
   </a>
 </p>
 

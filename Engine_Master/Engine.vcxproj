@@ -158,6 +158,7 @@
     <ClInclude Include="ModuleProgramShader.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleTexture.h" />
+    <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleTriangle.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MsTimer.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="ModuleProgramShader.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleTriangle.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MsTimer.cpp" />

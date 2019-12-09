@@ -25,10 +25,15 @@ bool ModuleTime::Init()
 	}
 	else
 	{
-		millisTimer = new MsTimer();
-		microTimer = new MicroTimer();
-
 		timeScale = 1.0f;
+		realTimeBeginTimeStamp = 0.0f;
+		realTimeEndTimeStamp = 0.0f;
+
+		timeSinceStartUp = 0.0f;
+		framesSinceStartUp = 0.0f;
+
+		timeSinceGameStart = 0.0f;
+		framesSinceGameStart = 0.0f;
 		state = STOP;
 	}
 
@@ -38,11 +43,7 @@ bool ModuleTime::Init()
 void ModuleTime::play()
 {
 	if (state == PLAY) return;
-
 	state = PLAY;
-
-	millisTimer->start();
-	microTimer->start();
 }
 
 void ModuleTime::tick()
@@ -64,17 +65,17 @@ void ModuleTime::stop()
 
 float ModuleTime::realDeltaTime()
 {
-	return math::Abs(beginTimeStamp - endTimeStamp) / 1000.0f;
+	return math::Abs(realTimeBeginTimeStamp - realTimeEndTimeStamp) / 1000.0f;
 }
 
 float ModuleTime::gameDeltaTime()
 {
-	return realDeltaTime() * timeScale;
+	return (math::Abs(gameTimeBeginTimeStamp - gameTimeEndTimeStamp) / 1000.0f) * timeScale;
 }
 
 float ModuleTime::realTimeSinceStartUp()
 {
-	return millisTimer->myStartTime;
+	return 0.0f;
 }
 
 void ModuleTime::setTimeScale(float scale)
@@ -85,18 +86,26 @@ void ModuleTime::setTimeScale(float scale)
 
 void ModuleTime::frameStart()
 {
-	beginTimeStamp = millisTimer->read();
+	realTimeBeginTimeStamp = SDL_GetTicks();
+	if (state == PLAY) gameTimeBeginTimeStamp = SDL_GetTicks();
 }
 
 void ModuleTime::frameEnd()
 {
-	endTimeStamp = millisTimer->read();
+	realTimeEndTimeStamp = SDL_GetTicks();
+	if (state == PLAY) gameTimeEndTimeStamp = SDL_GetTicks();
+
+	framesSinceStartUp = SDL_GetTicks();
+	timeSinceStartUp = framesSinceStartUp / 1000.0f;
+
+	if (state == PLAY)
+	{
+		framesSinceGameStart = SDL_GetTicks();
+		timeSinceGameStart = framesSinceGameStart / 1000.0f;
+	}
 }
 
 bool ModuleTime::Cleanup()
 {
-	delete(millisTimer);
-	delete(microTimer);
-
 	return true;
 }

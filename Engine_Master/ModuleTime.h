@@ -32,11 +32,19 @@ public:
 
 private:
 	float timeScale;
-	float beginTimeStamp;
-	float endTimeStamp;
-	TimeState state;
+	
+	float realTimeBeginTimeStamp;
+	float realTimeEndTimeStamp;
 
-	MsTimer* millisTimer;
-	MicroTimer* microTimer;
+	float gameTimeBeginTimeStamp;
+	float gameTimeEndTimeStamp;
+
+	float timeSinceStartUp;
+	float framesSinceStartUp;
+	
+	float timeSinceGameStart;
+	float framesSinceGameStart;
+	
+	TimeState state;
 };
 

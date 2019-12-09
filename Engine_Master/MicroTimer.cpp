@@ -1,6 +1,5 @@
 #include "MicroTimer.h"
 
-
 MicroTimer::MicroTimer()
 {
 	myCurrentTime = 0;
@@ -9,22 +8,18 @@ MicroTimer::MicroTimer()
 
 MicroTimer::~MicroTimer()
 {
-
 }
 
 void MicroTimer::start()
 {
 	running = true;
-	myStartTime = SDL_GetTicks();
+	myStartTime = SDL_GetPerformanceCounter();
 	myCurrentTime = 0;
 }
 
 Uint32 MicroTimer::read()
 {
-	if (running)
-	{
-		myCurrentTime = SDL_GetTicks() - myStartTime;
-	}
+	if (running) setupCurrentTime();
 	return myCurrentTime;
 }
 
@@ -33,6 +28,11 @@ void MicroTimer::stop()
 	if (running)
 	{
 		running = false;
-		myCurrentTime = SDL_GetTicks() - myStartTime;
+		setupCurrentTime();
 	}
+}
+
+void MicroTimer::setupCurrentTime()
+{
+	myCurrentTime = (SDL_GetPerformanceCounter() - myStartTime) / SDL_GetPerformanceFrequency();
 }

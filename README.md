@@ -1,35 +1,33 @@
-# Astaroz Engine
+<h1 align="center">Astaroz Engine</h1>
+<h3 align="center">Game Engine in development</h3>
+<p align="center">
+  <a href="https://github.com/tacos-upc/Astaroz-Engine/releases">
+    <img alt="GitHub version" src="https://img.shields.io/github/v/release/tacos-upc/Astaroz-Engine?include_prereleases">
+  </a>
+  <a href="https://github.com/tacos-upc/Astaroz-Engine/stargazers/">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/tacos-upc/Astaroz-Engine.svg">
+  </a>
+  <a href="https://github.com/tacos-upc/Astaroz-Engine/network/">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/tacos-upc/Astaroz-Engine.svg">
+  </a>
+  <a href="https://github.com/tacos-upc/Astaroz-Engine/">
+    <img alt="GitHub repo size in bytes" src="https://img.shields.io/github/repo-size/tacos-upc/Astaroz-Engine.svg">
+  </a>
+  <a href="https://github.com/tacos-upc/Astaroz-Engine/blob/master/LICENSE">
+    <img alt="GitHub license" src="https://img.shields.io/github/license/tacos-upc/Astaroz-Engine.svg">
+  </a>
+</p>
 
-Still in development
-----------------------------------------------------------------
-Author: Pau Casas Garcia
+## Authors
+| [![Pau Casas García](https://github.com/Pacasasgar.png?size=100)]( https://github.com/Pacasasgar) | [![Vidal Melero](https://github.com/vidalmelero.png?size=100)](https://github.com/vidalmelero) | [![Luis Moyano](https://github.com/luismoyano.png?size=100)](https://github.com/luismoyano) |
+| ---- | ---- | ---- |
+| [Pau Casas García](https://github.com/Pacasasgar) | [Vidal Melero](https://github.com/vidalmelero) | [Luis Moyano](https://github.com/luismoyano)
 
-E-mail: pacasasgar@gmail.com  
+## Powered by
 
-Repository: https://github.com/Pacasasgar/Astaroz-Engine
-
-License: MIT (check LICENSE file)
-
-----------------------------------------------------------------
-
-Introduction
--------------
-This is my own engine developed in advanced AAA videogame programming at UPC.
-
-The engine loads one model by default and then you can drag & drop another model to replace it.
-
-File extensions
----------------
-Engine accepts grag & drop of '.FBX' '.fbx' model files and '.png' '.jpg' '.png' textures.
-
-Controls
--------------
-·While Right-clicking: WASDQE Unity-like movement and free look around
-
-·Mouse Wheel to zoom in and out
-
-·Alt+Left click for orbiting the model loaded
-
-·'F' focus the camera on model loaded
-
-·Hold shift to duplicate WASDQE movement
+* [SDL 2.0](https://www.libsdl.org/)
+* [assimp 5.0](https://github.com/assimp/assimp/)
+* [glew 2.1.0](http://glew.sourceforge.net/)
+* [Dear ImGui 1.73](https://github.com/ocornut/imgui/)
+* [MathGeoLib 3.0.0](https://github.com/juj/MathGeoLib/)
+* [DevIL 1.8](http://openil.sourceforge.net/)

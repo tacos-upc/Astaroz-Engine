@@ -61,7 +61,7 @@ bool ModuleEditorCamera::CleanUp()
 void ModuleEditorCamera::SetFOV(float fov)
 {
 	frustum.verticalFov = fov;
-	frustum.horizontalFov = 2.f * atanf(fov * 0.5f) * (SCREEN_WIDTH / SCREEN_HEIGHT);
+	frustum.horizontalFov = 3.f * atanf(tanf(fov * 0.5f) * (SCREEN_WIDTH / SCREEN_HEIGHT));
 }
 
 void ModuleEditorCamera::SetAspectRatio(float h)

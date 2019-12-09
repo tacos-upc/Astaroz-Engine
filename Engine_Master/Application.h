@@ -15,6 +15,7 @@ class ModuleTexture;
 class ModuleEditor;
 class ModuleEditorCamera;
 class ModuleModelLoader;
+class ModuleScene;
 
 class Application
 {
@@ -37,6 +38,7 @@ public:
 	ModuleEditor* editor = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
 	ModuleModelLoader* modelLoader = nullptr;
+	ModuleScene* scene = nullptr;
 
 private:
 	std::list<Module*> modules;

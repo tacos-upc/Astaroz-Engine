@@ -9,6 +9,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleTexture.h"
 #include "ModuleModelLoader.h"
+#include "ModuleDebugDraw.h"
 #include "MsTimer.h"
 
 using namespace std;
@@ -25,6 +26,7 @@ Application::Application()
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(modelLoader = new ModuleModelLoader());
 	modules.push_back(editor = new ModuleEditor());
+	modules.push_back(debug_draw = new ModuleDebugDraw());
 }
 
 Application::~Application()

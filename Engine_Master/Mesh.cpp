@@ -1,8 +1,13 @@
 #include "Mesh.h"
 #include "Application.h"
 #include "ModuleProgramShader.h"
+#include "ModuleModelLoader.h"
 #include "glew.h"
 #include <string>
+
+Mesh::Mesh()
+{
+}
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures)
 {
@@ -81,7 +86,7 @@ void Mesh::Draw(unsigned int program) const
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
-
+	
 		// retrieve texture number (the N in diffuse_textureN)
 		std::string number;
 		std::string name = textures[i].type;
@@ -96,6 +101,7 @@ void Mesh::Draw(unsigned int program) const
 		glUniform1i(glGetUniformLocation(program, (name + number).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
+	
 
 	//This will actually Draw the prepared mesh
 	glBindVertexArray(VAO);

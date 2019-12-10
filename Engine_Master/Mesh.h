@@ -40,7 +40,7 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
-
+	
 
 	Mesh();
 	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
@@ -49,7 +49,7 @@ public:
 	void Init();
 	void Draw(unsigned int program) const;
 	void updateTexture(Texture texture);
-	unsigned        material = 0;
+	unsigned int material;
 
 
 	unsigned int VAO = 0, VBO = 0, EBO = 0;

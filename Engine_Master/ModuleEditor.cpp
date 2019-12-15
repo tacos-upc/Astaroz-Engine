@@ -17,17 +17,22 @@ ModuleEditor::~ModuleEditor()
 
 bool ModuleEditor::Init()
 {
+	return true;
+}
+
+bool ModuleEditor::Start()
+{
 	// Initialize OpenGL loader
-	#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 	bool err = gl3wInit() != 0;
-	#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 	bool err = glewInit() != GLEW_OK;
-	#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 	bool err = gladLoadGL() == 0;
-	#else
+#else
 	bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
-	#endif
-	if (err){
+#endif
+	if (err) {
 		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 		return 1;
 	}
@@ -184,15 +189,15 @@ update_status ModuleEditor::Update()
 		ImGui::End();
 	}
 
-	//Draw
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate()
 {
+	//Draw
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	return UPDATE_CONTINUE;
 }
 

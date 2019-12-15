@@ -15,6 +15,11 @@ ModuleProgramShader::~ModuleProgramShader()
 
 bool ModuleProgramShader::Init()
 {
+	return true;
+}
+
+bool ModuleProgramShader::Start()
+{
 	createProgram();	//assigns myProgram member a value
 
 	return true;

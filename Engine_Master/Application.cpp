@@ -20,13 +20,14 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(time = new ModuleTime());
 	modules.push_back(texture = new ModuleTexture());
-	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
 	//modules.push_back(triangle = new ModuleTriangle());
 	modules.push_back(programShader = new ModuleProgramShader());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(modelLoader = new ModuleModelLoader());
 	modules.push_back(editor = new ModuleEditor());
+	modules.push_back(renderer = new ModuleRender());
+
 }
 
 Application::~Application()
@@ -46,6 +47,9 @@ bool Application::Init()
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
+
+	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+		ret = (*it)->Start();
 
 	timer.stop();
 	LOG("init total time: %d ms", timer.read());

@@ -27,6 +27,11 @@ bool ModuleModelLoader::Init()
 	sLog.callback = addLog;
 	aiAttachLogStream(&sLog);
 
+	return true;
+}
+
+bool ModuleModelLoader::Start()
+{
 	//Always start by loading the Baker house model
 	LoadModel(MODEL_BAKER_PATH);
 

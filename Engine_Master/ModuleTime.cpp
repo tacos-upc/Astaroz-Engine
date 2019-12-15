@@ -1,6 +1,8 @@
 #include "ModuleTime.h"
 #include "Math/MathAll.h"
-
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
 
 
 
@@ -38,6 +40,26 @@ bool ModuleTime::Init()
 	}
 
 	return ret;
+}
+
+update_status ModuleTime::Update()
+{
+	//ImGui::BeginMenuBar();
+	//if (ImGui::BeginMenu("Play"))
+	//{
+	//	ImGui::EndMenu();
+	//};
+	//if (ImGui::BeginMenu("Pause"))
+	//{
+	//	ImGui::EndMenu();
+	//};
+	//if (ImGui::BeginMenu("Stop"))
+	//{
+	//	ImGui::EndMenu();
+	//};
+	//ImGui::EndMenuBar();
+
+	return UPDATE_CONTINUE;
 }
 
 void ModuleTime::play()
@@ -88,6 +110,8 @@ void ModuleTime::frameStart()
 {
 	realTimeBeginTimeStamp = SDL_GetTicks();
 	if (state == PLAY) gameTimeBeginTimeStamp = SDL_GetTicks();
+
+	//draw();
 }
 
 void ModuleTime::frameEnd()
@@ -103,6 +127,7 @@ void ModuleTime::frameEnd()
 		framesSinceGameStart = SDL_GetTicks();
 		timeSinceGameStart = framesSinceGameStart / 1000.0f;
 	}
+
 }
 
 bool ModuleTime::Cleanup()

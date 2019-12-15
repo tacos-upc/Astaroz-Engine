@@ -1,8 +1,13 @@
+#ifndef __ModuleTime_H__
+#define __ModuleTime_H__
+
+
 #pragma once
 #include "Module.h"
 #include "SDL.h"
 #include "MsTimer.h"
 #include "MicroTimer.h"
+#include "ModuleEditor.h"
 
 enum TimeState { PLAY, PAUSE, STOP };
 
@@ -14,6 +19,8 @@ public:
 	~ModuleTime();
 
 	bool Init();
+
+	update_status Update();
 
 	void play();
 	void tick();
@@ -48,3 +55,4 @@ private:
 	TimeState state;
 };
 
+#endif __ModuleTime_H__

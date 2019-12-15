@@ -61,6 +61,8 @@ private:
 	MovementMode navigationMode = NONE;
 	bool isFastMode = false;
 	float orbitAngleX = 0.0f;
+	float orbitAngleY = 0.0f;
+
 
 	void reloadMatrices();
 

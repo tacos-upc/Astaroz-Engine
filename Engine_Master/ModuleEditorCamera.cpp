@@ -116,6 +116,13 @@ void ModuleEditorCamera::updateOrbit(float dt)
 		orbitAngleX += mouseMotion.x;
 		orbitX(orbitAngleX, float3(0, 0, 0));
 	}
+
+	//I don't think we're doing anyone any favor by orbitting in Y
+	//if (math::Abs(mouseMotion.y) > 2.0f)
+	//{
+	//	orbitAngleY += mouseMotion.y;
+	//	orbitY(orbitAngleY, float3(0, 0, 0));
+	//}
 }
 
 void ModuleEditorCamera::updateFocus(float dt)
@@ -230,13 +237,23 @@ void ModuleEditorCamera::orbitX(float angle, float3 target)
 	frustum.pos.x = newPos.x;
 	frustum.pos.z = newPos.y;
 
-	LookAt(float3::zero);
+	LookAt(target);
 
 }
 
 void ModuleEditorCamera::orbitY(float angle, float3 target)
 {
-	//wololo
+	float2 polar = cartesianToPolar(float2(frustum.pos.z, frustum.pos.y), float2(target.z, target.y));
+	if (polar.y >= 360.0f) polar.y = 0.0f;
+	else if (polar.y <= 0.0f) polar.y = 360.0f;
+	polar.y += angle;
+	polar.y = math::DegToRad(polar.y);
+
+	float2 newPos = polarToCartesian(polar);
+	frustum.pos.z = newPos.x;
+	frustum.pos.y = newPos.y;
+
+	LookAt(target);
 }
 
 //x = distance, y = angle

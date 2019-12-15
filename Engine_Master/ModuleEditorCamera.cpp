@@ -104,12 +104,6 @@ void ModuleEditorCamera::updateRotation(float dt)
 	fPoint mouseMotion = App->input->GetMouseMotion();
 	if (math::Abs(mouseMotion.x) > 10.0f) yaw(mouseMotion.x, dt);
 	if (math::Abs(mouseMotion.y) > 5.0f) pitch(mouseMotion.y, dt);
-
-	//if (App->input->isKeyDown(SDL_SCANCODE_LEFT)) yaw(true, dt);
-	//if (App->input->isKeyDown(SDL_SCANCODE_RIGHT)) yaw(false, dt);
-	//
-	//if (App->input->isKeyDown(SDL_SCANCODE_UP)) pitch(true, dt);
-	//if (App->input->isKeyDown(SDL_SCANCODE_DOWN)) pitch(false, dt);
 }
 
 void ModuleEditorCamera::updateOrbit(float dt)
@@ -117,21 +111,29 @@ void ModuleEditorCamera::updateOrbit(float dt)
 	if (navigationMode != ORBIT) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
-	if (App->input->isKeyDown(SDL_SCANCODE_LEFT)) 
+	if (math::Abs(mouseMotion.x) > 2.0f)
 	{
-		orbitAngleX -= 0.5f;
-		orbitX(orbitAngleX, float3(0, 0, 0));
-	}
-	if (App->input->isKeyDown(SDL_SCANCODE_RIGHT))
-	{
-		orbitAngleX += 0.5f;
+		orbitAngleX += mouseMotion.x;
 		orbitX(orbitAngleX, float3(0, 0, 0));
 	}
 }
 
 void ModuleEditorCamera::updateFocus(float dt)
 {
-	//TODO: This thing
+	//Get the info from the model BoundingBox
+	//float3 halfSize = App->modelLoader->myBoundingBox.HalfSize();
+	//float distX = halfSize.x / tanf(myFrustum.horizontalFov * 0.5f);
+	//float distY = halfSize.y / tanf(myFrustum.verticalFov * 0.5f);
+	//float camDist = MAX(distX, distY) + halfSize.z;
+	//float3 center = App->modelLoader->myBoundingBox.FaceCenterPoint(5);
+	//
+	////Change camera position depending on the model
+	//myFrustum.pos = center + float3(0, 0, camDist);
+	//myFrustum.front = float3(0, 0, -1);
+	//
+	////Reset rotation
+	//pitch = 0;
+	//yaw = -90;
 }
 
 void ModuleEditorCamera::updateNavModes()

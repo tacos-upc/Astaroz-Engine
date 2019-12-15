@@ -15,7 +15,7 @@ ModuleEditorCamera::~ModuleEditorCamera()
 bool ModuleEditorCamera::Init()
 {
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3::unitX;
+	frustum.pos = float3(0, 5.0f, 10.0f);
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
 
@@ -117,8 +117,16 @@ void ModuleEditorCamera::updateOrbit(float dt)
 	if (navigationMode != ORBIT) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
-	if (mouseMotion.x > 2.0f) yaw(mouseMotion.x, dt);
-	if (mouseMotion.y > 2.0f) pitch(mouseMotion.y, dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_LEFT)) 
+	{
+		orbitAngleX -= 0.5f;
+		orbitX(orbitAngleX, float3(0, 0, 0));
+	}
+	if (App->input->isKeyDown(SDL_SCANCODE_RIGHT))
+	{
+		orbitAngleX += 0.5f;
+		orbitX(orbitAngleX, float3(0, 0, 0));
+	}
 }
 
 void ModuleEditorCamera::updateFocus(float dt)
@@ -131,15 +139,16 @@ void ModuleEditorCamera::updateNavModes()
 	isFastMode = App->input->isKeyDown(SDL_SCANCODE_LSHIFT);
 
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) navigationMode = FREE;
-	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && App->input->isKeyDown(SDL_SCANCODE_LALT)) navigationMode = ORBIT;
+	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = ORBIT;
 	else navigationMode = NONE;
 }
 
 void ModuleEditorCamera::LookAt(float3 target)
 {
-	float3x3 rotation = float3x3::LookAt(frustum.front, (target - frustum.pos).Normalized(), frustum.up, float3::unitY);
-	frustum.front = frustum.front * rotation;
-	frustum.up = frustum.up * rotation;
+	float3 dir = (target - frustum.pos).Normalized();
+	float3x3 rot = float3x3::LookAt(frustum.front, dir, frustum.up, float3::unitY);
+	frustum.front = rot.Transform(frustum.front).Normalized();
+	frustum.up = rot.Transform(frustum.up).Normalized();
 }
 
 void ModuleEditorCamera::reloadMatrices()
@@ -207,25 +216,51 @@ void ModuleEditorCamera::yaw(float direction, float dt)
 	//LookAt(float3::zero);
 }
 
-void ModuleEditorCamera::orbitX(float angle, float dt)
+void ModuleEditorCamera::orbitX(float angle, float3 target)
 {
-	const float newAngle = dt * getCamSpeed() * (angle*-1);
-	float3x3 rotation_matrix = float3x3::RotateY(newAngle);
-	frustum.pos = rotation_matrix * frustum.pos;
+	float2 polar = cartesianToPolar(float2(frustum.pos.x, frustum.pos.z), float2(target.x, target.z));
+	if (polar.y >= 360.0f) polar.y = 0.0f;
+	else if (polar.y <= 0.0f) polar.y = 360.0f;
+	polar.y += angle;
+	polar.y = math::DegToRad(polar.y);
+
+	float2 newPos = polarToCartesian(polar); 
+	frustum.pos.x = newPos.x;
+	frustum.pos.z = newPos.y;
 
 	LookAt(float3::zero);
 
 }
 
-void ModuleEditorCamera::orbitY(float angle, float dt)
+void ModuleEditorCamera::orbitY(float angle, float3 target)
 {
-	float adjustment = dt * getCamSpeed() * (angle*-1);
-	float newAngle = math::Abs(adjustment + asinf(frustum.front.y / frustum.front.Length()));
-	if (newAngle >= math::pi / 2) return;
+	//wololo
+}
 
-	float3x3 rotationMatrix = float3x3::identity;
-	rotationMatrix.SetRotatePart(frustum.WorldRight(), adjustment);
-	frustum.pos = rotationMatrix * frustum.pos;
+//x = distance, y = angle
+float2 ModuleEditorCamera::polarToCartesian(float2 polar)
+{
+	float y = polar.x * math::Cos(polar.y);
+	float x = polar.x * math::Sin(polar.y);
 
-	LookAt(float3::zero);
+	return float2(x, y);
+}
+
+float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
+{
+	float dX = cartesian.x - target.x;
+	float dY = cartesian.y - target.y;
+
+	float r = math::SqrtFast(math::Pow(dX, 2) + math::Pow(dY, 2));
+
+	float theta = 0.0f;
+
+	if (dX == 0.0f && dY == 0.0f) theta = 0.0f;
+	else if (dX == 0.0f && dY > 0.0f) theta = 0.0f;
+	else if (dX > 0.0f && dY == 0.0f) theta = 90.0f;
+	else if (dX < 0.0f && dY == 0.0f) theta = 180.0f;
+	else if (dX == 0.0f && dY < 0.0f) theta = 270.0f;
+	else theta = math::Atan(dY / dX);
+	
+	return float2(r, theta);
 }

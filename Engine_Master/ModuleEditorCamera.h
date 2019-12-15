@@ -60,6 +60,7 @@ private:
 
 	MovementMode navigationMode = NONE;
 	bool isFastMode = false;
+	float orbitAngleX = 0.0f;
 
 	void reloadMatrices();
 
@@ -74,8 +75,11 @@ private:
 
 	void pitch(float, float);
 	void yaw(float, float);
-	void orbitX(float, float);
-	void orbitY(float, float);
+	void orbitX(float, float3);
+	void orbitY(float, float3);
+
+	float2 polarToCartesian(float2);
+	float2 cartesianToPolar(float2, float2);
 };
 
 #endif __ModuleEditorCamera_H__

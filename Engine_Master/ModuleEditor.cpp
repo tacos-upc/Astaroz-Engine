@@ -17,6 +17,12 @@ ModuleEditor::~ModuleEditor()
 
 bool ModuleEditor::Init()
 {
+	//flags to show windows
+	show_demo_window = false;
+	show_log_window = false;
+	show_about_window = false;
+	show_configuration_window = false;
+
 	return true;
 }
 
@@ -50,12 +56,6 @@ bool ModuleEditor::Start()
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
 	ImGui_ImplOpenGL3_Init();
-
-	//flags to show windows
-	show_demo_window = false;
-	show_log_window = false;
-	show_about_window = false;
-	show_configuration_window = false;
 
 	return true;
 }

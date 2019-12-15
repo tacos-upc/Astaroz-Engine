@@ -44,20 +44,45 @@ bool ModuleTime::Init()
 
 update_status ModuleTime::Update()
 {
-	//ImGui::BeginMenuBar();
-	//if (ImGui::BeginMenu("Play"))
-	//{
-	//	ImGui::EndMenu();
-	//};
-	//if (ImGui::BeginMenu("Pause"))
-	//{
-	//	ImGui::EndMenu();
-	//};
-	//if (ImGui::BeginMenu("Stop"))
-	//{
-	//	ImGui::EndMenu();
-	//};
-	//ImGui::EndMenuBar();
+	ImGui::SetNextWindowSize(ImVec2(App->window->width, 8.0f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 18.0f));
+	if (ImGui::Begin("Time Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+	{
+		ImVec2 size = ImGui::GetWindowSize();
+
+		if (ImGui::Button("PLAY"))
+		{
+			//Play();
+		}
+
+		ImGui::SameLine();
+
+
+		if (true)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.5816f, 0.94f, 0.9804f));
+			if (ImGui::Button("PAUSE"))
+			{
+				//Pause();
+			}
+			ImGui::PopStyleColor();
+		}
+		else
+		{
+			if (ImGui::Button("PAUSE"))
+			{
+				//Pause();
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("FORWARD"))
+		{
+			//StepFrame();
+		}
+	}
+	ImGui::End();
 
 	return UPDATE_CONTINUE;
 }

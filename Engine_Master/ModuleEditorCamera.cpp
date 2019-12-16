@@ -104,8 +104,8 @@ void ModuleEditorCamera::updateRotation(float dt)
 	if (navigationMode != FREE) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
-	if (math::Abs(mouseMotion.x) > 10.0f && App->input->isKeyDown(SDL_SCANCODE_LALT)) yaw(mouseMotion.x, dt);
-	if (math::Abs(mouseMotion.y) > 5.0f && App->input->isKeyDown(SDL_SCANCODE_LALT)) pitch(mouseMotion.y, dt);
+	if (math::Abs(mouseMotion.x) > 10.0f) yaw(mouseMotion.x, dt);
+	if (math::Abs(mouseMotion.y) > 5.0f) pitch(mouseMotion.y, dt);
 }
 
 void ModuleEditorCamera::updateOrbit(float dt)
@@ -113,7 +113,7 @@ void ModuleEditorCamera::updateOrbit(float dt)
 	if (navigationMode != ORBIT) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
-	if (math::Abs(mouseMotion.x) > 2.0f)
+	if (math::Abs(mouseMotion.x) > 2.0f && App->input->isKeyDown(SDL_SCANCODE_LALT))
 	{
 		orbitAngleX += mouseMotion.x;
 		orbitX(orbitAngleX, float3(0, 0, 0));

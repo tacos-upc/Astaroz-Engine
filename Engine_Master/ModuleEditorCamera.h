@@ -13,7 +13,7 @@
 
 
 #define CAM_SPEED 2.5f
-#define CAM_ROTATION_SPEED 0.349f //20 deg
+#define CAM_ROTATION_SPEED 1.36f //80 deg
 
 enum MovementMode
 {

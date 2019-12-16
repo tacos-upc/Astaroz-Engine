@@ -147,9 +147,16 @@ void ModuleEditorCamera::updateNavModes()
 {
 	isFastMode = App->input->isKeyDown(SDL_SCANCODE_LSHIFT);
 
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) navigationMode = FREE;
-	else if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = ORBIT;
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	{
+		navigationMode = FREE;
+		return;
+	}
 	else navigationMode = NONE;
+	
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = ORBIT;
+	else navigationMode = NONE;
+	
 }
 
 void ModuleEditorCamera::LookAt(float3 target)
@@ -208,21 +215,17 @@ void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
 void ModuleEditorCamera::pitch(float direction, float dt)
 {
 	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction));
-	float3x3 rotationMatrix = float3x3::RotateX(adjustment);
-	frustum.up = rotationMatrix * frustum.up;
-	frustum.front = rotationMatrix * frustum.front;
-
-	//LookAt(float3::zero);
+	float3x3 rotationMatrix = float3x3::RotateAxisAngle(frustum.WorldRight(), adjustment);
+	frustum.front = rotationMatrix.Transform(frustum.front).Normalized();
+	frustum.up = rotationMatrix.Transform(frustum.up).Normalized();
 }
 
 void ModuleEditorCamera::yaw(float direction, float dt)
 {
 	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction));
 	float3x3 rotationMatrix = float3x3::RotateY(adjustment);
-	frustum.up = rotationMatrix * frustum.up;
-	frustum.front = rotationMatrix * frustum.front;
-
-	//LookAt(float3::zero);
+	frustum.front = rotationMatrix.Transform(frustum.front).Normalized();
+	frustum.up = rotationMatrix.Transform(frustum.up).Normalized();
 }
 
 void ModuleEditorCamera::orbitX(float angle, float3 target)

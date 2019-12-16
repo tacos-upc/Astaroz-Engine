@@ -15,6 +15,8 @@ ModuleInput::ModuleInput()
 {
 	keys = new KeyState[MAX_KEYS];
 	memset(keys, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
+
+	memset(mouseButtons, KEY_UP, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 }
 
 // Destructor
@@ -67,9 +69,6 @@ update_status ModuleInput::PreUpdate()
 	{
 		if (mouseButtons[i] == KEY_DOWN)
 			mouseButtons[i] = KEY_REPEAT;
-
-		if (mouseButtons[i] == KEY_UP)
-			mouseButtons[i] = KEY_IDLE;
 	}
 
 	mouseWheel = 0.0f;

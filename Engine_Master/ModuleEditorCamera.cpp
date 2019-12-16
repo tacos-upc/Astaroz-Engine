@@ -104,8 +104,8 @@ void ModuleEditorCamera::updateRotation(float dt)
 	if (navigationMode != FREE) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
-	if (math::Abs(mouseMotion.x) > 10.0f) yaw(mouseMotion.x, dt);
-	if (math::Abs(mouseMotion.y) > 5.0f) pitch(mouseMotion.y, dt);
+	if (math::Abs(mouseMotion.x) > 10.0f && App->input->isKeyDown(SDL_SCANCODE_LALT)) yaw(mouseMotion.x, dt);
+	if (math::Abs(mouseMotion.y) > 5.0f && App->input->isKeyDown(SDL_SCANCODE_LALT)) pitch(mouseMotion.y, dt);
 }
 
 void ModuleEditorCamera::updateOrbit(float dt)
@@ -207,7 +207,7 @@ void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
 
 void ModuleEditorCamera::pitch(float direction, float dt)
 {
-	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction));
+	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
 	float3x3 rotationMatrix = float3x3::RotateAxisAngle(frustum.WorldRight(), adjustment);
 	frustum.front = rotationMatrix.Transform(frustum.front).Normalized();
 	frustum.up = rotationMatrix.Transform(frustum.up).Normalized();
@@ -215,7 +215,7 @@ void ModuleEditorCamera::pitch(float direction, float dt)
 
 void ModuleEditorCamera::yaw(float direction, float dt)
 {
-	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction));
+	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
 	float3x3 rotationMatrix = float3x3::RotateY(adjustment);
 	frustum.front = rotationMatrix.Transform(frustum.front).Normalized();
 	frustum.up = rotationMatrix.Transform(frustum.up).Normalized();

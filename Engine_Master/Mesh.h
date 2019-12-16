@@ -58,7 +58,7 @@ public:
 	unsigned num_vertices = 0;
 	unsigned num_indices = 0;
 	unsigned texcoords_offset = 0;
-
+	bool hastext = true;
 	void setupMesh();
 };
 

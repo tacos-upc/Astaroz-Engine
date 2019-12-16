@@ -37,19 +37,11 @@ bool ModuleModelLoader::Init()
 	//Always start by loading the Baker house model
 	//LoadModel(MODEL_BAKER_PATH);
 
-	LoadSphere("sphere0", math::float3(1.0f, 1.0f, 1.0f), math::Quat::identity, 1.0f, 20, 20, math::float4(0.5f, 0.0f, 0.5f, 1.0f));
-	materials.back().k_specular = 0.9f;
-	materials.back().shininess = 64.0f;
-	materials.back().k_specular = 0.6f;
-	materials.back().k_diffuse = 0.5f;
-	materials.back().k_ambient = 1.0f;
-	
-	LoadTorus("torus0", math::float3(0.0f, 1.0f, 3.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(0.5f, 0.5f, 0.0f, 1.0f));
-	materials.back().k_specular = 0.9f;
-	materials.back().shininess = 16.0f;
-	materials.back().k_specular = 0.6f;
-	materials.back().k_diffuse = 0.5f;
-	materials.back().k_ambient = 1.0f;
+	LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	LoadSphere("sphere2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	LoadSphere("sphere3", math::float3(11.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+
 
 	return true;
 }
@@ -423,6 +415,7 @@ void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, 
 
 	
 	meshes.push_back(dst_mesh);
+	dst_mesh->hastext = false;
 
 	bsphere.center = (max_v + min_v)*0.5f;
 	bsphere.radius = (max_v - min_v).Length()*0.5f;

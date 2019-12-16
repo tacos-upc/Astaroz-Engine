@@ -72,6 +72,7 @@ public:
 		float        radius = 0.0f;
 	};
 
+	float ambient = 0.0f;
 	Sphere bsphere;
 };
 

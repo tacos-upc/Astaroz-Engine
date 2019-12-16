@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="IconsFontAwesome5.h" />
     <ClInclude Include="ImGUI\imconfig.h" />
     <ClInclude Include="ImGUI\imgui.h" />
     <ClInclude Include="ImGUI\imgui_impl_opengl3.h" />

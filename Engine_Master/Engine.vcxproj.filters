@@ -353,6 +353,7 @@
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModuleTime.h" />
+    <ClInclude Include="IconsFontAwesome5.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

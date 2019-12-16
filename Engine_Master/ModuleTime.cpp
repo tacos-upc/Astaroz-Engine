@@ -3,6 +3,7 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "IconsFontAwesome5.h"
 
 
 
@@ -50,7 +51,7 @@ update_status ModuleTime::Update()
 	{
 		ImVec2 size = ImGui::GetWindowSize();
 		ImGui::SetCursorPos(ImVec2((size.x/2) - (24*3), size.y/5));
-		if (ImGui::Button("PLAY", ImVec2(24, 24)))
+		if (ImGui::Button(ICON_FA_PLAY, ImVec2(24, 24)))
 		{
 			//Play();
 		}

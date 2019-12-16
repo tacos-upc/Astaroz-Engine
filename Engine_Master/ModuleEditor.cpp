@@ -1,9 +1,9 @@
 #include "ModuleEditor.h"
 #include "windows.h"
-
 #include "version.h"
 #include "IL/il.h"
-
+#include "IconsFontAwesome5.h"
+#include "IconsFontAwesome5Brands.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -56,6 +56,8 @@ bool ModuleEditor::Start()
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
 	ImGui_ImplOpenGL3_Init();
+
+	loadIcons();
 
 	return true;
 }
@@ -217,3 +219,22 @@ void ModuleEditor::processEvent(SDL_Event event)
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 
+void ModuleEditor::loadIcons()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	static const ImWchar icons[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.PixelSnapH = true;
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAS, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAR, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	static const ImWchar fabIcons[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAB, 12.f, &config, fabIcons);
+}

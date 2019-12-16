@@ -7,6 +7,7 @@
 
 
 
+
 ModuleTime::ModuleTime()
 {
 }
@@ -61,14 +62,14 @@ update_status ModuleTime::Update()
 
 		if (true)
 		{
-			if (ImGui::Button("PAUSE", ImVec2(24, 24)))
+			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
 			{
 				//Pause();
 			}
 		}
 		else
 		{
-			if (ImGui::Button("PAUSE", ImVec2(24, 24)))
+			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
 			{
 				//Pause();
 			}
@@ -76,7 +77,7 @@ update_status ModuleTime::Update()
 
 		ImGui::SameLine();
 
-		if (ImGui::Button("FORWARD", ImVec2(24, 24)))
+		if (ImGui::Button(ICON_FA_STOP, ImVec2(24, 24)))
 		{
 			//StepFrame();
 		}

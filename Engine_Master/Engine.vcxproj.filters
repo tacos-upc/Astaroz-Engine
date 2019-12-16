@@ -354,6 +354,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="IconsFontAwesome5.h" />
+    <ClInclude Include="IconsFontAwesome5Brands.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

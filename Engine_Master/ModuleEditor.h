@@ -32,6 +32,9 @@ public:
 	bool scrollToBottom, show_demo_window, show_log_window, show_about_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
+
+private:
+	void loadIcons();
 };
 
 #endif __ModuleEditor_H__

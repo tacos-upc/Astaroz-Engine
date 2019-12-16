@@ -15,9 +15,7 @@ ModuleEditorCamera::~ModuleEditorCamera()
 bool ModuleEditorCamera::Init()
 {
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3(0, 5.0f, 10.0f);
-	frustum.front = -float3::unitZ;
-	frustum.up = float3::unitY;
+	setDefaultPosition();
 
 	SetPlaneDistances(0.1f, 2000.0f);
 	SetFOV(math::pi / 4.0f);
@@ -37,7 +35,7 @@ update_status ModuleEditorCamera::PreUpdate()
 	updatePosition(0.06f);
 	updateRotation(0.06f);
 	updateOrbit(0.06f);
-
+	updateFocus(0.06f);
 	reloadMatrices();
 
 	return UPDATE_CONTINUE;
@@ -127,20 +125,11 @@ void ModuleEditorCamera::updateOrbit(float dt)
 
 void ModuleEditorCamera::updateFocus(float dt)
 {
-	//Get the info from the model BoundingBox
-	//float3 halfSize = App->modelLoader->myBoundingBox.HalfSize();
-	//float distX = halfSize.x / tanf(myFrustum.horizontalFov * 0.5f);
-	//float distY = halfSize.y / tanf(myFrustum.verticalFov * 0.5f);
-	//float camDist = MAX(distX, distY) + halfSize.z;
-	//float3 center = App->modelLoader->myBoundingBox.FaceCenterPoint(5);
-	//
-	////Change camera position depending on the model
-	//myFrustum.pos = center + float3(0, 0, camDist);
-	//myFrustum.front = float3(0, 0, -1);
-	//
-	////Reset rotation
-	//pitch = 0;
-	//yaw = -90;
+	if (App->input->isKeyDown(SDL_SCANCODE_F))
+	{
+		setDefaultPosition();
+		LookAt(float3::zero);
+	}
 }
 
 void ModuleEditorCamera::updateNavModes()
@@ -257,6 +246,13 @@ void ModuleEditorCamera::orbitY(float angle, float3 target)
 	frustum.pos.y = newPos.y;
 
 	LookAt(target);
+}
+
+void ModuleEditorCamera::setDefaultPosition()
+{
+	frustum.pos = float3(0, 5.0f, 10.0f);
+	frustum.front = -float3::unitZ;
+	frustum.up = float3::unitY;
 }
 
 //x = distance, y = angle

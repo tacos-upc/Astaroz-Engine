@@ -80,6 +80,8 @@ private:
 	void orbitX(float, float3);
 	void orbitY(float, float3);
 
+	void setDefaultPosition();
+
 	float2 polarToCartesian(float2);
 	float2 cartesianToPolar(float2, float2);
 };

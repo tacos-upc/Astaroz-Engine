@@ -80,6 +80,10 @@ void ModuleEditorCamera::SetPosition(float x, float y, float z)
 
 void ModuleEditorCamera::updatePosition(float dt)
 {
+	if (App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
+	if (App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
+
+
 	if (!navigationMode == FREE) return;
 
 	if (App->input->isKeyDown(SDL_SCANCODE_W)) moveUp(dt);

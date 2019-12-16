@@ -46,43 +46,8 @@ bool ModuleTime::Init()
 
 update_status ModuleTime::Update()
 {
-	ImGui::SetNextWindowSize(ImVec2(App->window->width, 8.0f));
-	ImGui::SetNextWindowPos(ImVec2(0.0f, 18.0f));
-	if (ImGui::Begin("Time Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
-	{
-		ImVec2 size = ImGui::GetWindowSize();
-		ImGui::SetCursorPos(ImVec2((size.x/2) - (24*3), size.y/5));
-		if (ImGui::Button(ICON_FA_PLAY, ImVec2(24, 24)))
-		{
-			//Play();
-		}
-
-		ImGui::SameLine();
-
-
-		if (true)
-		{
-			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
-			{
-				//Pause();
-			}
-		}
-		else
-		{
-			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
-			{
-				//Pause();
-			}
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button(ICON_FA_STOP, ImVec2(24, 24)))
-		{
-			//StepFrame();
-		}
-	}
-	ImGui::End();
+	drawTimeControls();
+	drawTimeData();
 
 	return UPDATE_CONTINUE;
 }
@@ -158,4 +123,68 @@ void ModuleTime::frameEnd()
 bool ModuleTime::Cleanup()
 {
 	return true;
+}
+
+void ModuleTime::drawTimeControls()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width, 8.0f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 18.0f));
+	if (ImGui::Begin("Time Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+	{
+		ImVec2 size = ImGui::GetWindowSize();
+		ImGui::SetCursorPos(ImVec2((size.x / 2) - (24 * 3), size.y / 5));
+		if (ImGui::Button(ICON_FA_PLAY, ImVec2(24, 24)))
+		{
+			play();
+		}
+
+		ImGui::SameLine();
+
+
+		if (true)
+		{
+			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
+			{
+				pause();
+			}
+		}
+		else
+		{
+			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
+			{
+				pause();
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button(ICON_FA_STOP, ImVec2(24, 24)))
+		{
+			stop();
+		}
+	}
+	ImGui::End();
+}
+
+void ModuleTime::drawTimeData()
+{
+	//float timeScale;
+	//
+	//float realTimeBeginTimeStamp;
+	//float realTimeEndTimeStamp;
+	//
+	//float gameTimeBeginTimeStamp;
+	//float gameTimeEndTimeStamp;
+	//
+	//float timeSinceStartUp;
+	//float framesSinceStartUp;
+	//
+	//float timeSinceGameStart;
+	//float framesSinceGameStart;
+	if (ImGui::Begin("Time Data"))
+	{
+		ImGui::Text("Time since Startup: %f", timeSinceGameStart);
+		ImGui::Text("Frames since Startup: %f", framesSinceGameStart);
+	}
+	ImGui::End();
 }

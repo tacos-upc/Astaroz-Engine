@@ -53,6 +53,9 @@ private:
 	float framesSinceGameStart;
 	
 	TimeState state;
+
+	void drawTimeControls();
+	void drawTimeData();
 };
 
 #endif __ModuleTime_H__

@@ -23,6 +23,8 @@ public:
 
 public:
 	SDL_GLContext glcontext;
+
+	void renderGrid();
 };
 
 #endif __ModuleRender_H__

@@ -49,8 +49,8 @@ update_status ModuleTime::Update()
 	if (ImGui::Begin("Time Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
 	{
 		ImVec2 size = ImGui::GetWindowSize();
-
-		if (ImGui::Button("PLAY"))
+		ImGui::SetCursorPos(ImVec2((size.x/2) - (24*3), size.y/5));
+		if (ImGui::Button("PLAY", ImVec2(24, 24)))
 		{
 			//Play();
 		}
@@ -60,16 +60,14 @@ update_status ModuleTime::Update()
 
 		if (true)
 		{
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.5816f, 0.94f, 0.9804f));
-			if (ImGui::Button("PAUSE"))
+			if (ImGui::Button("PAUSE", ImVec2(24, 24)))
 			{
 				//Pause();
 			}
-			ImGui::PopStyleColor();
 		}
 		else
 		{
-			if (ImGui::Button("PAUSE"))
+			if (ImGui::Button("PAUSE", ImVec2(24, 24)))
 			{
 				//Pause();
 			}
@@ -77,7 +75,7 @@ update_status ModuleTime::Update()
 
 		ImGui::SameLine();
 
-		if (ImGui::Button("FORWARD"))
+		if (ImGui::Button("FORWARD", ImVec2(24, 24)))
 		{
 			//StepFrame();
 		}

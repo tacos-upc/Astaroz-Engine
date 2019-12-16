@@ -18,6 +18,7 @@ public:
 	bool Init();
 	update_status PreUpdate();
 	update_status Update();
+	update_status PostUpdate();
 	bool CleanUp();
 
 	bool getWindowEvent(EventWindow code) const;
@@ -31,6 +32,7 @@ public:
 
 	float getWheelSpeed()
 	{
+		LOG("%f", mouseWheel);
 		return mouseWheel;
 	}
 

@@ -73,71 +73,74 @@ update_status ModuleInput::PreUpdate()
 
 	mouseWheel = 0.0f;
 
-	while (SDL_PollEvent(&event)) ImGui_ImplSDL2_ProcessEvent(&event);
-	
-	switch (event.type)
+	while (SDL_PollEvent(&event))
 	{
-	case SDL_QUIT:
-		windowEvents[WE_QUIT] = true;
-		break;
+		ImGui_ImplSDL2_ProcessEvent(&event);
 
-	case SDL_WINDOWEVENT:
-		switch (event.window.event)
+		switch (event.type)
 		{
-		case SDL_WINDOWEVENT_CLOSE:
+		case SDL_QUIT:
 			windowEvents[WE_QUIT] = true;
 			break;
-		case SDL_WINDOWEVENT_RESIZED:
-		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			App->window->ResizeWindow(event.window.data1, event.window.data2);
+
+		case SDL_WINDOWEVENT:
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_CLOSE:
+				windowEvents[WE_QUIT] = true;
+				break;
+			case SDL_WINDOWEVENT_RESIZED:
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				App->window->ResizeWindow(event.window.data1, event.window.data2);
+				break;
+			}
+			break;
+
+		case SDL_MOUSEBUTTONDOWN:
+			mouseButtons[event.button.button - 1] = KEY_DOWN;
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			mouseButtons[event.button.button - 1] = KEY_UP;
+			break;
+
+		case SDL_MOUSEMOTION:
+			mouseMotion.x = event.motion.xrel;
+			mouseMotion.y = event.motion.yrel;
+			mouse.x = event.motion.x / SCREEN_SIZE;
+			mouse.y = event.motion.y / SCREEN_SIZE;
+			break;
+
+		case SDL_MOUSEWHEEL:
+			mouseWheel = event.wheel.y;
+			break;
+
+		case SDL_DROPFILE:
+			//Save filepath
+			const char* file = event.drop.file;
+
+			//We need to know if it's a model or a texture using the file extension
+			std::string ext(file);
+			std::size_t lastPoint = ext.find_last_of(".");
+			ext = ext.substr(lastPoint + 1, ext.length());	//from last point in the name we can get the (ext)ension
+
+			//Model
+			if (ext == "fbx" || ext == "FBX")
+			{
+				App->modelLoader->loadNewModel(file);
+			}
+
+			//Texture
+			if (ext == "png" || ext == "jpg" || ext == "dds")
+			{
+				Texture texture = App->texture->LoadTexture(file);
+				//App->modelLoader->addTexture(texture);
+			}
+
+			//Free memory
+			SDL_free(event.drop.file);
 			break;
 		}
-		break;
-
-	case SDL_MOUSEBUTTONDOWN:
-		mouseButtons[event.button.button - 1] = KEY_DOWN;
-		break;
-
-	case SDL_MOUSEBUTTONUP:
-		mouseButtons[event.button.button - 1] = KEY_UP;
-		break;
-
-	case SDL_MOUSEMOTION:
-		mouseMotion.x = event.motion.xrel;
-		mouseMotion.y = event.motion.yrel;
-		mouse.x = event.motion.x / SCREEN_SIZE;
-		mouse.y = event.motion.y / SCREEN_SIZE;
-		break;
-
-	case SDL_MOUSEWHEEL:
-		mouseWheel = event.wheel.y;
-		break;
-
-	case SDL_DROPFILE:
-		//Save filepath
-		const char* file = event.drop.file;
-
-		//We need to know if it's a model or a texture using the file extension
-		std::string ext(file);
-		std::size_t lastPoint = ext.find_last_of(".");	
-		ext = ext.substr(lastPoint + 1, ext.length());	//from last point in the name we can get the (ext)ension
-
-		//Model
-		if (ext == "fbx" || ext == "FBX")
-		{
-			App->modelLoader->loadNewModel(file);
-		}
-
-		//Texture
-		if (ext == "png" || ext == "jpg" || ext == "dds")
-		{
-			Texture texture = App->texture->LoadTexture(file);
-			//App->modelLoader->addTexture(texture);
-		}
-
-		//Free memory
-		SDL_free(event.drop.file);
-		break;
 	}
 
 	if (keyboard[SDL_SCANCODE_ESCAPE] || getWindowEvent(EventWindow::WE_QUIT) == true)
@@ -149,6 +152,13 @@ update_status ModuleInput::PreUpdate()
 // Called every draw update
 update_status ModuleInput::Update()
 {
+	mouseWheel = 0.0f;
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleInput::PostUpdate()
+{
+	//memset(mouseButtons, KEY_UP, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 	return UPDATE_CONTINUE;
 }
 

@@ -90,9 +90,9 @@ void ModuleEditorCamera::updatePosition(float dt)
 
 	if (App->input->isKeyDown(SDL_SCANCODE_D)) moveRight(dt);
 
-	if (App->input->isKeyDown(SDL_SCANCODE_E) || App->input->getWheelSpeed() > 0.0f) moveForward(dt, App->input->getWheelSpeed());
+	if (App->input->isKeyDown(SDL_SCANCODE_E) || App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
 
-	if (App->input->isKeyDown(SDL_SCANCODE_Q) || App->input->getWheelSpeed() < 0.0f) moveBackwards(dt, App->input->getWheelSpeed());
+	if (App->input->isKeyDown(SDL_SCANCODE_Q) || App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
 }
 
 void ModuleEditorCamera::updateRotation(float dt)

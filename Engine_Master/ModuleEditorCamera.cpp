@@ -86,17 +86,17 @@ void ModuleEditorCamera::updatePosition(float dt)
 
 	if (!navigationMode == FREE) return;
 
-	if (App->input->isKeyDown(SDL_SCANCODE_W)) moveUp(dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_E)) moveUp(dt);
 
-	if (App->input->isKeyDown(SDL_SCANCODE_S)) moveDown(dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_Q)) moveDown(dt);
 
 	if (App->input->isKeyDown(SDL_SCANCODE_A)) moveLeft(dt);
 
 	if (App->input->isKeyDown(SDL_SCANCODE_D)) moveRight(dt);
 
-	if (App->input->isKeyDown(SDL_SCANCODE_E) || App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
+	if (App->input->isKeyDown(SDL_SCANCODE_W) || App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
 
-	if (App->input->isKeyDown(SDL_SCANCODE_Q) || App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
+	if (App->input->isKeyDown(SDL_SCANCODE_S) || App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
 }
 
 void ModuleEditorCamera::updateRotation(float dt)

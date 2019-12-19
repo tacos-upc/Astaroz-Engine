@@ -89,6 +89,16 @@ void ModuleTime::setTimeScale(float scale)
 	timeScale = scale;
 }
 
+float ModuleTime::getDeltaTime()
+{
+	return state == PLAY? gameDeltaTime : realDeltaTime;
+}
+
+float ModuleTime::getGameTimeSinceStartup()
+{
+	return timeSinceGameStart;
+}
+
 void ModuleTime::frameStart()
 {
 	realTimeBeginTimeStamp = SDL_GetTicks();
@@ -144,7 +154,11 @@ void ModuleTime::drawTimeControls()
 		ImGui::SetCursorPos(ImVec2((size.x / 2) - (24 * 3), size.y / 5));
 
 		if (ImGui::Button(ICON_FA_PLAY, ImVec2(24, 24))) play();
+		
+		ImGui::SameLine();
 		if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24))) pause();
+		
+		ImGui::SameLine();
 		if (ImGui::Button(ICON_FA_FORWARD, ImVec2(24, 24))) tick();
 	}
 	ImGui::End();
@@ -187,7 +201,7 @@ const char* ModuleTime::stateToString()
 			stringState = "Pause";
 			break;
 		case ONE_STEP:
-			stringState = "Step";
+			stringState = "One Tick";
 			break;
 	}
 

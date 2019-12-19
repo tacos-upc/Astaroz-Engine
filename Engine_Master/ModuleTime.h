@@ -33,6 +33,9 @@ public:
 	float realTimeSinceStartUp();
 	void setTimeScale(float);
 
+	float getDeltaTime();
+	float getGameTimeSinceStartup();
+
 	void frameStart();
 	void frameEnd();
 

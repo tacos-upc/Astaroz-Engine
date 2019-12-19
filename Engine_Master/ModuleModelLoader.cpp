@@ -72,7 +72,7 @@ void ModuleModelLoader::LoadModel(const char* path)
 	generateBoundingBox();
 
 	//Center camera to new model
-	App->editorCamera->focusModel();
+	//App->editorCamera->focusModel();
 }
 
 void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)

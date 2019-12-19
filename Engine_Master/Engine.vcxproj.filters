@@ -355,6 +355,7 @@
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="IconsFontAwesome5.h" />
     <ClInclude Include="IconsFontAwesome5Brands.h" />
+    <ClInclude Include="Point.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

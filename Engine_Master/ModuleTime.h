@@ -8,8 +8,12 @@
 #include "MsTimer.h"
 #include "MicroTimer.h"
 #include "ModuleEditor.h"
+#define MIN_TIMESCALE 0.0f
+#define MAX_TIMESCALE 5.0f
 
-enum TimeState { PLAY, PAUSE, STOP };
+enum TimeState { PLAY, PAUSE, ONE_STEP };
+
+
 
 class ModuleTime :
 	public Module
@@ -23,12 +27,9 @@ public:
 	update_status Update();
 
 	void play();
-	void tick();
 	void pause();
-	void stop();
+	void tick();
 
-	float realDeltaTime();
-	float gameDeltaTime();
 	float realTimeSinceStartUp();
 	void setTimeScale(float);
 
@@ -42,9 +43,11 @@ private:
 	
 	float realTimeBeginTimeStamp;
 	float realTimeEndTimeStamp;
+	float realDeltaTime;
 
 	float gameTimeBeginTimeStamp;
 	float gameTimeEndTimeStamp;
+	float gameDeltaTime;
 
 	float timeSinceStartUp;
 	float framesSinceStartUp;
@@ -56,6 +59,7 @@ private:
 
 	void drawTimeControls();
 	void drawTimeData();
+	const char* stateToString();
 };
 
 #endif __ModuleTime_H__

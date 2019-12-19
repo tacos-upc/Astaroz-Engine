@@ -142,35 +142,10 @@ void ModuleTime::drawTimeControls()
 	{
 		ImVec2 size = ImGui::GetWindowSize();
 		ImGui::SetCursorPos(ImVec2((size.x / 2) - (24 * 3), size.y / 5));
-		if (ImGui::Button(ICON_FA_PLAY, ImVec2(24, 24)))
-		{
-			play();
-		}
 
-		ImGui::SameLine();
-
-
-		if (true)
-		{
-			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
-			{
-				pause();
-			}
-		}
-		else
-		{
-			if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24)))
-			{
-				pause();
-			}
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button(ICON_FA_FORWARD, ImVec2(24, 24)))
-		{
-			tick();
-		}
+		if (ImGui::Button(ICON_FA_PLAY, ImVec2(24, 24))) play();
+		if (ImGui::Button(ICON_FA_PAUSE, ImVec2(24, 24))) pause();
+		if (ImGui::Button(ICON_FA_FORWARD, ImVec2(24, 24))) tick();
 	}
 	ImGui::End();
 }

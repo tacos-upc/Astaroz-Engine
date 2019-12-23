@@ -50,7 +50,9 @@ bool ModuleRender::Init()
 	//glEnable(GL_CULL_FACE);
 
 	glEnable(GL_TEXTURE_2D);
-	glViewport(0, 0, 1024, 768);
+	//glViewport(0, 0, 1024, 768);
+
+	renderToTexture(1024, 768);
 
 	return true;
 }
@@ -104,6 +106,68 @@ bool ModuleRender::CleanUp()
 	SDL_GL_DeleteContext(glcontext);
 
 	return true;
+}
+
+int ModuleRender::generateFBO(unsigned int width, unsigned int height)
+{
+	RenderTexture renderTexture;
+	renderTexture.frameBuffer = 0;
+
+	glGenFramebuffers(1, &renderTexture.frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, renderTexture.frameBuffer);
+
+
+	// The texture we're going to render to
+	glGenTextures(1, &renderTexture.rgbBuffer);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, renderTexture.rgbBuffer);
+
+	// Give an empty image to OpenGL ( the last "0" )
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+	// Poor filtering. Needed !
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+
+	// The depth buffer
+	glGenRenderbuffers(1, &renderTexture.depthBuffer);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, renderTexture.depthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTexture.depthBuffer);
+
+
+	// Set "renderedTexture" as our colour attachement #0
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderTexture.rgbBuffer, 0);
+
+	// Set the list of draw buffers.
+	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+
+
+	// Check that framebuffer is ok
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+	{
+		renderTextures.push_back(renderTexture);
+		return renderTextures.size() -1;
+	}
+	return -1;
+}
+
+void ModuleRender::renderToTexture(unsigned int  width, unsigned int height)
+{
+	int renderTextureIndex = generateFBO(width, height);
+	
+	std::list<RenderTexture>::iterator it = renderTextures.begin();
+	std::advance(it, renderTextureIndex);
+	
+	// Render to our framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, (*it).frameBuffer);
+	glViewport(0, 0, width, height); // Render on the whole framebuffer, complete from the lower left corner to the upper right
+
+	//layout(location = 0) out vec3 color;
 }
 
 void ModuleRender::renderGrid()

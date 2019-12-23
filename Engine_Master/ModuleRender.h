@@ -4,10 +4,19 @@
 #include "Module.h"
 #include "Globals.h"
 #include "SDL.h"
+#include <list>
+
 
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
+
+struct RenderTexture
+{
+	GLuint frameBuffer;
+	GLuint rgbBuffer;
+	GLuint depthBuffer;
+};
 
 class ModuleRender : public Module
 {
@@ -21,8 +30,13 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
+	//Returns the array index 
+	int generateFBO(unsigned int, unsigned int);
+	void renderToTexture(unsigned int, unsigned int);
+
 public:
 	SDL_GLContext glcontext;
+	std::list<RenderTexture> renderTextures;
 
 	void renderGrid();
 };

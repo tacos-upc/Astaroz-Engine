@@ -12,8 +12,8 @@
 #include "SDL.h"
 
 
-#define CAM_SPEED 2.5f
-#define CAM_ROTATION_SPEED 1.36f //80 deg
+#define CAM_SPEED 12.5f
+#define CAM_ROTATION_SPEED 2.7f //160 deg
 
 enum MovementMode
 {

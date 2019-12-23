@@ -136,6 +136,7 @@
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -357,6 +358,9 @@
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModuleTime.h" />
+    <ClInclude Include="IconsFontAwesome5.h" />
+    <ClInclude Include="IconsFontAwesome5Brands.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="GameObject.h" />

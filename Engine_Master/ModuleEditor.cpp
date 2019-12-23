@@ -1,9 +1,9 @@
 #include "ModuleEditor.h"
 #include "windows.h"
-
 #include "version.h"
 #include "IL/il.h"
-
+#include "IconsFontAwesome5.h"
+#include "IconsFontAwesome5Brands.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -17,17 +17,28 @@ ModuleEditor::~ModuleEditor()
 
 bool ModuleEditor::Init()
 {
+	//flags to show windows
+	show_demo_window = false;
+	show_log_window = false;
+	show_about_window = false;
+	show_configuration_window = false;
+
+	return true;
+}
+
+bool ModuleEditor::Start()
+{
 	// Initialize OpenGL loader
-	#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 	bool err = gl3wInit() != 0;
-	#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 	bool err = glewInit() != GLEW_OK;
-	#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 	bool err = gladLoadGL() == 0;
-	#else
+#else
 	bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
-	#endif
-	if (err){
+#endif
+	if (err) {
 		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 		return 1;
 	}
@@ -46,11 +57,7 @@ bool ModuleEditor::Init()
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
 	ImGui_ImplOpenGL3_Init();
 
-	//flags to show windows
-	show_demo_window = false;
-	show_log_window = false;
-	show_about_window = false;
-	show_configuration_window = false;
+	loadIcons();
 
 	return true;
 }
@@ -184,15 +191,15 @@ update_status ModuleEditor::Update()
 		ImGui::End();
 	}
 
-	//Draw
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate()
 {
+	//Draw
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	return UPDATE_CONTINUE;
 }
 
@@ -212,3 +219,22 @@ void ModuleEditor::processEvent(SDL_Event event)
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 
+void ModuleEditor::loadIcons()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	static const ImWchar icons[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.PixelSnapH = true;
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAS, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAR, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	static const ImWchar fabIcons[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAB, 12.f, &config, fabIcons);
+}

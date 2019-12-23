@@ -15,8 +15,12 @@ public:
 	void stop();
 
 public:
-	Uint32 myStartTime, myCurrentTime;
+	Uint64 myStartTime, myCurrentTime;
 	bool running;
+
+private:
+
+	void setupCurrentTime();
 };
 
 #endif __Timer_H__

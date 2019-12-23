@@ -20,6 +20,7 @@ public:
 	~ModuleEditor();
 
 	bool Init();
+	bool Start();
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
@@ -31,6 +32,9 @@ public:
 	bool scrollToBottom, show_demo_window, show_log_window, show_about_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
+
+private:
+	void loadIcons();
 };
 
 #endif __ModuleEditor_H__

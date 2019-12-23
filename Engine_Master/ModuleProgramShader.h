@@ -12,6 +12,7 @@ public:
 	ModuleProgramShader();
 	~ModuleProgramShader();
 	bool Init();
+	bool Start();
 	bool CleanUp();
 
 	void createProgram();

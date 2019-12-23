@@ -1,5 +1,6 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleModelLoader.h"
+#include "ModuleTime.h"
 #include "Point.h"
 
 
@@ -31,11 +32,14 @@ bool ModuleEditorCamera::Start()
 
 update_status ModuleEditorCamera::PreUpdate()
 {
+	float dt = App->time->getDeltaTime();
+
 	updateNavModes();
-	updatePosition(0.06f);
-	updateRotation(0.06f);
-	updateOrbit(0.06f);
-	updateFocus(0.06f);
+	updatePosition(dt);
+	updateRotation(dt);
+	updateOrbit(dt);
+	updateFocus(dt);
+
 	reloadMatrices();
 
 	return UPDATE_CONTINUE;

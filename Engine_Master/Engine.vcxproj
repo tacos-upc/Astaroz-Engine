@@ -85,6 +85,8 @@
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="IconsFontAwesome5.h" />
+    <ClInclude Include="IconsFontAwesome5Brands.h" />
     <ClInclude Include="ImGUI\imconfig.h" />
     <ClInclude Include="ImGUI\imgui.h" />
     <ClInclude Include="ImGUI\imgui_impl_opengl3.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="ModuleTexture.h" />
+    <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleTriangle.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MsTimer.h" />
@@ -226,6 +229,7 @@
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleTriangle.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MsTimer.cpp" />

@@ -166,19 +166,16 @@ void ComponentCamera::DrawFrustum()
 {
 
 	//Draw Grid
-	unsigned int progGrid = App->program->gridProg;
-	glUseProgram(progGrid);
-
-	float4x4 model = float4x4::identity.LookAt(-float3::unitZ, frustum->front, frustum->up, float3::unitY);
-
-	glUniformMatrix4fv(glGetUniformLocation(progGrid,
-		"model"), 1, GL_TRUE, &model[0][0]);
-
-	//Temporary as std140 doesnt work
-	glUniformMatrix4fv(glGetUniformLocation(progGrid,
-		"proj"), 1, GL_TRUE, &App->camera->proj[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(progGrid,
-		"view"), 1, GL_TRUE, &App->camera->view[0][0]);
+	//unsigned int progGrid = App->programShader->gridProg;
+	//glUseProgram(progGrid);
+	//
+	//float4x4 model = float4x4::identity.LookAt(-float3::unitZ, frustum->front, frustum->up, float3::unitY);
+	//
+	//glUniformMatrix4fv(glGetUniformLocation(progGrid, "model"), 1, GL_TRUE, &model[0][0]);
+	//
+	////Temporary as std140 doesnt work
+	//glUniformMatrix4fv(glGetUniformLocation(progGrid, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+	//glUniformMatrix4fv(glGetUniformLocation(progGrid, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
 
 
 	if(oldPosition.x != frustum->pos.x || oldPosition.y != frustum->pos.y || oldPosition.z != frustum->pos.z)
@@ -213,6 +210,7 @@ void ComponentCamera::DrawFrustum()
 	glLineWidth(2.0f);
 	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 	glBegin(GL_LINES);
+	
 	//Near Plane
 	glVertex3f(NearTopLeft.x, NearTopLeft.y, NearTopLeft.z);
 	glVertex3f(NearTopRight.x, NearTopRight.y, NearTopRight.z);

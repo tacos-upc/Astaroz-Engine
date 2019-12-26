@@ -28,30 +28,6 @@ bool ModuleTexture::Init()
 	ilGenImages(1, &myTextureId);
 	ilBindImage(myTextureId);
 
-	/* THIS PART WAS FOR THE FIRST EXERCISE WITH 'LENNA' IMAGE
-	
-	//Image
-	ilGenImages(1, &myLena);
-	ilBindImage(myLena);
-
-	//Load image
-	if (!ilLoadImage("textures/lenna.png"))
-	{
-		//Errors
-		ILenum err = ilGetError();
-		LOG("Failed loading image");
-	}
-
-	//Il renderer
-	ilutRenderer(ILUT_OPENGL);
-
-	//Assign member variables
-	myData = ilGetData();
-	myTexture = ilutGLBindTexImage();
-
-	//Once assigned, we can 'unbind' the image
-	ilDeleteImages(1, &myLena);
-	*/
 	return true;
 }
 

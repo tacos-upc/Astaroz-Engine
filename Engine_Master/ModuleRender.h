@@ -25,6 +25,18 @@ public:
 	SDL_GLContext glcontext;
 
 	void renderGrid();
+
+private:
+
+	GLuint fbo; //ID of the FrameBufferObject to render to texture
+	GLuint texture; //ID of the texture to render in a window later
+	GLuint rbo; //ID of the render buffer object for depth testing
+
+	bool CreateFrameBuffer(int, int);
+	bool beginRenderTexture(int, int);
+	bool endRenderTexture();
+
+	void drawSceneWindow();
 };
 
 #endif __ModuleRender_H__

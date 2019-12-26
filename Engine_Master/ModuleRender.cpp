@@ -37,7 +37,6 @@ bool ModuleRender::Init()
 	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glClearDepth(1.0f);
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -50,7 +49,7 @@ bool ModuleRender::Init()
 	//glEnable(GL_CULL_FACE);
 
 	glEnable(GL_TEXTURE_2D);
-	glViewport(0, 0, 1024, 768);
+	glViewport(0, 0, App->window->width, App->window->height);
 
 	return true;
 }
@@ -66,10 +65,10 @@ update_status ModuleRender::PreUpdate()
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
 
 	//Viewport using window size
-	int w, h;
-	SDL_GetWindowSize(App->window->window, &w, &h);
-	glViewport(0, 0, w, h);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//int w, h;
+	//SDL_GetWindowSize(App->window->window, &w, &h);
+	//glViewport(0, 0, w, h);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UPDATE_CONTINUE;
 }
@@ -77,14 +76,41 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	//Attach window and context
-	SDL_GL_MakeCurrent(App->window->window, glcontext);
+	beginRenderTexture(App->window->width, App->window->height);
+
+	glViewport(0, 0, App->window->width, App->window->height);
+	glClearColor(1.f, 1.f, 1.f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Draw program shader
 	App->modelLoader->Draw(App->programShader->myProgram);
-
-	//Grid
 	renderGrid();
+
+	//Draw Scene and Game Windows
+	bool isEnabled = true;
+	//First Scene window is created
+	ImGui::Begin("Scene", &isEnabled, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+	ImVec2 wSize = ImGui::GetWindowSize();
+	App->editorCamera->SetAspectRatio((int)wSize.y);
+
+
+	//widthScene = (int)wSize.x;
+	//heightScene = (int)wSize.y;
+
+	ImGui::GetWindowDrawList()->AddImage(
+		(void *)texture,
+		ImVec2(ImGui::GetCursorScreenPos()),
+		ImVec2(
+			ImGui::GetCursorScreenPos().x + wSize.x,
+			ImGui::GetCursorScreenPos().y + wSize.y
+		));
+
+
+	ImGui::End();
+
+	endRenderTexture();
+
 
 	return UPDATE_CONTINUE;
 }
@@ -143,4 +169,121 @@ void ModuleRender::renderGrid()
 	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
 	glEnd();
 	glLineWidth(1.0f);
+}
+
+bool ModuleRender::CreateFrameBuffer(int width, int height)
+{
+	//Generate the frame buffer and bind it
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	//glDeleteFramebuffers(1, &fbo);
+
+	//Create the texture to fill with the created framebuffer
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, App->window->width, App->window->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//We also bind the default frame buffer
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//Attach the texture to the framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+	//Render buffer for depth testing
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, App->window->width, App->window->height);
+	
+	//We also bind the default frame buffer
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	//Atach the render buffer object to the default render buffer
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	//Now we bind the default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+}
+
+bool ModuleRender::beginRenderTexture(int width, int height)
+{
+	//Generate the frame buffer and bind it
+	glCreateFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	//Create the texture to fill with the created framebuffer
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//Attach the texture to the framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+	//Render buffer for depth testing
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+	//Atach the render buffer object to the default render buffer
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	LOG("BEGIN TEXTURE SUCCESFUL? %d", glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+
+	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+}
+
+bool ModuleRender::endRenderTexture()
+{
+	//glDeleteFramebuffers(1, &fbo);
+	//glDeleteTextures(1, &texture);
+	//glDeleteRenderbuffers(1, &rbo);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	
+	return true;
+}
+
+void ModuleRender::drawSceneWindow()
+{
+	//Draw Scene and Game Windows
+	bool isEnabled = true;
+	//First Scene window is created
+	ImGui::Begin("Scene", &isEnabled, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+	ImVec2 wSize = ImGui::GetWindowSize();
+	App->editorCamera->SetAspectRatio((int)wSize.y);
+
+	CreateFrameBuffer((int)wSize.x, (int)wSize.y);
+	//GenerateTexture((int)wSize.x, (int)wSize.y);
+
+
+	//widthScene = (int)wSize.x;
+	//heightScene = (int)wSize.y;
+
+	ImGui::GetWindowDrawList()->AddImage(
+		(void *)texture,
+		ImVec2(ImGui::GetCursorScreenPos()),
+		ImVec2(
+			ImGui::GetCursorScreenPos().x + wSize.x,
+			ImGui::GetCursorScreenPos().y + wSize.y
+		),
+		ImVec2(0, 1),
+		ImVec2(1, 0)
+	);
+
+
+	ImGui::End();
 }

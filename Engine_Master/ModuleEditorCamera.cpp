@@ -35,7 +35,7 @@ update_status ModuleEditorCamera::PreUpdate()
 	updatePosition(0.06f);
 	updateRotation(0.06f);
 	updateOrbit(0.06f);
-	updateFocus(0.06f);
+	updateFocus();
 	reloadMatrices();
 
 	return UPDATE_CONTINUE;
@@ -127,7 +127,7 @@ void ModuleEditorCamera::updateOrbit(float dt)
 	//}
 }
 
-void ModuleEditorCamera::updateFocus(float dt)
+void ModuleEditorCamera::updateFocus()
 {
 	if (App->input->isKeyDown(SDL_SCANCODE_F))
 	{

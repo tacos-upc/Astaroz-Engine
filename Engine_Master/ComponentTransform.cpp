@@ -1,5 +1,5 @@
 #include "ComponentTransform.h"
-#include "include/Math/MathFunc.h"
+#include "Math/MathFunc.h"
 #include "GameObject.h"
 
 ComponentTransform::ComponentTransform(GameObject* gameObject)

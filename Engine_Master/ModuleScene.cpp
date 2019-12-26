@@ -79,7 +79,7 @@ GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent
 
 	LOG("Creating new GameObject with name: %s", name);
 
-	++numberOfGameObjects;
+	nGameObjects++;
 	return gameObject;
 }
 
@@ -89,7 +89,7 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 	App->modelLoader->loadModel(path);
 
 	int numObject = 0;
-	std::string name = App->modelLoader->nameOfModel;
+	std::string name = App->modelLoader->modelName;
 	LOG("Creating parent gameObject %s", name.c_str());
 	parent->SetName(name);
 
@@ -104,10 +104,10 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 		newMeshObject->ComputeAABB();
 		gameObjects.push_back(newMeshObject);
 
-		++numObject;
+		numObject++;
 	}
 
-	LOG("Deliting info from ModelLoader");
+	LOG("Deleting info from ModelLoader");
 	App->modelLoader->emptyScene();
 	parent->ComputeAABB();
 
@@ -122,10 +122,7 @@ void ModuleScene::CreateEmpy(GameObject* parent)
 	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* empty = CreateGameObject(defaultName.c_str(), parent);
 	
-
 	gameObjects.push_back(empty);
-
-	return;
 }
 
 void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
@@ -148,6 +145,7 @@ void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
 
 void ModuleScene::CreateGameObjectShape(GameObject * parent, ShapeType shape)
 {
+	/*
 	if (parent == nullptr)
 	{
 		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
@@ -226,7 +224,8 @@ void ModuleScene::CreateGameObjectShape(GameObject * parent, ShapeType shape)
 
 	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
 	//Deleting model loader information
-	//App->modelLoader->emptyScene();
+	App->modelLoader->emptyScene();
+	*/
 }
 
 void ModuleScene::RemoveGameObject(GameObject * go)

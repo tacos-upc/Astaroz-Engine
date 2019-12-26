@@ -28,7 +28,13 @@ bool ModuleModelLoader::Init()
 	aiAttachLogStream(&sLog);
 
 	//Always start by loading the Baker house model
-	LoadModel(MODEL_BAKER_PATH);
+	loadModel(MODEL_BAKER_PATH);
+
+	//Init variables
+	numMeshes = 0;
+	numVertices = 0;
+	numTextures = 0;
+	numPolys = NULL;
 
 	return true;
 }
@@ -49,7 +55,7 @@ void ModuleModelLoader::Draw(unsigned int program)
 		meshes[i]->Draw(program);
 }
 
-void ModuleModelLoader::LoadModel(const char* path)
+void ModuleModelLoader::loadModel(const char* path)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -67,7 +73,10 @@ void ModuleModelLoader::LoadModel(const char* path)
 	generateBoundingBox();
 
 	//Center camera to new model
-	//App->editorCamera->focusModel();
+	//App->editorCamera->focusModel(); TODO --> Center model
+
+	//Take the model's name from path
+	modelName = path; //TODO --> extract name from path and not the full route
 }
 
 void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
@@ -167,6 +176,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	textureHeight = textures[0].height;
 	textureId = textures[0].id;
 	numPolys /= 3;
+	numTextures += textures.size();
 
 	return Mesh(vertices, indices, textures);
 }
@@ -209,7 +219,7 @@ void ModuleModelLoader::loadNewModel(const char* path)
 	meshes.clear();
 
 	//Load model
-	LoadModel(path);
+	loadModel(path);
 }
 
 void ModuleModelLoader::generateBoundingBox()
@@ -243,4 +253,10 @@ void ModuleModelLoader::addTexture(Texture texture)
 	{
 		(*it)->updateTexture(texture);
 	}
+}
+
+void ModuleModelLoader::emptyScene()
+{
+	meshes.clear();
+	numTextures = 0;
 }

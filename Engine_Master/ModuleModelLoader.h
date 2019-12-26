@@ -22,14 +22,15 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	void LoadModel(const char*);
 	void Draw(unsigned int program);
+	void loadModel(const char*);
 	void processNode(aiNode*, const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
 	void loadNewModel(const char* path);
 	void generateBoundingBox();
 	void addTexture(Texture texture);
+	void emptyScene();
 
 public:
 	//Lists
@@ -38,15 +39,19 @@ public:
 
 	//For our model
 	AABB myBoundingBox;
-	unsigned int numMeshes = 0;
-	int numPolys = NULL;
-	unsigned int numVertices = 0;
+	unsigned int numMeshes;
+	int numPolys;
+	unsigned int numVertices;
 
 	//For textures in our model
 	int textureWidth;
 	int textureHeight;
 	char* textureType = nullptr;
 	int textureId;
+
+	//General
+	std::string modelName;
+	int numTextures;
 };
 
 #endif __ModuleModelLoader_H__

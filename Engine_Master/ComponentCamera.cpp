@@ -164,7 +164,7 @@ bool ComponentCamera::SideOfPlane(float3 &point, Plane &plane)
 
 void ComponentCamera::DrawFrustum()
 {
-
+	/*
 	//Draw Grid
 	unsigned int progGrid = App->program->gridProg;
 	glUseProgram(progGrid);
@@ -258,4 +258,5 @@ void ComponentCamera::DrawFrustum()
 	glUseProgram(0);
 
 	return;
+	*/
 }

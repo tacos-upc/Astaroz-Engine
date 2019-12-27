@@ -18,7 +18,6 @@ ModuleEditor::~ModuleEditor()
 bool ModuleEditor::Init()
 {
 	//flags to show windows
-	show_demo_window = false;
 	show_log_window = false;
 	show_about_window = false;
 	show_configuration_window = false;
@@ -73,12 +72,63 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
+	drawMainMenu();
+
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleEditor::PostUpdate()
+{
+	//Draw
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	return UPDATE_CONTINUE;
+}
+
+// Called before quitting
+bool ModuleEditor::CleanUp()
+{
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
+	return true;
+}
+
+void ModuleEditor::processEvent(SDL_Event event)
+{
+	ImGui_ImplSDL2_ProcessEvent(&event);
+}
+
+void ModuleEditor::loadIcons()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	static const ImWchar icons[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.PixelSnapH = true;
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAS, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAR, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	static const ImWchar fabIcons[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAB, 12.f, &config, fabIcons);
+}
+
+void ModuleEditor::drawMainMenu()
+{
 	//Menu
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("Tools"))
 		{
-			ImGui::MenuItem("Demo window", NULL, &show_demo_window);
 			ImGui::MenuItem("Logger console", NULL, &show_log_window);
 			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);
 			ImGui::EndMenu();
@@ -90,13 +140,8 @@ update_status ModuleEditor::Update()
 		};
 		ImGui::EndMainMenuBar();
 	}
-	//Demo flag
-	if (show_demo_window) 
-	{
-		ImGui::ShowDemoWindow();
-	}
 	//Log flag
-	if (show_log_window) 
+	if (show_log_window)
 	{
 		ImGui::Begin("Logger Console", &show_log_window);
 		ImGui::TextUnformatted(myBuffer.begin());
@@ -106,7 +151,7 @@ update_status ModuleEditor::Update()
 		ImGui::End();
 	}
 	//About flag
-	if (show_about_window) 
+	if (show_about_window)
 	{
 		ImGui::Begin("About...", &show_about_window);
 		ImGui::BulletText("Engine name: Astaroz engine");
@@ -129,7 +174,7 @@ update_status ModuleEditor::Update()
 	if (show_configuration_window)
 	{
 		ImGui::Begin("Configuration", &show_configuration_window);
-		
+
 		//FPS
 		fps_log.push_back(ImGui::GetIO().Framerate);
 		if (fps_log.size() > 25) //Divides graph by sections like in PDF image
@@ -190,51 +235,4 @@ update_status ModuleEditor::Update()
 		}
 		ImGui::End();
 	}
-
-	return UPDATE_CONTINUE;
-}
-
-update_status ModuleEditor::PostUpdate()
-{
-	//Draw
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	return UPDATE_CONTINUE;
-}
-
-// Called before quitting
-bool ModuleEditor::CleanUp()
-{
-	// Cleanup
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-
-	return true;
-}
-
-void ModuleEditor::processEvent(SDL_Event event)
-{
-	ImGui_ImplSDL2_ProcessEvent(&event);
-}
-
-void ModuleEditor::loadIcons()
-{
-	ImGuiIO& io = ImGui::GetIO();
-
-	static const ImWchar icons[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-	ImFontConfig config;
-	config.MergeMode = true;
-	config.PixelSnapH = true;
-
-	io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAS, 12.f, &config, icons);
-
-	io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAR, 12.f, &config, icons);
-
-	io.Fonts->AddFontDefault();
-	static const ImWchar fabIcons[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
-	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAB, 12.f, &config, fabIcons);
 }

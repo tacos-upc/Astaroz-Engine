@@ -20,31 +20,35 @@ bool ModuleProgramShader::Init()
 
 bool ModuleProgramShader::Start()
 {
-	createProgram();	//assigns myProgram member a value
+	defaultProgram = createProgram("shaders/vertexShader.vs", "shaders/fragmentShader.fs");	//assigns myProgram member a value
+	gridProgram = createProgram("shaders/gridShader.vs", "shaders/gridShader.fs");
 
 	return true;
 }
 
-void ModuleProgramShader::createProgram()
+GLuint ModuleProgramShader::createProgram(const char* vertexShaderPath, const char*  fragmentShaderPath)
 {
+	GLuint program;
 	//we need to create a program with a vertex shader and a fragment shader
-	myProgram = glCreateProgram();
+	program = glCreateProgram();
 
 	//create first our vertex and fragments shaders
-	std::string vsSource = parseShader("shaders/vertexShader.vs");
-	std::string fsSource = parseShader("shaders/fragmentShader.fs");
+	std::string vsSource = parseShader(vertexShaderPath);
+	std::string fsSource = parseShader(fragmentShaderPath);
 	GLuint vs = compileShader(GL_VERTEX_SHADER, vsSource);
 	GLuint fs = compileShader(GL_FRAGMENT_SHADER, fsSource);
 
 	//we can link them now with our program
-	glAttachShader(myProgram, vs);
-	glAttachShader(myProgram, fs);
-	glLinkProgram(myProgram);
-	glValidateProgram(myProgram);
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+	glValidateProgram(program);
 
 	//once shaders are linked into a program, we can delete them
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+
+	return program;
 }
 
 std::string ModuleProgramShader::parseShader(const std::string& filepath)
@@ -96,7 +100,7 @@ GLuint ModuleProgramShader::compileShader(const GLuint type, const std::string s
 bool ModuleProgramShader::CleanUp() 
 {
 	//delete our program
-	glDeleteProgram(myProgram);
+	glDeleteProgram(defaultProgram);
 
 	return true;
 }

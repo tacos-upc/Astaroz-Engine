@@ -35,6 +35,8 @@ private:
 	void generateBuffers();
 	bool beginRenderTexture(int, int);
 	bool endRenderTexture();
+
+	void drawCameraWindow();
 };
 
 #endif __ModuleRender_H__

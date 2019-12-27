@@ -59,12 +59,12 @@ bool ModuleRender::Init()
 update_status ModuleRender::PreUpdate()
 {
 	//Program (shaders: vertex shader + fragment shader)
-	glUseProgram(App->programShader->myProgram);
+	glUseProgram(App->programShader->defaultProgram);
 	
 	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
-	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->programShader->myProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "model"), 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
 
 	//Viewport using window size
 	int w, h;
@@ -78,35 +78,7 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	bool active = false;
-	ImGui::Begin("Scene", &active, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-	ImVec2 size = ImGui::GetWindowSize();
-	//App->editorCamera->SetAspectRatio((int)size.y);
-
-	beginRenderTexture(size.x, size.y);
-
-	glViewport(0, 0, App->window->width, App->window->height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//Draw program shader
-	App->modelLoader->Draw(App->programShader->myProgram);
-	renderGrid();
-
-	ImGui::GetWindowDrawList()->AddImage(
-		(void *)texture,
-		ImVec2(ImGui::GetCursorScreenPos()),
-		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y), 
-		ImVec2(0, 1), 
-		ImVec2(1, 0)
-	);
-
-
-	ImGui::End();
-
-	endRenderTexture();
-
-
+	drawCameraWindow();
 	return UPDATE_CONTINUE;
 }
 
@@ -133,12 +105,23 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::renderGrid()
 {
+	GLuint gridProgram = App->programShader->gridProgram;
+	glUseProgram(gridProgram);
+
+	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "model"), 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+
+	
+
 	//Grid
 	glLineWidth(1.0f);
 	float d = 200.0f;
 	glBegin(GL_LINES);
 	for (float i = -d; i <= d; i += 1.0f)
 	{
+		glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
 		glVertex3f(i, 0.0f, -d);
 		glVertex3f(i, 0.0f, d);
 		glVertex3f(-d, 0.0f, i);
@@ -168,6 +151,8 @@ void ModuleRender::renderGrid()
 	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
 	glEnd();
 	glLineWidth(1.0f);
+
+	glUseProgram(App->programShader->defaultProgram);
 }
 
 void ModuleRender::generateBuffers()
@@ -210,4 +195,35 @@ bool ModuleRender::endRenderTexture()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	
 	return true;
+}
+
+void ModuleRender::drawCameraWindow()
+{
+	bool active = false;
+	ImGui::Begin("Scene", &active, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+	ImVec2 size = ImGui::GetWindowSize();
+	//App->editorCamera->SetAspectRatio((int)size.y);
+
+	beginRenderTexture(size.x, size.y);
+
+	glViewport(0, 0, App->window->width, App->window->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Draw program shader
+	App->modelLoader->Draw(App->programShader->defaultProgram);
+	renderGrid();
+
+	ImGui::GetWindowDrawList()->AddImage(
+		(void *)texture,
+		ImVec2(ImGui::GetCursorScreenPos()),
+		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y),
+		ImVec2(0, 1),
+		ImVec2(1, 0)
+	);
+
+
+	ImGui::End();
+
+	endRenderTexture();
 }

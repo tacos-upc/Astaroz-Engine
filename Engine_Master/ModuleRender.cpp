@@ -82,7 +82,7 @@ update_status ModuleRender::Update()
 	ImGui::Begin("Scene", &active, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 	ImVec2 size = ImGui::GetWindowSize();
-	App->editorCamera->SetAspectRatio((int)size.y);
+	//App->editorCamera->SetAspectRatio((int)size.y);
 
 	beginRenderTexture(size.x, size.y);
 
@@ -96,10 +96,10 @@ update_status ModuleRender::Update()
 	ImGui::GetWindowDrawList()->AddImage(
 		(void *)texture,
 		ImVec2(ImGui::GetCursorScreenPos()),
-		ImVec2(
-			ImGui::GetCursorScreenPos().x + size.x,
-			ImGui::GetCursorScreenPos().y + size.y
-		));
+		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y), 
+		ImVec2(0, 1), 
+		ImVec2(1, 0)
+	);
 
 
 	ImGui::End();

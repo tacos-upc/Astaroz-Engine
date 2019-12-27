@@ -32,11 +32,9 @@ private:
 	GLuint texture; //ID of the texture to render in a window later
 	GLuint rbo; //ID of the render buffer object for depth testing
 
-	bool CreateFrameBuffer(int, int);
+	void generateBuffers();
 	bool beginRenderTexture(int, int);
 	bool endRenderTexture();
-
-	void drawSceneWindow();
 };
 
 #endif __ModuleRender_H__

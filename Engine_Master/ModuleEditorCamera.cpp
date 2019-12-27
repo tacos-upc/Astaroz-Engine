@@ -68,7 +68,7 @@ void ModuleEditorCamera::SetFOV(float fov)
 
 void ModuleEditorCamera::SetAspectRatio(float h)
 {
-	frustum.horizontalFov = h;
+	SetFOV(h);
 }
 
 void ModuleEditorCamera::SetPlaneDistances(float nearPlane, float farPlane)

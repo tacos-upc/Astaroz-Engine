@@ -22,6 +22,7 @@ bool ModuleProgramShader::Start()
 {
 	defaultProgram = createProgram("shaders/vertexShader.vs", "shaders/fragmentShader.fs");	//assigns myProgram member a value
 	gridProgram = createProgram("shaders/gridShader.vs", "shaders/gridShader.fs");
+	skyboxProgram = createProgram("shaders/skyboxShader.vs", "shaders/skyboxShader.fs");
 
 	return true;
 }

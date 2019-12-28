@@ -22,6 +22,7 @@ public:
 public:
 	GLuint defaultProgram;
 	GLuint gridProgram;
+	GLuint skyboxProgram;
 };
 
 #endif __ModuleProgramShader_H__

@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include "Skybox.h"
 #include "SDL.h"
 
 struct SDL_Texture;
@@ -31,6 +32,7 @@ private:
 	GLuint fbo; //ID of the FrameBufferObject to render to texture
 	GLuint texture; //ID of the texture to render in a window later
 	GLuint rbo; //ID of the render buffer object for depth testing
+	Skybox * skybox;
 
 	void generateBuffers();
 	bool beginRenderTexture(int, int);

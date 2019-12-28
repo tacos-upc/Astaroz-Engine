@@ -19,7 +19,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	Texture ModuleTexture::LoadTexture(const char* path);
+	Texture LoadTexture(const char* path);
+	void loadSkybox(const char* path, int index);
 
 public:
 	//ILuint myLena;	--> Lenna exercise; improved code so not needed anymore

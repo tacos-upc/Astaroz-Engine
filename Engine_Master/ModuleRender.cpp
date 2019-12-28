@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleModelLoader.h"
 #include "ModuleProgramShader.h"
+#include "Skybox.h"
 #include "glew.h"
 
 ModuleRender::ModuleRender()
@@ -52,6 +53,8 @@ bool ModuleRender::Init()
 	glViewport(0, 0, App->window->width, App->window->height);
 
 	generateBuffers();
+
+	skybox = new Skybox("textures/skybox/sides.png", "textures/skybox/sides.png", "textures/skybox/top.png", "textures/skybox/bottom.png", "textures/skybox/sides.png", "textures/skybox/sides.png");
 
 	return true;
 }
@@ -213,6 +216,8 @@ void ModuleRender::drawCameraWindow()
 	//Draw program shader
 	App->modelLoader->Draw(App->programShader->defaultProgram);
 	renderGrid();
+
+	skybox->draw();
 
 	ImGui::GetWindowDrawList()->AddImage(
 		(void *)texture,

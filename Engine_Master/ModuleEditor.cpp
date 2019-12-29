@@ -290,7 +290,7 @@ void ModuleEditor::drawCameraPanel()
 			//HIierarchy tab
 			if (ImGui::BeginTabItem(ICON_FA_GAMEPAD " Game"))
 			{
-				App->renderer->drawSceneView();
+				App->renderer->drawGameView();
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();
@@ -317,7 +317,7 @@ void ModuleEditor::drawInspectorPanel()
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 			if (ImGui::Button("Add Component", ImVec2(ImGui::GetWindowSize().x * 0.6f, 25.0f)))
 			{
-
+				//TODO: Add Component
 			}
 		}
 		ImGui::End();

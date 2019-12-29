@@ -51,7 +51,8 @@ bool ModuleRender::Init()
 	glEnable(GL_TEXTURE_2D);
 	glViewport(0, 0, App->window->width, App->window->height);
 
-	generateBuffers();
+	generateBuffers(&sceneFBO, &sceneTexture, &sceneRBO);
+	generateBuffers(&gameFBO, &gameTexture, &gameRBO);
 
 	skybox = new Skybox("textures/skybox/sides.png", "textures/skybox/sides.png", "textures/skybox/top.png", "textures/skybox/bottom.png", "textures/skybox/sides.png", "textures/skybox/sides.png");
 	
@@ -68,8 +69,8 @@ update_status ModuleRender::PreUpdate()
 	
 	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &App->editorCamera->cam->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
 	//Viewport using window size
 	int w, h;
@@ -99,9 +100,9 @@ bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
 
-	glDeleteFramebuffers(1, &fbo);
-	glDeleteTextures(1, &texture);
-	glDeleteRenderbuffers(1, &rbo);
+	glDeleteFramebuffers(1, &sceneFBO);
+	glDeleteTextures(1, &sceneTexture);
+	glDeleteRenderbuffers(1, &sceneRBO);
 
 	//Destroy window is done in ModuleWindow
 	SDL_GL_DeleteContext(glcontext);
@@ -119,8 +120,8 @@ void ModuleRender::renderGrid()
 
 	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &App->editorCamera->cam->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
 	//Grid
 	glLineWidth(1.0f);
@@ -162,35 +163,35 @@ void ModuleRender::renderGrid()
 	glUseProgram(App->programShader->defaultProgram);
 }
 
-void ModuleRender::generateBuffers()
+void ModuleRender::generateBuffers(GLuint* fbo, GLuint* texture, GLuint* rbo)
 {
-	glGenFramebuffers(1, &fbo);
-	glGenTextures(1, &texture);
-	glGenRenderbuffers(1, &rbo);
+	glGenFramebuffers(1, fbo);
+	glGenTextures(1, texture);
+	glGenRenderbuffers(1, rbo);
 }
 
 
 bool ModuleRender::beginRenderTexture(int width, int height)
 {
 	//Generate the frame buffer and bind it
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
 	
 	//Create the texture to fill with the created framebuffer
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, sceneTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//Attach the texture to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneTexture, 0);
 
 	//Render buffer for depth testing
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, sceneRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 
 	//Atach the render buffer object to the default render buffer
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, sceneRBO);
 
 	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
@@ -221,7 +222,34 @@ void ModuleRender::drawSceneView()
 	//skybox->draw();
 
 	ImGui::GetWindowDrawList()->AddImage(
-		(void *)texture,
+		(void *)sceneTexture,
+		ImVec2(ImGui::GetCursorScreenPos()),
+		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y),
+		ImVec2(0, 1),
+		ImVec2(1, 0)
+	);
+
+	endRenderTexture();
+}
+
+void ModuleRender::drawGameView()
+{
+	ImVec2 size = ImGui::GetWindowSize();
+
+	beginRenderTexture(size.x, size.y);
+
+	glViewport(0, 0, App->window->width, App->window->height);
+	glClearColor(sceneClearColor.x, sceneClearColor.y, sceneClearColor.z, sceneClearColor.w);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Draw program shader
+	App->modelLoader->Draw(App->programShader->defaultProgram);
+	renderGrid();
+
+	//skybox->draw();
+
+	ImGui::GetWindowDrawList()->AddImage(
+		(void *)sceneTexture,
 		ImVec2(ImGui::GetCursorScreenPos()),
 		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y),
 		ImVec2(0, 1),

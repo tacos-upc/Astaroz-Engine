@@ -6,7 +6,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
-
+#include "ComponentCamera.h"
 #include "Geometry/Frustum.h"
 #include "Math/MathAll.h"
 #include "SDL.h"
@@ -28,6 +28,8 @@ class ModuleEditorCamera :
 	public Module
 {
 public:
+	ComponentCamera* cam;
+
 	ModuleEditorCamera();
 	~ModuleEditorCamera();
 
@@ -40,9 +42,6 @@ public:
 
 	bool CleanUp();
 
-	void SetFOV(float);
-	void SetAspectRatio(float);
-	void SetPlaneDistances(float, float);
 	void SetPosition(float, float, float);
 	void updatePosition(float);
 	void updateRotation(float);
@@ -51,19 +50,12 @@ public:
 	void updateNavModes();
 	void LookAt(float3);
 
-	float4x4 viewMatrix;
-	float4x4 projectionMatrix;
-
-	Frustum frustum;
-
 private:
 
 	MovementMode navigationMode = NONE;
 	bool isFastMode = false;
 	float orbitAngleX = 0.0f;
 	float orbitAngleY = 0.0f;
-
-	void reloadMatrices();
 
 	float getCamSpeed();
 
@@ -74,8 +66,6 @@ private:
 	void moveForward(float, float speed = 0.0f);
 	void moveBackwards(float, float speed = 0.0f);
 
-	void pitch(float, float);
-	void yaw(float, float);
 	void orbitX(float, float3);
 	void orbitY(float, float3);
 

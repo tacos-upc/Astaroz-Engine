@@ -1,6 +1,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleModelLoader.h"
 #include "ModuleTime.h"
+#include "ComponentCamera.h"
 #include "Point.h"
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
@@ -19,13 +20,14 @@ ModuleEditorCamera::~ModuleEditorCamera()
 
 bool ModuleEditorCamera::Init()
 {
-	frustum.type = FrustumType::PerspectiveFrustum;
+	cam = new ComponentCamera();
+	cam->frustum->type = FrustumType::PerspectiveFrustum;
 	setDefaultPosition();
 
-	SetPlaneDistances(0.1f, 2000.0f);
-	SetFOV(math::pi / 4.0f);
+	cam->SetPlaneDistances(0.1f, 2000.0f);
+	cam->SetFOV(math::pi / 4.0f);
 
-	reloadMatrices();
+	cam->reloadMatrices();
 	return true;
 }
 
@@ -44,7 +46,7 @@ update_status ModuleEditorCamera::PreUpdate()
 	updateOrbit(dt);
 	updateFocus(dt);
 
-	reloadMatrices();
+	cam->reloadMatrices();
 
 	return UPDATE_CONTINUE;
 }
@@ -64,26 +66,9 @@ bool ModuleEditorCamera::CleanUp()
 	return true;
 }
 
-void ModuleEditorCamera::SetFOV(float fov)
-{
-	frustum.verticalFov = fov;
-	frustum.horizontalFov = 3.f * atanf(tanf(fov * 0.5f) * (SCREEN_WIDTH / SCREEN_HEIGHT));
-}
-
-void ModuleEditorCamera::SetAspectRatio(float h)
-{
-	SetFOV(h);
-}
-
-void ModuleEditorCamera::SetPlaneDistances(float nearPlane, float farPlane)
-{
-	frustum.nearPlaneDistance = nearPlane;
-	frustum.farPlaneDistance = farPlane;
-}
-
 void ModuleEditorCamera::SetPosition(float x, float y, float z)
 {
-	frustum.pos = float3(x, y, z);
+	cam->frustum->pos = float3(x, y, z);
 }
 
 void ModuleEditorCamera::updatePosition(float dt)
@@ -112,8 +97,8 @@ void ModuleEditorCamera::updateRotation(float dt)
 	if (navigationMode != FREE) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
-	if (math::Abs(mouseMotion.x) > 10.0f) yaw(mouseMotion.x, dt);
-	if (math::Abs(mouseMotion.y) > 5.0f) pitch(mouseMotion.y, dt);
+	if (math::Abs(mouseMotion.x) > 10.0f) cam->yaw(mouseMotion.x, dt);
+	if (math::Abs(mouseMotion.y) > 5.0f) cam->pitch(mouseMotion.y, dt);
 }
 
 void ModuleEditorCamera::updateOrbit(float dt)
@@ -162,17 +147,10 @@ void ModuleEditorCamera::updateNavModes()
 
 void ModuleEditorCamera::LookAt(float3 target)
 {
-	float3 dir = (target - frustum.pos).Normalized();
-	float3x3 rot = float3x3::LookAt(frustum.front, dir, frustum.up, float3::unitY);
-	frustum.front = rot.Transform(frustum.front).Normalized();
-	frustum.up = rot.Transform(frustum.up).Normalized();
-}
-
-
-void ModuleEditorCamera::reloadMatrices()
-{
-	projectionMatrix = frustum.ProjectionMatrix();
-	viewMatrix = frustum.ViewMatrix();
+	float3 dir = (target - cam->frustum->pos).Normalized();
+	float3x3 rot = float3x3::LookAt(cam->frustum->front, dir, cam->frustum->up, float3::unitY);
+	cam->frustum->front = rot.Transform(cam->frustum->front).Normalized();
+	cam->frustum->up = rot.Transform(cam->frustum->up).Normalized();
 }
 
 float ModuleEditorCamera::getCamSpeed()
@@ -182,75 +160,59 @@ float ModuleEditorCamera::getCamSpeed()
 
 void ModuleEditorCamera::moveUp(float dt)
 {
-	float3 newPosition = frustum.pos;
+	float3 newPosition = cam->frustum->pos;
 	newPosition.y = newPosition.y + ((0.05f + dt) * getCamSpeed());
-	frustum.pos = newPosition;
+	cam->frustum->pos = newPosition;
 }
 
 void ModuleEditorCamera::moveDown(float dt)
 {
-	float3 newPosition = frustum.pos;
+	float3 newPosition = cam->frustum->pos;
 	newPosition.y = newPosition.y - ((0.05f + dt) * getCamSpeed());
-	frustum.pos = newPosition;
+	cam->frustum->pos = newPosition;
 }
 
 void ModuleEditorCamera::moveLeft(float dt)
 {
-	frustum.pos -= frustum.WorldRight().ScaledToLength((0.05f + dt) * getCamSpeed());
+	cam->frustum->pos -= cam->frustum->WorldRight().ScaledToLength((0.05f + dt) * getCamSpeed());
 }
 
 void ModuleEditorCamera::moveRight(float dt)
 {
-	frustum.pos += frustum.WorldRight().ScaledToLength((0.05f + dt) * getCamSpeed());
+	cam->frustum->pos += cam->frustum->WorldRight().ScaledToLength((0.05f + dt) * getCamSpeed());
 }
 
 void ModuleEditorCamera::moveForward(float dt, float extraSpeed)
 {
-	if(frustum.type == FrustumType::PerspectiveFrustum) frustum.pos += frustum.front.ScaledToLength((dt) * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
-	else if (frustum.type == FrustumType::OrthographicFrustum)
+	if(cam->frustum->type == FrustumType::PerspectiveFrustum) cam->frustum->pos += cam->frustum->front.ScaledToLength((dt) * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
+	else if (cam->frustum->type == FrustumType::OrthographicFrustum)
 	{
-		frustum.verticalFov -= dt * getCamSpeed();
-		frustum.horizontalFov -= dt * getCamSpeed();
+		cam->frustum->verticalFov -= dt * getCamSpeed();
+		cam->frustum->horizontalFov -= dt * getCamSpeed();
 	}
 }
 
 void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
 {
-	if (frustum.type == FrustumType::PerspectiveFrustum) frustum.pos -= frustum.front.ScaledToLength((0.05f + dt) * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
-	else if (frustum.type == FrustumType::OrthographicFrustum)
+	if (cam->frustum->type == FrustumType::PerspectiveFrustum) cam->frustum->pos -= cam->frustum->front.ScaledToLength((0.05f + dt) * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
+	else if (cam->frustum->type == FrustumType::OrthographicFrustum)
 	{
-		frustum.verticalFov += dt * getCamSpeed();
-		frustum.horizontalFov += dt * getCamSpeed();
+		cam->frustum->verticalFov += dt * getCamSpeed();
+		cam->frustum->horizontalFov += dt * getCamSpeed();
 	}
-}
-
-void ModuleEditorCamera::pitch(float direction, float dt)
-{
-	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
-	float3x3 rotationMatrix = float3x3::RotateAxisAngle(frustum.WorldRight(), adjustment);
-	frustum.front = rotationMatrix.Transform(frustum.front).Normalized();
-	frustum.up = rotationMatrix.Transform(frustum.up).Normalized();
-}
-
-void ModuleEditorCamera::yaw(float direction, float dt)
-{
-	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
-	float3x3 rotationMatrix = float3x3::RotateY(adjustment);
-	frustum.front = rotationMatrix.Transform(frustum.front).Normalized();
-	frustum.up = rotationMatrix.Transform(frustum.up).Normalized();
 }
 
 void ModuleEditorCamera::orbitX(float angle, float3 target)
 {
-	float2 polar = cartesianToPolar(float2(frustum.pos.x, frustum.pos.z), float2(target.x, target.z));
+	float2 polar = cartesianToPolar(float2(cam->frustum->pos.x, cam->frustum->pos.z), float2(target.x, target.z));
 	if (polar.y >= 360.0f) polar.y = 0.0f;
 	else if (polar.y <= 0.0f) polar.y = 360.0f;
 	polar.y += angle;
 	polar.y = math::DegToRad(polar.y);
 
 	float2 newPos = polarToCartesian(polar); 
-	frustum.pos.x = newPos.x;
-	frustum.pos.z = newPos.y;
+	cam->frustum->pos.x = newPos.x;
+	cam->frustum->pos.z = newPos.y;
 
 	LookAt(target);
 
@@ -258,24 +220,24 @@ void ModuleEditorCamera::orbitX(float angle, float3 target)
 
 void ModuleEditorCamera::orbitY(float angle, float3 target)
 {
-	float2 polar = cartesianToPolar(float2(frustum.pos.z, frustum.pos.y), float2(target.z, target.y));
+	float2 polar = cartesianToPolar(float2(cam->frustum->pos.z, cam->frustum->pos.y), float2(target.z, target.y));
 	if (polar.y >= 360.0f) polar.y = 0.0f;
 	else if (polar.y <= 0.0f) polar.y = 360.0f;
 	polar.y += angle;
 	polar.y = math::DegToRad(polar.y);
 
 	float2 newPos = polarToCartesian(polar);
-	frustum.pos.z = newPos.x;
-	frustum.pos.y = newPos.y;
+	cam->frustum->pos.z = newPos.x;
+	cam->frustum->pos.y = newPos.y;
 
 	LookAt(target);
 }
 
 void ModuleEditorCamera::setDefaultPosition()
 {
-	frustum.pos = float3(0, 5.0f, 10.0f);
-	frustum.front = -float3::unitZ;
-	frustum.up = float3::unitY;
+	cam->frustum->pos = float3(0, 5.0f, 10.0f);
+	cam->frustum->front = -float3::unitZ;
+	cam->frustum->up = float3::unitY;
 }
 
 //x = distance, y = angle

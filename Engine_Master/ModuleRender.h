@@ -40,13 +40,19 @@ public:
 
 	void renderGrid();
 	void drawSceneView();
+	void drawGameView();
 	void drawSceneRenderSettings();
 
 private:
 
-	GLuint fbo; //ID of the FrameBufferObject to render to texture
-	GLuint texture; //ID of the texture to render in a window later
-	GLuint rbo; //ID of the render buffer object for depth testing
+	GLuint sceneFBO; //ID of the FrameBufferObject to render to texture
+	GLuint sceneTexture; //ID of the texture to render in a window later
+	GLuint sceneRBO; //ID of the render buffer object for depth testing
+
+	GLuint gameFBO;
+	GLuint gameTexture;
+	GLuint gameRBO;
+
 	Skybox * skybox;
 
 	//Scene render settings
@@ -54,7 +60,7 @@ private:
 	bool usesGrid = true;
 	ImVec4 gridColor;
 
-	void generateBuffers();
+	void generateBuffers(GLuint*, GLuint*, GLuint*);
 	bool beginRenderTexture(int, int);
 	bool endRenderTexture();
 };

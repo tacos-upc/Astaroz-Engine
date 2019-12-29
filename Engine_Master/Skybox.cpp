@@ -83,9 +83,9 @@ void Skybox::draw()
 	GLuint skyboxProgram = App->programShader->skyboxProgram;
 	glUseProgram(skyboxProgram);
 
-	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projection"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projection"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
-	float4x4 view = App->editorCamera->viewMatrix;
+	float4x4 view = App->editorCamera->cam->viewMatrix;
 	view.SetRow(3, float4::zero);
 	view.SetCol(3, float4::zero);
 

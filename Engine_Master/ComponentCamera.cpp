@@ -8,6 +8,7 @@
 #include <math.h>
 #include "Geometry/Plane.h"
 #include "glew.h"
+#include "IconsFontAwesome5.h"
 
 
 ComponentCamera::ComponentCamera()
@@ -16,100 +17,74 @@ ComponentCamera::ComponentCamera()
 
 	frustum = new Frustum();
 	frustum->type = FrustumType::PerspectiveFrustum;
-	frustum->pos = float3::zero;
-	frustum->front = -float3::unitZ;
-	frustum->up = float3::unitY;
-	frustum->nearPlaneDistance = 0.1f;
-	frustum->farPlaneDistance = 50.0f;
-	frustum->verticalFov = (float)M_PI / 4.0f;
-	aspect = 1.0f;
-	frustum->horizontalFov = 2.0f * atanf(tanf(frustum->verticalFov * 0.5f) *aspect);
 
-	frustum->Translate(float3(0.0f, 0.0f, 0.0f));
+	SetPlaneDistances(0.1f, 2000.0f);
+	SetFOV(math::pi / 4.0f);
 
-	proj = frustum->ProjectionMatrix();
-	view = frustum->ViewMatrix();
+	reloadMatrices();
 
-	oldPosition = float3{5.0f,2.0f,1000.0f};
+	clearColor = ImVec4(0.36f, 0.9f, 0.39, 1.f);
 }
 
 
 ComponentCamera::~ComponentCamera()
 {
+	delete frustum;
 }
 
 void ComponentCamera::Update()
 {
 	frustum->pos = myGameObject->myTransform->position;
-	view = frustum->ViewMatrix();
+	viewMatrix = frustum->ViewMatrix();
 
 	return;
 }
 
-void ComponentCamera::SetFOV()
+void ComponentCamera::SetFOV(float fov)
 {
-	frustum->horizontalFov = 2.0f * atanf(tanf(frustum->verticalFov * 0.5f) *aspect);
-	proj = frustum->ProjectionMatrix();
+	frustum->verticalFov = fov;
+	frustum->horizontalFov = 3.f * atanf(tanf(fov * 0.5f) * (SCREEN_WIDTH / SCREEN_HEIGHT));
 }
 
-void ComponentCamera::SetAspectRatio(int newHeight, int newWidth)
+void ComponentCamera::SetAspectRatio(float h)
 {
-	aspect = ((float)newWidth / newHeight);
-	frustum->horizontalFov = 2.0f * atanf(tanf(frustum->verticalFov * 0.5f) *aspect);
-
-	proj = frustum->ProjectionMatrix();
+	SetFOV(h);
 }
 
-void ComponentCamera::Rotate(const float dx, const float dy)
+void ComponentCamera::SetPlaneDistances(float nearPlane, float farPlane)
 {
-	if (dx != 0.0f)
-	{
-		float3x3 rotationY = float3x3::RotateY(dx);
-		frustum->front = rotationY.Transform(frustum->front).Normalized();
-		frustum->up = rotationY.Transform(frustum->up).Normalized();
-	}
-
-	if (dy != 0.0f)
-	{
-		float3x3 rotationX = float3x3::RotateAxisAngle(frustum->WorldRight(), dy);
-		frustum->up = rotationX.Transform(frustum->up).Normalized();
-		frustum->front = rotationX.Transform(frustum->front).Normalized();
-	}
+	frustum->nearPlaneDistance = nearPlane;
+	frustum->farPlaneDistance = farPlane;
 }
 
-void ComponentCamera::Move(float3 direction)
+void ComponentCamera::pitch(float direction, float dt)
 {
-	if (!direction.Equals(float3::zero))
-		frustum->Translate(direction);
+	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
+	float3x3 rotationMatrix = float3x3::RotateAxisAngle(frustum->WorldRight(), adjustment);
+	frustum->front = rotationMatrix.Transform(frustum->front).Normalized();
+	frustum->up = rotationMatrix.Transform(frustum->up).Normalized();
 }
 
-
-void ComponentCamera::TranslateCameraToPoint(const float3 & newPos)
+void ComponentCamera::yaw(float direction, float dt)
 {
-	frustum->pos = newPos;
-	frustum->front = -float3::unitZ;
-	frustum->up = float3::unitY;
-
-
-	view = frustum->ViewMatrix();
+	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
+	float3x3 rotationMatrix = float3x3::RotateY(adjustment);
+	frustum->front = rotationMatrix.Transform(frustum->front).Normalized();
+	frustum->up = rotationMatrix.Transform(frustum->up).Normalized();
 }
 
-void ComponentCamera::SetNearPlaneDistance(const float nearDist)
+void ComponentCamera::roll(float direction, float dt)
 {
-	frustum->nearPlaneDistance = nearDist;
+	float adjustment = CAM_ROTATION_SPEED * (dt * math::DegToRad(direction)) * -1.0f;
+	float3x3 rotationMatrix = float3x3::RotateZ(adjustment);
+	frustum->front = rotationMatrix.Transform(frustum->front).Normalized();
+	frustum->up = rotationMatrix.Transform(frustum->up).Normalized();
 }
 
-void ComponentCamera::SetFarPlaneDistance(const float farDist)
+void ComponentCamera::reloadMatrices()
 {
-	frustum->farPlaneDistance = farDist;
-}
-
-void ComponentCamera::LookAt(const float3 target)
-{
-	float3 dir = (target - frustum->pos).Normalized();
-	float3x3 rot = float3x3::LookAt(frustum->front, dir, frustum->up, float3::unitY);
-	frustum->front = rot.Transform(frustum->front).Normalized();
-	frustum->up = rot.Transform(frustum->up).Normalized();
+	projectionMatrix = frustum->ProjectionMatrix();
+	viewMatrix = frustum->ViewMatrix();
 }
 
 int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
@@ -164,32 +139,28 @@ bool ComponentCamera::SideOfPlane(float3 &point, Plane &plane)
 
 void ComponentCamera::DrawFrustum()
 {
-	if(oldPosition.x != frustum->pos.x || oldPosition.y != frustum->pos.y || oldPosition.z != frustum->pos.z)
-	{
-		oldPosition = frustum->pos;
-		//First we will get the width and height of the near plane
-		Hnear = 2 * tan(frustum->verticalFov / 2) * frustum->nearPlaneDistance;
-		Wnear = Hnear * aspect;
+	//First we will get the width and height of the near plane
+	Hnear = 2 * tan(frustum->verticalFov / 2) * frustum->nearPlaneDistance;
+	//Wnear = Hnear * aspect;
 
-		//Then we do the same for the far plane
-		Hfar = 2 * tan(frustum->verticalFov / 2) * frustum->farPlaneDistance;
-		Wfar = Hfar * aspect;
+	//Then we do the same for the far plane
+	Hfar = 2 * tan(frustum->verticalFov / 2) * frustum->farPlaneDistance;
+	//Wfar = Hfar * aspect;
 
-		//Now we get the center of the planes
-		centerNear = frustum->pos + frustum->front * frustum->nearPlaneDistance;
-		centerFar = frustum->pos + frustum->front * frustum->farPlaneDistance;
+	//Now we get the center of the planes
+	centerNear = frustum->pos + frustum->front * frustum->nearPlaneDistance;
+	centerFar = frustum->pos + frustum->front * frustum->farPlaneDistance;
 
-		//And now we get our points
-		NearTopLeft = centerNear + (frustum->up * (Hnear / 2)) - (frustum->WorldRight() * (Wnear / 2));
-		NearTopRight = centerNear + (frustum->up * (Hnear / 2)) + (frustum->WorldRight() * (Wnear / 2));
-		NearBottomLeft = centerNear - (frustum->up * (Hnear / 2)) - (frustum->WorldRight() * (Wnear / 2));
-		NearBottomRight = centerNear - (frustum->up * (Hnear / 2)) + (frustum->WorldRight() * (Wnear / 2));
+	//And now we get our points
+	NearTopLeft = centerNear + (frustum->up * (Hnear / 2)) - (frustum->WorldRight() * (Wnear / 2));
+	NearTopRight = centerNear + (frustum->up * (Hnear / 2)) + (frustum->WorldRight() * (Wnear / 2));
+	NearBottomLeft = centerNear - (frustum->up * (Hnear / 2)) - (frustum->WorldRight() * (Wnear / 2));
+	NearBottomRight = centerNear - (frustum->up * (Hnear / 2)) + (frustum->WorldRight() * (Wnear / 2));
 
-		FarTopLeft = centerFar + (frustum->up * (Hfar / 2)) - (frustum->WorldRight() * (Wfar / 2));
-		FarTopRight = centerFar + (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
-		FarBottomLeft = centerFar - (frustum->up * (Hfar / 2)) - (frustum->WorldRight() * (Wfar / 2));
-		FarBottomRight = centerFar - (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
-	}
+	FarTopLeft = centerFar + (frustum->up * (Hfar / 2)) - (frustum->WorldRight() * (Wfar / 2));
+	FarTopRight = centerFar + (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
+	FarBottomLeft = centerFar - (frustum->up * (Hfar / 2)) - (frustum->WorldRight() * (Wfar / 2));
+	FarBottomRight = centerFar - (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
 
 	GLuint gridProgram = App->programShader->gridProgram;
 	glUseProgram(gridProgram);
@@ -244,4 +215,32 @@ void ComponentCamera::DrawFrustum()
 	glUseProgram(0);
 
 	return;
+}
+
+void ComponentCamera::drawInspector()
+{
+	if (ImGui::CollapsingHeader(ICON_FA_CAMERA " Camera"))
+	{
+		const char* clearModeTags[]{ "Color", "Skybox" };
+		ImGui::Combo("Clear mode", &selectedClearMode, clearModeTags, 2);
+
+		if (selectedClearMode == COLOR) ImGui::ColorEdit3("Clear Color", &clearColor.x);
+
+		const char* projectionModeTags[]{ "Perspective", "Ortographic" };
+		ImGui::Combo("Projection", &selectedProjectionMode, projectionModeTags, 2);
+
+		if (selectedProjectionMode == PERSPECTIVE)
+		{
+			frustum->type = FrustumType::PerspectiveFrustum;
+			//SetAspectRatio(1, 1);
+
+		}
+		else if (selectedProjectionMode == ORTHOGRAPHIC)
+		{
+			frustum->type = FrustumType::OrthographicFrustum;
+		}
+
+		ImGui::Separator();
+	}
+	
 }

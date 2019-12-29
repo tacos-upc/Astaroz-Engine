@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleModelLoader.h"
 #include "ModuleProgramShader.h"
+#include "ModuleScene.h"
 #include "Skybox.h"
 #include "glew.h"
 
@@ -85,7 +86,6 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	//drawSceneView();
 	return UPDATE_CONTINUE;
 }
 
@@ -171,27 +171,27 @@ void ModuleRender::generateBuffers(GLuint* fbo, GLuint* texture, GLuint* rbo)
 }
 
 
-bool ModuleRender::beginRenderTexture(int width, int height)
+bool ModuleRender::beginRenderTexture(int width, int height, GLuint* fbo, GLuint* texture, GLuint* rbo)
 {
 	//Generate the frame buffer and bind it
-	glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 	
 	//Create the texture to fill with the created framebuffer
-	glBindTexture(GL_TEXTURE_2D, sceneTexture);
+	glBindTexture(GL_TEXTURE_2D, *texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	//Attach the texture to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneTexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *texture, 0);
 
 	//Render buffer for depth testing
-	glBindRenderbuffer(GL_RENDERBUFFER, sceneRBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, *rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 
 	//Atach the render buffer object to the default render buffer
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, sceneRBO);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);
 
 	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
@@ -209,17 +209,18 @@ void ModuleRender::drawSceneView()
 {
 	ImVec2 size = ImGui::GetWindowSize();
 
-	beginRenderTexture(size.x, size.y);
+	beginRenderTexture(size.x, size.y, &sceneFBO, &sceneTexture, &sceneRBO);
 
 	glViewport(0, 0, App->window->width, App->window->height);
 	glClearColor(sceneClearColor.x, sceneClearColor.y, sceneClearColor.z, sceneClearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//Draw program shader
-	App->modelLoader->Draw(App->programShader->defaultProgram);
-	renderGrid();
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &App->editorCamera->cam->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
-	//skybox->draw();
+	App->modelLoader->Draw(App->programShader->defaultProgram);
+
+	renderGrid();
 
 	ImGui::GetWindowDrawList()->AddImage(
 		(void *)sceneTexture,
@@ -234,22 +235,24 @@ void ModuleRender::drawSceneView()
 
 void ModuleRender::drawGameView()
 {
+	ComponentCamera* cam = (ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA);
 	ImVec2 size = ImGui::GetWindowSize();
 
-	beginRenderTexture(size.x, size.y);
+	beginRenderTexture(size.x, size.y, &gameFBO, &gameTexture, &gameRBO);
 
 	glViewport(0, 0, App->window->width, App->window->height);
-	glClearColor(sceneClearColor.x, sceneClearColor.y, sceneClearColor.z, sceneClearColor.w);
+	glClearColor(cam->clearColor.x, cam->clearColor.y, cam->clearColor.z, cam->clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//Draw program shader
-	App->modelLoader->Draw(App->programShader->defaultProgram);
-	renderGrid();
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &cam->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &cam->projectionMatrix[0][0]);
 
-	//skybox->draw();
+	App->modelLoader->Draw(App->programShader->defaultProgram);
+
+	if(cam->selectedClearMode == SKYBOX) skybox->draw();
 
 	ImGui::GetWindowDrawList()->AddImage(
-		(void *)sceneTexture,
+		(void *)gameTexture,
 		ImVec2(ImGui::GetCursorScreenPos()),
 		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y),
 		ImVec2(0, 1),

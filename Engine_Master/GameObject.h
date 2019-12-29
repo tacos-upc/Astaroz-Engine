@@ -30,12 +30,12 @@ public:
 
 	//Component Creation
 	Component* CreateComponent(ComponentType type);
+	
+	Component* GetComponent(ComponentType);
 
 	//Hierarchy
 	void DrawHierarchy(GameObject* selected);
 
-	//Draw Main Camera
-	void DrawCamera();
 
 	//Update
 	void UpdateTransform();

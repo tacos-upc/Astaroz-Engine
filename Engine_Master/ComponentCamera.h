@@ -44,6 +44,8 @@ public:
 	Frustum* frustum;
 	float4x4 projectionMatrix = float4x4::zero;
 	float4x4 viewMatrix = float4x4::zero;
+	ImVec4 clearColor;
+	int selectedClearMode = 0;
 
 private:
 	//Planes and points
@@ -62,9 +64,7 @@ private:
 	float3 FarBottomLeft;
 	float3 FarBottomRight;
 
-	int selectedClearMode = 0;
 	int selectedProjectionMode = 0;
-	ImVec4 clearColor;
 };
 
 #endif __ComponentCamera_H__

@@ -61,7 +61,7 @@ private:
 	ImVec4 gridColor;
 
 	void generateBuffers(GLuint*, GLuint*, GLuint*);
-	bool beginRenderTexture(int, int);
+	bool beginRenderTexture(int, int, GLuint*, GLuint*, GLuint*);
 	bool endRenderTexture();
 };
 

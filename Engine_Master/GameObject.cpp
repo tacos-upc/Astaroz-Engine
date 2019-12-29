@@ -135,6 +135,18 @@ Component * GameObject::CreateComponent(ComponentType type)
 	return component;
 }
 
+Component* GameObject::GetComponent(ComponentType type)
+{
+	Component* found = nullptr;
+
+	for (auto comp : components)
+	{
+		if (comp->myType == type) found = comp;
+	}
+	
+	return found;
+}
+
 
 void GameObject::DrawHierarchy(GameObject * selected)
 {
@@ -243,18 +255,6 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		}
 	}
 	ImGui::PopID();
-}
-
-void GameObject::DrawCamera()
-{
-	for(auto comp : components)
-	{
-		if(comp->myType == CAMERA)
-		{
-			ComponentCamera* mainCamera = (ComponentCamera*)comp;
-			mainCamera->DrawFrustum();
-		}
-	}
 }
 
 void GameObject::UpdateTransform()

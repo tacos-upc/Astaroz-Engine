@@ -83,16 +83,13 @@ void Skybox::draw()
 	GLuint skyboxProgram = App->programShader->skyboxProgram;
 	glUseProgram(skyboxProgram);
 
-	// ... set view and projection matrix
-	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram,
-		"projection"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projection"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
 
 	float4x4 view = App->editorCamera->viewMatrix;
 	view.SetRow(3, float4::zero);
 	view.SetCol(3, float4::zero);
 
-	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram,
-		"view"), 1, GL_TRUE, &view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "view"), 1, GL_TRUE, &view[0][0]);
 
 	glBindVertexArray(vao);
 	glActiveTexture(GL_TEXTURE0);
@@ -100,6 +97,7 @@ void Skybox::draw()
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 
+	//reset the functions
 	glDepthFunc(GL_LESS);
 	glUseProgram(0);
 }

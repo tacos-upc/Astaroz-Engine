@@ -120,7 +120,7 @@ void ModuleRender::renderGrid()
 
 	//Grid
 	glLineWidth(1.0f);
-	float d = 200.0f;
+	float d = 35.0f;
 	glBegin(GL_LINES);
 	for (float i = -d; i <= d; i += 1.0f)
 	{

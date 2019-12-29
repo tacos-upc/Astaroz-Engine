@@ -21,7 +21,7 @@ enum MovementMode
 	NONE,
 	FREE,
 	ORBIT,
-
+	COUNT
 };
 
 class ModuleEditorCamera :

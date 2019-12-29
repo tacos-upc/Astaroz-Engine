@@ -63,7 +63,6 @@ private:
 	float orbitAngleX = 0.0f;
 	float orbitAngleY = 0.0f;
 
-
 	void reloadMatrices();
 
 	float getCamSpeed();

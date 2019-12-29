@@ -44,6 +44,8 @@ public:
 	//ID are unique
 	//TODO: ID system
 	unsigned int ID;
+	std::string name;
+
 
 	//All GameObjects have a transform
 	ComponentTransform* myTransform = nullptr;
@@ -76,11 +78,9 @@ public:
 	AABB* boundingBox = nullptr;
 	AABB* globalBoundingBox = nullptr;
 
-	void DrawInspector(bool &showInspector);
+	void DrawInspector();
 
 private:
-	std::string name;
-
 	void CheckDragAndDrop(GameObject* go);
 
 

@@ -164,20 +164,6 @@ bool ComponentCamera::SideOfPlane(float3 &point, Plane &plane)
 
 void ComponentCamera::DrawFrustum()
 {
-
-	//Draw Grid
-	//unsigned int progGrid = App->programShader->gridProg;
-	//glUseProgram(progGrid);
-	//
-	//float4x4 model = float4x4::identity.LookAt(-float3::unitZ, frustum->front, frustum->up, float3::unitY);
-	//
-	//glUniformMatrix4fv(glGetUniformLocation(progGrid, "model"), 1, GL_TRUE, &model[0][0]);
-	//
-	////Temporary as std140 doesnt work
-	//glUniformMatrix4fv(glGetUniformLocation(progGrid, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
-	//glUniformMatrix4fv(glGetUniformLocation(progGrid, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
-
-
 	if(oldPosition.x != frustum->pos.x || oldPosition.y != frustum->pos.y || oldPosition.z != frustum->pos.z)
 	{
 		oldPosition = frustum->pos;
@@ -205,6 +191,8 @@ void ComponentCamera::DrawFrustum()
 		FarBottomRight = centerFar - (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
 	}
 
+	GLuint gridProgram = App->programShader->gridProgram;
+	glUseProgram(gridProgram);
 
 	//Draw Lines
 	glLineWidth(2.0f);

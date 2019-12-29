@@ -6,6 +6,9 @@
 #include "Math/float3.h"
 #include "Math/Quat.h"
 #include "Math/float4x4.h"
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
 
 class ComponentTransform : public Component
 {
@@ -18,6 +21,8 @@ public:
 	void UpdateMatrices();
 	void SetGlobalMatrix(float4x4 &parentGlobal);
 	void SetLocalMatrix(float4x4 &newParentGlobalMatrix);
+
+	void drawInspector() override;
 
 	//Variables
 	//Local Transform

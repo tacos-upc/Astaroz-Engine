@@ -4,6 +4,10 @@
 #include "IL/il.h"
 #include "IconsFontAwesome5.h"
 #include "IconsFontAwesome5Brands.h"
+#include "IconsFontAwesome5.h"
+#include "ModuleTime.h"
+#include "ModuleScene.h"
+#include "ModuleEditorCamera.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -73,6 +77,10 @@ update_status ModuleEditor::PreUpdate()
 update_status ModuleEditor::Update()
 {
 	drawMainMenu();
+	drawHierarchyPanel();
+	drawCameraPanel();
+	drawInspectorPanel(); 
+	drawLogPanel();
 
 	return UPDATE_CONTINUE;
 }
@@ -139,16 +147,6 @@ void ModuleEditor::drawMainMenu()
 			ImGui::EndMenu();
 		};
 		ImGui::EndMainMenuBar();
-	}
-	//Log flag
-	if (show_log_window)
-	{
-		ImGui::Begin("Logger Console", &show_log_window);
-		ImGui::TextUnformatted(myBuffer.begin());
-		if (scrollToBottom)
-			ImGui::SetScrollHere(1.0f);
-		scrollToBottom = false;
-		ImGui::End();
 	}
 	//About flag
 	if (show_about_window)
@@ -233,6 +231,110 @@ void ModuleEditor::drawMainMenu()
 			ImGui::TreePop();
 			ImGui::Separator();
 		}
+		ImGui::End();
+	}
+}
+
+void ModuleEditor::drawHierarchyPanel()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height * 0.65f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
+	if (ImGui::Begin("Left panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+	{
+		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
+		{
+			//Settings tab
+			if (ImGui::BeginTabItem(ICON_FA_COG " Engine Settings"))
+			{
+				if (ImGui::CollapsingHeader(ICON_FA_CLOCK " Time"))
+				{
+					App->time->drawTimeData();
+					ImGui::Separator();
+				}
+				if (ImGui::CollapsingHeader(ICON_FA_CAMERA_RETRO " Scene"))
+				{
+					App->renderer->drawSceneRenderSettings();
+					ImGui::Separator();
+				}
+				ImGui::EndTabItem();
+			}
+			
+			//HIierarchy tab
+			if (ImGui::BeginTabItem(ICON_FA_SITEMAP " Hierarchy"))
+			{
+				App->scene->drawHierarchy();
+
+				ImGui::EndTabItem();
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+	}
+}
+
+void ModuleEditor::drawCameraPanel()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.6f, App->window->height * 0.65f));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
+	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+	{
+		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
+		{
+			//Settings tab
+			if (ImGui::BeginTabItem(ICON_FA_FEATHER_ALT " Scene"))
+			{
+				App->renderer->drawSceneView();
+				ImGui::EndTabItem();
+			}
+
+			//HIierarchy tab
+			if (ImGui::BeginTabItem(ICON_FA_GAMEPAD " Game"))
+			{
+				App->renderer->drawSceneView();
+				ImGui::EndTabItem();
+			}
+			ImGui::EndTabBar();
+		}
+
+		ImGui::End();
+	}
+}
+
+void ModuleEditor::drawInspectorPanel()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 50.0f));
+	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+	{
+		GameObject* obj = App->scene->selectedByHierarchy;
+		if (obj != nullptr)
+		{
+			obj->DrawInspector();
+
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
+			ImGui::Separator();
+			ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.2f);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
+			if (ImGui::Button("Add Component", ImVec2(ImGui::GetWindowSize().x * 0.6f, 25.0f)))
+			{
+
+			}
+		}
+		ImGui::End();
+	}
+}
+
+void ModuleEditor::drawLogPanel()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.8f, App->window->height * 0.3f));
+	ImGui::SetNextWindowPos(ImVec2(0, 50.0f + App->window->height * 0.65f));
+
+	if (ImGui::Begin(ICON_FA_TAPE " Logs", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+	{
+		ImGui::TextUnformatted(myBuffer.begin());
+		if (scrollToBottom)
+			ImGui::SetScrollHere(1.0f);
+		scrollToBottom = false;
 		ImGui::End();
 	}
 }

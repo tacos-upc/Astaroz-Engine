@@ -54,7 +54,7 @@ bool ModuleTime::Init()
 update_status ModuleTime::Update()
 {
 	drawTimeControls();
-	drawTimeData();
+	//drawTimeData();
 
 	return UPDATE_CONTINUE;
 }
@@ -74,7 +74,7 @@ void ModuleTime::pause()
 void ModuleTime::tick()
 {
 	if (state != PAUSE) return;
-	state = ONE_STEP;
+	state = TICK;
 }
 
 
@@ -102,11 +102,11 @@ float ModuleTime::getGameTimeSinceStartup()
 void ModuleTime::frameStart()
 {
 	realTimeBeginTimeStamp = SDL_GetTicks();
-	if (state == PLAY || state == ONE_STEP)
+	if (state == PLAY || state == TICK)
 	{
 		gameTimeBeginTimeStamp = SDL_GetTicks();
 
-		if (state == ONE_STEP) state = PAUSE;
+		if (state == TICK) state = PAUSE;
 	}
 }
 
@@ -114,21 +114,28 @@ void ModuleTime::frameEnd()
 {
 	realTimeEndTimeStamp = SDL_GetTicks();
 
-	framesSinceStartUp = SDL_GetTicks();
-	timeSinceStartUp = framesSinceStartUp / 1000.0f;
+	framesSinceStartUp++;
+	timeSinceStartUp = SDL_GetTicks() / 1000.0f;
 
 	realDeltaTime = (realTimeEndTimeStamp - realTimeBeginTimeStamp) / 1000.0f;
 
 	if (state == PLAY)
 	{
+		if (framesSinceGameStart <= 0)
+		{
+			state = TICK;
+			frameEnd();
+			state = PLAY;
+			return;
+		}
 		gameTimeEndTimeStamp = SDL_GetTicks();
-		framesSinceGameStart = SDL_GetTicks();
+		framesSinceGameStart++;
 		
 		gameDeltaTime = ((gameTimeEndTimeStamp - gameTimeBeginTimeStamp) / 1000.0f) * timeScale;
 		
 		timeSinceGameStart += gameDeltaTime;
 	}
-	else if (state == ONE_STEP)
+	else if (state == TICK)
 	{
 		framesSinceGameStart++;
 		
@@ -165,28 +172,24 @@ void ModuleTime::drawTimeControls()
 }
 
 void ModuleTime::drawTimeData()
-{
-	if (ImGui::Begin("Time Data"))
-	{
-		ImGui::Text("Game Status: %s", stateToString());
+{	
+	ImGui::Text("Game Status: %s", stateToString());
 
-		ImGui::Separator();
+	ImGui::Separator();
 
-		ImGui::Text("Time since Startup: %.2fs", timeSinceStartUp);
-		ImGui::Text("Frames since Startup: %.0f frames", framesSinceStartUp);
-		ImGui::Text("Real Delta time: %.4fs", realDeltaTime);
+	ImGui::Text("Time since Startup: %.2fs", timeSinceStartUp);
+	ImGui::Text("Frames since Startup: %.0f frames", framesSinceStartUp);
+	ImGui::Text("Real Delta time: %.4fs", realDeltaTime);
 
-		ImGui::Separator();
+	ImGui::Separator();
 
-		ImGui::Text("Game Time since startup: %.2fs", timeSinceGameStart);
-		ImGui::Text("Game Frames since startup: %.0f frames", framesSinceGameStart);
-		ImGui::Text("Game Delta time: %.4fs", gameDeltaTime);
+	ImGui::Text("Game Time since startup: %.2fs", timeSinceGameStart);
+	ImGui::Text("Game Frames since startup: %.0f frames", framesSinceGameStart);
+	ImGui::Text("Game Delta time: %.4fs", gameDeltaTime);
 
-		ImGui::Separator();
+	ImGui::Separator();
 
-		ImGui::SliderFloat("Time Scale", &timeScale, MIN_TIMESCALE, MAX_TIMESCALE, "%.2f", 1.0f);
-	}
-	ImGui::End();
+	ImGui::SliderFloat("Time Scale", &timeScale, MIN_TIMESCALE, MAX_TIMESCALE, "%.2f", 1.0f);	
 }
 
 const char* ModuleTime::stateToString()
@@ -200,7 +203,7 @@ const char* ModuleTime::stateToString()
 		case PAUSE:
 			stringState = "Pause";
 			break;
-		case ONE_STEP:
+		case TICK:
 			stringState = "One Tick";
 			break;
 	}

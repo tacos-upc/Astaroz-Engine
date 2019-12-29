@@ -2,6 +2,9 @@
 #include "ModuleModelLoader.h"
 #include "ModuleTime.h"
 #include "Point.h"
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
 
 
 ModuleEditorCamera::ModuleEditorCamera()
@@ -11,6 +14,7 @@ ModuleEditorCamera::ModuleEditorCamera()
 
 ModuleEditorCamera::~ModuleEditorCamera()
 {
+
 }
 
 bool ModuleEditorCamera::Init()
@@ -164,6 +168,7 @@ void ModuleEditorCamera::LookAt(float3 target)
 	frustum.up = rot.Transform(frustum.up).Normalized();
 }
 
+
 void ModuleEditorCamera::reloadMatrices()
 {
 	projectionMatrix = frustum.ProjectionMatrix();
@@ -201,12 +206,22 @@ void ModuleEditorCamera::moveRight(float dt)
 
 void ModuleEditorCamera::moveForward(float dt, float extraSpeed)
 {
-	frustum.pos += frustum.front.ScaledToLength((0.05f + dt) * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
+	if(frustum.type == FrustumType::PerspectiveFrustum) frustum.pos += frustum.front.ScaledToLength((dt) * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
+	else if (frustum.type == FrustumType::OrthographicFrustum)
+	{
+		frustum.verticalFov -= dt * getCamSpeed();
+		frustum.horizontalFov -= dt * getCamSpeed();
+	}
 }
 
 void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
 {
-	frustum.pos -= frustum.front.ScaledToLength((0.05f + dt) * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
+	if (frustum.type == FrustumType::PerspectiveFrustum) frustum.pos -= frustum.front.ScaledToLength((0.05f + dt) * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
+	else if (frustum.type == FrustumType::OrthographicFrustum)
+	{
+		frustum.verticalFov += dt * getCamSpeed();
+		frustum.horizontalFov += dt * getCamSpeed();
+	}
 }
 
 void ModuleEditorCamera::pitch(float direction, float dt)

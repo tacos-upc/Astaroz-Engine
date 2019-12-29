@@ -36,6 +36,10 @@ public:
 private:
 	void loadIcons();
 	void drawMainMenu();
+	void drawHierarchyPanel();
+	void drawCameraPanel();
+	void drawInspectorPanel();
+	void drawLogPanel();
 };
 
 #endif __ModuleEditor_H__

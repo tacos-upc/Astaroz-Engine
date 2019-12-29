@@ -11,7 +11,7 @@
 #define MIN_TIMESCALE 0.0f
 #define MAX_TIMESCALE 5.0f
 
-enum TimeState { PLAY, PAUSE, ONE_STEP };
+enum TimeState { PLAY, PAUSE, TICK };
 
 
 
@@ -41,6 +41,9 @@ public:
 
 	bool Cleanup();
 
+	void drawTimeData();
+
+
 private:
 	float timeScale;
 	
@@ -61,7 +64,6 @@ private:
 	TimeState state;
 
 	void drawTimeControls();
-	void drawTimeData();
 	const char* stateToString();
 };
 

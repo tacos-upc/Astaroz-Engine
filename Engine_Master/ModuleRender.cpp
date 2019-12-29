@@ -40,7 +40,6 @@ bool ModuleRender::Init()
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glClearDepth(1.0f);
-	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
@@ -55,6 +54,9 @@ bool ModuleRender::Init()
 	generateBuffers();
 
 	skybox = new Skybox("textures/skybox/sides.png", "textures/skybox/sides.png", "textures/skybox/top.png", "textures/skybox/bottom.png", "textures/skybox/sides.png", "textures/skybox/sides.png");
+	
+	sceneClearColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+	gridColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
 
 	return true;
 }
@@ -73,6 +75,7 @@ update_status ModuleRender::PreUpdate()
 	int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);
 	glViewport(0, 0, w, h);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UPDATE_CONTINUE;
@@ -81,7 +84,7 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	drawCameraWindow();
+	//drawSceneView();
 	return UPDATE_CONTINUE;
 }
 
@@ -106,70 +109,11 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-int ModuleRender::generateFBO(unsigned int width, unsigned int height)
-{
-	RenderTexture renderTexture;
-	renderTexture.frameBuffer = 0;
-
-	glGenFramebuffers(1, &renderTexture.frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, renderTexture.frameBuffer);
-
-
-	// The texture we're going to render to
-	glGenTextures(1, &renderTexture.rgbBuffer);
-
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, renderTexture.rgbBuffer);
-
-	// Give an empty image to OpenGL ( the last "0" )
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-	// Poor filtering. Needed !
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-
-	// The depth buffer
-	glGenRenderbuffers(1, &renderTexture.depthBuffer);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, renderTexture.depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTexture.depthBuffer);
-
-
-	// Set "renderedTexture" as our colour attachement #0
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderTexture.rgbBuffer, 0);
-
-	// Set the list of draw buffers.
-	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
-
-
-	// Check that framebuffer is ok
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
-	{
-		renderTextures.push_back(renderTexture);
-		return renderTextures.size() -1;
-	}
-	return -1;
-}
-
-void ModuleRender::renderToTexture(unsigned int  width, unsigned int height)
-{
-	int renderTextureIndex = generateFBO(width, height);
-	
-	std::list<RenderTexture>::iterator it = renderTextures.begin();
-	std::advance(it, renderTextureIndex);
-	
-	// Render to our framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, (*it).frameBuffer);
-	glViewport(0, 0, width, height); // Render on the whole framebuffer, complete from the lower left corner to the upper right
-
-	//layout(location = 0) out vec3 color;
-}
 
 void ModuleRender::renderGrid()
 {
+	if (!usesGrid) return;
+
 	GLuint gridProgram = App->programShader->gridProgram;
 	glUseProgram(gridProgram);
 
@@ -178,15 +122,13 @@ void ModuleRender::renderGrid()
 	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &App->editorCamera->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &App->editorCamera->projectionMatrix[0][0]);
 
-	
-
 	//Grid
 	glLineWidth(1.0f);
 	float d = 35.0f;
 	glBegin(GL_LINES);
 	for (float i = -d; i <= d; i += 1.0f)
 	{
-		glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
+		glColor4f(gridColor.x, gridColor.y, gridColor.z, gridColor.w);
 		glVertex3f(i, 0.0f, -d);
 		glVertex3f(i, 0.0f, d);
 		glVertex3f(-d, 0.0f, i);
@@ -262,24 +204,21 @@ bool ModuleRender::endRenderTexture()
 	return true;
 }
 
-void ModuleRender::drawCameraWindow()
+void ModuleRender::drawSceneView()
 {
-	bool active = false;
-	ImGui::Begin("Scene", &active, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
 	ImVec2 size = ImGui::GetWindowSize();
-	//App->editorCamera->SetAspectRatio((int)size.y);
 
 	beginRenderTexture(size.x, size.y);
 
 	glViewport(0, 0, App->window->width, App->window->height);
+	glClearColor(sceneClearColor.x, sceneClearColor.y, sceneClearColor.z, sceneClearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Draw program shader
 	App->modelLoader->Draw(App->programShader->defaultProgram);
 	renderGrid();
 
-	skybox->draw();
+	//skybox->draw();
 
 	ImGui::GetWindowDrawList()->AddImage(
 		(void *)texture,
@@ -289,8 +228,15 @@ void ModuleRender::drawCameraWindow()
 		ImVec2(1, 0)
 	);
 
-
-	ImGui::End();
-
 	endRenderTexture();
+}
+
+void ModuleRender::drawSceneRenderSettings()
+{
+	ImGui::ColorEdit3("Clear Color", &sceneClearColor.x);
+	
+	ImGui::Separator();
+
+	ImGui::Checkbox("Uses grid?", &usesGrid);
+	if (usesGrid) ImGui::ColorEdit3("Grid Color", &gridColor.x);
 }

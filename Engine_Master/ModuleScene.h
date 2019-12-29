@@ -29,7 +29,7 @@ public:
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const char* name, GameObject* parent);
 	void LoadModel(const char* path, GameObject* parent);
-	void CreateEmpy(GameObject* parent);
+	void CreateEmpty(GameObject* parent);
 	void CreateGameObjectBakerHouse(GameObject* parent);
 	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
 	void RemoveGameObject(GameObject* go);
@@ -41,10 +41,12 @@ public:
 	bool showInspector = true;
 	GameObject* mainCamera = nullptr;
 
+	void drawHierarchy();
+	GameObject* selectedByHierarchy = nullptr;
+
 private:
 	//private variables
 	GameObject* root = nullptr;
-	GameObject* selectedByHierarchy = nullptr;
 	unsigned int nGameObjects = 0;
 	unsigned int numberOfBakerHouse = 0;
 	unsigned int numberOfSphere = 0;

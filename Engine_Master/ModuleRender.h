@@ -6,6 +6,9 @@
 #include "Skybox.h"
 #include "SDL.h"
 #include <list>
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
 
 
 struct SDL_Texture;
@@ -31,15 +34,13 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	//Returns the array index 
-	int generateFBO(unsigned int, unsigned int);
-	void renderToTexture(unsigned int, unsigned int);
-
 public:
 	SDL_GLContext glcontext;
 	std::list<RenderTexture> renderTextures;
 
 	void renderGrid();
+	void drawSceneView();
+	void drawSceneRenderSettings();
 
 private:
 
@@ -48,11 +49,14 @@ private:
 	GLuint rbo; //ID of the render buffer object for depth testing
 	Skybox * skybox;
 
+	//Scene render settings
+	ImVec4 sceneClearColor;
+	bool usesGrid = true;
+	ImVec4 gridColor;
+
 	void generateBuffers();
 	bool beginRenderTexture(int, int);
 	bool endRenderTexture();
-
-	void drawCameraWindow();
 };
 
 #endif __ModuleRender_H__

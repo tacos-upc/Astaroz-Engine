@@ -49,6 +49,8 @@ public:
 		return true;
 	}
 
+	virtual void drawInspector() { return; }
+
 	
 
 	//GameObject Parent: 
@@ -56,6 +58,7 @@ public:
 	GameObject* myGameObject = nullptr;
 	ComponentType myType = TRANSFORM;
 	bool isActive = true;
+	bool allowMany;
 	std::string name = "NewComponent";
 };
 

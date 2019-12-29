@@ -1,6 +1,7 @@
 #include "ComponentTransform.h"
 #include "Math/MathFunc.h"
 #include "GameObject.h"
+#include "IconsFontAwesome5.h"
 
 ComponentTransform::ComponentTransform(GameObject* gameObject)
 {
@@ -41,6 +42,18 @@ void ComponentTransform::SetLocalMatrix(float4x4 &newParentGlobalMatrix)
 	localModelMatrix = newParentGlobalMatrix.Inverted() *  globalModelMatrix;
 	localModelMatrix.Decompose(position, rotation, scale);
 	QuatToEuler();
+}
+
+void ComponentTransform::drawInspector()
+{
+	if (ImGui::CollapsingHeader(ICON_FA_HAND_SCISSORS " Transform"))
+	{
+		ImGui::InputFloat3("Position", &position.x);
+		ImGui::InputFloat3("Rotation", &rotation.x);
+		ImGui::InputFloat3("Scale", &scale.x);
+
+		ImGui::Separator();
+	}
 }
 
 

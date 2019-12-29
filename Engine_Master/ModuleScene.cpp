@@ -8,6 +8,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "Math/float4.h"
+#include "IconsFontAwesome5.h"
 
 
 ModuleScene::ModuleScene()
@@ -44,6 +45,8 @@ update_status ModuleScene::Update()
 		gameObject->Update();
 	}
 	
+	drawHierarchy();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -117,7 +120,7 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 	return;
 }
 
-void ModuleScene::CreateEmpy(GameObject* parent)
+void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* empty = CreateGameObject(defaultName.c_str(), parent);
@@ -240,4 +243,12 @@ void ModuleScene::RemoveGameObject(GameObject * go)
 void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 {
 	selectedByHierarchy = selected;
+}
+
+void ModuleScene::drawHierarchy()
+{
+	for (unsigned int i = 0; i < root->children.size(); ++i)
+	{
+		root->children[i]->DrawHierarchy(root->children[i]);
+	}
 }

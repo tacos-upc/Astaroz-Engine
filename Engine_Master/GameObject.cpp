@@ -11,6 +11,8 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "SDL.h"
+#include "IconsFontAwesome5.h"
+
 
 GameObject::GameObject()
 {
@@ -136,8 +138,7 @@ Component * GameObject::CreateComponent(ComponentType type)
 
 void GameObject::DrawHierarchy(GameObject * selected)
 {
-	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen
-		| ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
 
 	ImGui::PushID(this);
 	if (children.empty())
@@ -190,7 +191,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		if(ImGui::Selectable("Create Empty"))
 		{
 			//Create empty gameobject
-			App->scene->CreateEmpy(this);
+			App->scene->CreateEmpty(this);
 		}
 
 		if (ImGui::BeginMenu("Create 3D Object"))
@@ -431,10 +432,8 @@ void GameObject::DrawAABB() const
 	glEnd();
 }
 
-void GameObject::DrawInspector(bool &showInspector)
+void GameObject::DrawInspector()
 {
-	ImGui::Begin("Inspector", &showInspector);
-
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();
 	
 	char* go_name = new char[64];
@@ -450,17 +449,23 @@ void GameObject::DrawInspector(bool &showInspector)
 	ImGui::Checkbox("Static", &isStatic);
 
 
-	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::Text("Position");
-		ImGui::DragFloat3("Position", (float *)&myTransform->position, 0.1f);
-		ImGui::Text("Rotation");
-		ImGui::DragFloat3("Rotation", (float *)&myTransform->eulerRotation, 1.0f, -360.0f, 360.0f);
-		ImGui::Text("Scale");
-		ImGui::DragFloat3("Scale", (float *)&myTransform->scale, 0.01f, 0.01f, 1000.0f);
+	//if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	//{
+	//	ImGui::Text("Position");
+	//	ImGui::DragFloat3("Position", (float *)&myTransform->position, 0.1f);
+	//	ImGui::Text("Rotation");
+	//	ImGui::DragFloat3("Rotation", (float *)&myTransform->eulerRotation, 1.0f, -360.0f, 360.0f);
+	//	ImGui::Text("Scale");
+	//	ImGui::DragFloat3("Scale", (float *)&myTransform->scale, 0.01f, 0.01f, 1000.0f);
+	//
+	//}
 
+	//Components
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		components[i]->drawInspector();
 	}
-	ImGui::End();
+
 	//Change EulerRotation to Quat
 	myTransform->EulerToQuat();
 }

@@ -82,9 +82,5 @@ void ModuleWindow::ResizeWindow(const unsigned int width, const unsigned int hei
 {
 	this->width = width;
 	this->height = height;
-}
-
-float ModuleWindow::getAspectRatio()
-{
-	return width / height;
+	App->editorCamera->setAspectFrustum();
 }

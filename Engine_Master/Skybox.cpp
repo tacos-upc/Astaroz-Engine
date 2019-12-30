@@ -77,7 +77,7 @@ GLuint Skybox::Load()
 	return texture;
 }
 
-void Skybox::draw()
+void Skybox::draw(ComponentCamera* camera)
 {
 	glDepthFunc(GL_LEQUAL);
 	GLuint skyboxProgram = App->programShader->skyboxProgram;
@@ -85,7 +85,7 @@ void Skybox::draw()
 
 	glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "projection"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
-	float4x4 view = App->editorCamera->cam->viewMatrix;
+	float4x4 view = camera->viewMatrix;
 	view.SetRow(3, float4::zero);
 	view.SetCol(3, float4::zero);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Globals.h"
+#include "ComponentCamera.h"
 #include <list>
 
 class Skybox
@@ -17,7 +18,7 @@ public:
 	~Skybox();
 
 	GLuint Load();
-	void draw();
+	void draw(ComponentCamera* camera);
 
 private:
 

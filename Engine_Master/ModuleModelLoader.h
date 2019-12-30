@@ -24,7 +24,7 @@ public:
 	bool CleanUp();
 
 	void LoadModel(const char*);
-	void Draw(unsigned int program);
+	void DrawAll(unsigned int program);
 	void processNode(aiNode*, const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);

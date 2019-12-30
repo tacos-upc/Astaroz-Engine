@@ -43,6 +43,7 @@ public:
 	void drawSceneView();
 	void drawGameView();
 	void drawSceneRenderSettings();
+	void drawGameObjects(GLuint);
 
 private:
 

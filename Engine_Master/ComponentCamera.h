@@ -49,22 +49,6 @@ public:
 	int selectedClearMode = 0;
 
 private:
-	//Planes and points
-	//float Hnear;
-	//float Wnear;
-	//float Hfar;
-	//float Wfar;
-	//float3 centerNear;
-	//float3 centerFar;
-	//float3 NearTopLeft;
-	//float3 NearTopRight;
-	//float3 NearBottomLeft;
-	//float3 NearBottomRight;
-	//float3 FarTopLeft;
-	//float3 FarTopRight;
-	//float3 FarBottomLeft;
-	//float3 FarBottomRight;
-
 	int selectedProjectionMode = 0;
 };
 

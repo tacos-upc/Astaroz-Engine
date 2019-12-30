@@ -72,7 +72,8 @@ public:
 		float        radius = 0.0f;
 	};
 
-	float ambient = 0.0f;
+	math::float3 light_pos = math::float3(1.0f, 1.0f, 1.0f);
+	float ambient = 0.3f;
 	Sphere bsphere;
 };
 

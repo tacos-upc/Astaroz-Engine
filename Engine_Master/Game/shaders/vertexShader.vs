@@ -1,21 +1,21 @@
+
 #version 330
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 
-out vec2 TexCoords;
-out vec3 aNormal;
-out vec3 aPos;
-
 uniform mat4 proj;
 uniform mat4 view;
 uniform mat4 model;
 
+out vec2 uv0;
+out vec3 normal;
+out vec3 position;
+
 void main()
 {
-	gl_Position = proj*view*model*vec4(aPos, 1.0);
-	aPos= (model*vec4(vertex_normal, 1.0)).xyz;
-	TexCoords = aTexCoords;
-	aNormal      = (model*vec4(vertex_normal, 0.0)).xyz;
-	
+    position    = (model*vec4(aPos, 1.0)).xyz;
+    normal      = (model*vec4(aNormal, 0.0)).xyz;
+    gl_Position = proj*view*vec4(position, 1.0);
+    uv0 = aTexCoords;
 }

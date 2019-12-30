@@ -38,10 +38,16 @@ bool ModuleModelLoader::Init()
 	//LoadModel(MODEL_BAKER_PATH);
 
 	LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	LoadSphere("sphere2", math::float3(8.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	LoadSphere("sphere3", math::float3(11.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	materials.back().k_specular = 0.9f;
+	materials.back().shininess = 64.0f;
+	materials.back().k_diffuse = 0.5f;
+	materials.back().k_ambient = 1.0f;
 
+	LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	materials.back().k_specular = 0.9f;
+	materials.back().shininess = 20.0f;
+	materials.back().k_diffuse = 0.5f;
+	materials.back().k_ambient = 1.0f;
 
 	return true;
 }

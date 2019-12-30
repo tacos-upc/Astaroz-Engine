@@ -22,7 +22,7 @@ ComponentCamera::ComponentCamera()
 	frustum = new Frustum();
 	frustum->type = FrustumType::PerspectiveFrustum;
 
-	SetPlaneDistances(0.1f, 2000.0f);
+	SetPlaneDistances(0.1f, 50.0f);
 	SetFOV(math::pi / 4.0f);
 
 	frustum->front = -float3::unitZ;
@@ -148,8 +148,7 @@ bool ComponentCamera::SideOfPlane(float3 &point, Plane &plane)
 
 void ComponentCamera::DrawFrustum()
 {
-	float4x4 projectionView = viewMatrix * projectionMatrix;
-	dd::frustum(projectionView.Inverted(), float3(0.f, 0.02f, 0.9f));
+	//dd::frustum(frustum->ViewProjMatrix().Inverted(), float3(0.f, 0.02f, 0.7f));
 }
 
 void ComponentCamera::drawInspector()

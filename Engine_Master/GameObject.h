@@ -73,7 +73,7 @@ public:
 
 	//Compute
 	void ComputeAABB();
-	void DrawAABB() const;
+	void DrawAABB();
 
 	AABB* boundingBox = nullptr;
 	AABB* globalBoundingBox = nullptr;

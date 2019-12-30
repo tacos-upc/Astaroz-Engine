@@ -252,3 +252,11 @@ void ModuleScene::drawHierarchy()
 		root->children[i]->DrawHierarchy(root->children[i]);
 	}
 }
+
+void ModuleScene::drawAllBoundingBoxes()
+{
+	for (unsigned int i = 0; i < root->children.size(); ++i)
+	{
+		root->children[i]->DrawAABB();
+	}
+}

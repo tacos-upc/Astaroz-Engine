@@ -17,6 +17,7 @@ class ModuleEditorCamera;
 class ModuleModelLoader;
 class ModuleTime;
 class ModuleScene;
+class ModuleDebugDraw;
 
 class Application
 {
@@ -41,6 +42,7 @@ public:
 	ModuleModelLoader* modelLoader = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
+	ModuleDebugDraw* debugDraw = nullptr;
 
 private:
 	std::list<Module*> modules;

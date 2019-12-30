@@ -138,6 +138,7 @@
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="ModuleDebugDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -370,6 +371,9 @@
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="ModuleDebugDraw.h" />
+    <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="debug_draw.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -34,6 +34,8 @@ public:
 	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
 	void RemoveGameObject(GameObject* go);
 	void SelectObjectInHierarchy(GameObject* selected);
+	void drawHierarchy();
+	void drawAllBoundingBoxes();
 
 	//public variables
 	std::vector<GameObject*> gameObjects;
@@ -41,7 +43,6 @@ public:
 	bool showInspector = true;
 	GameObject* mainCamera = nullptr;
 
-	void drawHierarchy();
 	GameObject* selectedByHierarchy = nullptr;
 
 private:

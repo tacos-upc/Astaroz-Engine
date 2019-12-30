@@ -161,45 +161,35 @@ float ModuleEditorCamera::getCamSpeed()
 void ModuleEditorCamera::moveUp(float dt)
 {
 	float3 newPosition = cam->frustum->pos;
-	newPosition.y = newPosition.y + ((0.05f + dt) * getCamSpeed());
+	newPosition.y = newPosition.y + (dt * getCamSpeed());
 	cam->frustum->pos = newPosition;
 }
 
 void ModuleEditorCamera::moveDown(float dt)
 {
 	float3 newPosition = cam->frustum->pos;
-	newPosition.y = newPosition.y - ((0.05f + dt) * getCamSpeed());
+	newPosition.y = newPosition.y - (dt * getCamSpeed());
 	cam->frustum->pos = newPosition;
 }
 
 void ModuleEditorCamera::moveLeft(float dt)
 {
-	cam->frustum->pos -= cam->frustum->WorldRight().ScaledToLength((0.05f + dt) * getCamSpeed());
+	cam->frustum->pos -= cam->frustum->WorldRight().ScaledToLength(dt * getCamSpeed());
 }
 
 void ModuleEditorCamera::moveRight(float dt)
 {
-	cam->frustum->pos += cam->frustum->WorldRight().ScaledToLength((0.05f + dt) * getCamSpeed());
+	cam->frustum->pos += cam->frustum->WorldRight().ScaledToLength(dt * getCamSpeed());
 }
 
 void ModuleEditorCamera::moveForward(float dt, float extraSpeed)
 {
-	if(cam->frustum->type == FrustumType::PerspectiveFrustum) cam->frustum->pos += cam->frustum->front.ScaledToLength((dt) * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
-	else if (cam->frustum->type == FrustumType::OrthographicFrustum)
-	{
-		cam->frustum->verticalFov -= dt * getCamSpeed();
-		cam->frustum->horizontalFov -= dt * getCamSpeed();
-	}
+	cam->frustum->pos += cam->frustum->front.ScaledToLength(dt * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
 }
 
 void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
 {
-	if (cam->frustum->type == FrustumType::PerspectiveFrustum) cam->frustum->pos -= cam->frustum->front.ScaledToLength((0.05f + dt) * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
-	else if (cam->frustum->type == FrustumType::OrthographicFrustum)
-	{
-		cam->frustum->verticalFov += dt * getCamSpeed();
-		cam->frustum->horizontalFov += dt * getCamSpeed();
-	}
+	cam->frustum->pos -= cam->frustum->front.ScaledToLength(dt * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
 }
 
 void ModuleEditorCamera::orbitX(float angle, float3 target)

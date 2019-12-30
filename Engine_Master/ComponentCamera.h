@@ -9,6 +9,7 @@
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
 
+
 const int AABB_OUT = 0;
 const int AABB_IN = 1;
 const int AABB_INTERSECT = 2;
@@ -49,20 +50,20 @@ public:
 
 private:
 	//Planes and points
-	float Hnear;
-	float Wnear;
-	float Hfar;
-	float Wfar;
-	float3 centerNear;
-	float3 centerFar;
-	float3 NearTopLeft;
-	float3 NearTopRight;
-	float3 NearBottomLeft;
-	float3 NearBottomRight;
-	float3 FarTopLeft;
-	float3 FarTopRight;
-	float3 FarBottomLeft;
-	float3 FarBottomRight;
+	//float Hnear;
+	//float Wnear;
+	//float Hfar;
+	//float Wfar;
+	//float3 centerNear;
+	//float3 centerFar;
+	//float3 NearTopLeft;
+	//float3 NearTopRight;
+	//float3 NearBottomLeft;
+	//float3 NearBottomRight;
+	//float3 FarTopLeft;
+	//float3 FarTopRight;
+	//float3 FarBottomLeft;
+	//float3 FarBottomRight;
 
 	int selectedProjectionMode = 0;
 };

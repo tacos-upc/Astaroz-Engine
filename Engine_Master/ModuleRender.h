@@ -9,6 +9,7 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "ComponentCamera.h"
 
 
 struct SDL_Texture;
@@ -38,7 +39,7 @@ public:
 	SDL_GLContext glcontext;
 	std::list<RenderTexture> renderTextures;
 
-	void renderGrid();
+	void renderGrid(ComponentCamera*);
 	void drawSceneView();
 	void drawGameView();
 	void drawSceneRenderSettings();
@@ -63,6 +64,7 @@ private:
 	void generateBuffers(GLuint*, GLuint*, GLuint*);
 	bool beginRenderTexture(int, int, GLuint*, GLuint*, GLuint*);
 	bool endRenderTexture();
+	void drawAllBoundingBoxes();
 };
 
 #endif __ModuleRender_H__

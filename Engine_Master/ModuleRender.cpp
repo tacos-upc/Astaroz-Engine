@@ -7,6 +7,8 @@
 #include "ModuleScene.h"
 #include "Skybox.h"
 #include "glew.h"
+#include "ModuleDebugDraw.h"
+
 
 ModuleRender::ModuleRender()
 {
@@ -111,7 +113,7 @@ bool ModuleRender::CleanUp()
 }
 
 
-void ModuleRender::renderGrid()
+void ModuleRender::renderGrid(ComponentCamera* cam)
 {
 	if (!usesGrid) return;
 
@@ -120,8 +122,8 @@ void ModuleRender::renderGrid()
 
 	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, 0.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &App->editorCamera->cam->viewMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &cam->viewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &cam->projectionMatrix[0][0]);
 
 	//Grid
 	glLineWidth(1.0f);
@@ -205,6 +207,16 @@ bool ModuleRender::endRenderTexture()
 	return true;
 }
 
+void ModuleRender::drawAllBoundingBoxes()
+{
+	GLuint gridProgram = App->programShader->gridProgram;
+	glUseProgram(gridProgram);
+
+	App->scene->drawAllBoundingBoxes();
+
+	glUseProgram(0);
+}
+
 void ModuleRender::drawSceneView()
 {
 	ImVec2 size = ImGui::GetWindowSize();
@@ -218,9 +230,12 @@ void ModuleRender::drawSceneView()
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &App->editorCamera->cam->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
+	//Todo: Update this thing with mesh gameobjects
 	App->modelLoader->Draw(App->programShader->defaultProgram);
 
-	renderGrid();
+	drawAllBoundingBoxes();
+
+	renderGrid(App->editorCamera->cam);
 
 	ImGui::GetWindowDrawList()->AddImage(
 		(void *)sceneTexture,
@@ -230,6 +245,7 @@ void ModuleRender::drawSceneView()
 		ImVec2(1, 0)
 	);
 
+	App->debugDraw->Draw(App->editorCamera, sceneFBO, App->window->width, App->window->height);
 	endRenderTexture();
 }
 

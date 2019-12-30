@@ -4,16 +4,20 @@
 #include "ModuleWindow.h"
 #include "ModuleProgramShader.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleTime.h"
 #include "GameObject.h"
 #include <math.h>
 #include "Geometry/Plane.h"
 #include "glew.h"
 #include "IconsFontAwesome5.h"
+#include "DebugDraw.h"
+#include "debug_draw.hpp"
 
 
 ComponentCamera::ComponentCamera()
 {
 	myType = CAMERA;
+	allowMany = false;
 
 	frustum = new Frustum();
 	frustum->type = FrustumType::PerspectiveFrustum;
@@ -21,9 +25,12 @@ ComponentCamera::ComponentCamera()
 	SetPlaneDistances(0.1f, 2000.0f);
 	SetFOV(math::pi / 4.0f);
 
+	frustum->front = -float3::unitZ;
+	frustum->up = float3::unitY;
+
 	reloadMatrices();
 
-	clearColor = ImVec4(0.36f, 0.9f, 0.39, 1.f);
+	clearColor = ImVec4(0.1f, 0.f, 0.02f, 1.f);
 }
 
 
@@ -35,9 +42,11 @@ ComponentCamera::~ComponentCamera()
 void ComponentCamera::Update()
 {
 	frustum->pos = myGameObject->myTransform->position;
-	viewMatrix = frustum->ViewMatrix();
-
-	return;
+	pitch(myGameObject->myTransform->deltaEulerRotation.x, App->time->getDeltaTime());
+	yaw(myGameObject->myTransform->deltaEulerRotation.y, App->time->getDeltaTime());
+	roll(myGameObject->myTransform->deltaEulerRotation.z, App->time->getDeltaTime());
+	
+	reloadMatrices();
 }
 
 void ComponentCamera::SetFOV(float fov)
@@ -139,82 +148,8 @@ bool ComponentCamera::SideOfPlane(float3 &point, Plane &plane)
 
 void ComponentCamera::DrawFrustum()
 {
-	//First we will get the width and height of the near plane
-	Hnear = 2 * tan(frustum->verticalFov / 2) * frustum->nearPlaneDistance;
-	//Wnear = Hnear * aspect;
-
-	//Then we do the same for the far plane
-	Hfar = 2 * tan(frustum->verticalFov / 2) * frustum->farPlaneDistance;
-	//Wfar = Hfar * aspect;
-
-	//Now we get the center of the planes
-	centerNear = frustum->pos + frustum->front * frustum->nearPlaneDistance;
-	centerFar = frustum->pos + frustum->front * frustum->farPlaneDistance;
-
-	//And now we get our points
-	NearTopLeft = centerNear + (frustum->up * (Hnear / 2)) - (frustum->WorldRight() * (Wnear / 2));
-	NearTopRight = centerNear + (frustum->up * (Hnear / 2)) + (frustum->WorldRight() * (Wnear / 2));
-	NearBottomLeft = centerNear - (frustum->up * (Hnear / 2)) - (frustum->WorldRight() * (Wnear / 2));
-	NearBottomRight = centerNear - (frustum->up * (Hnear / 2)) + (frustum->WorldRight() * (Wnear / 2));
-
-	FarTopLeft = centerFar + (frustum->up * (Hfar / 2)) - (frustum->WorldRight() * (Wfar / 2));
-	FarTopRight = centerFar + (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
-	FarBottomLeft = centerFar - (frustum->up * (Hfar / 2)) - (frustum->WorldRight() * (Wfar / 2));
-	FarBottomRight = centerFar - (frustum->up * (Hfar / 2)) + (frustum->WorldRight() * (Wfar / 2));
-
-	GLuint gridProgram = App->programShader->gridProgram;
-	glUseProgram(gridProgram);
-
-	//Draw Lines
-	glLineWidth(2.0f);
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	glBegin(GL_LINES);
-	
-	//Near Plane
-	glVertex3f(NearTopLeft.x, NearTopLeft.y, NearTopLeft.z);
-	glVertex3f(NearTopRight.x, NearTopRight.y, NearTopRight.z);
-
-	glVertex3f(NearTopRight.x, NearTopRight.y, NearTopRight.z);
-	glVertex3f(NearBottomRight.x, NearBottomRight.y, NearBottomRight.z);
-
-	glVertex3f(NearBottomRight.x, NearBottomRight.y, NearBottomRight.z);
-	glVertex3f(NearBottomLeft.x, NearBottomLeft.y, NearBottomLeft.z);
-
-	glVertex3f(NearBottomLeft.x, NearBottomLeft.y, NearBottomLeft.z);
-	glVertex3f(NearTopLeft.x, NearTopLeft.y, NearTopLeft.z);
-
-	//Far Plane
-	glVertex3f(FarTopLeft.x, FarTopLeft.y, FarTopLeft.z);
-	glVertex3f(FarTopRight.x, FarTopRight.y, FarTopRight.z);
-
-	glVertex3f(FarTopRight.x, FarTopRight.y, FarTopRight.z);
-	glVertex3f(FarBottomRight.x, FarBottomRight.y, FarBottomRight.z);
-
-	glVertex3f(FarBottomRight.x, FarBottomRight.y, FarBottomRight.z);
-	glVertex3f(FarBottomLeft.x, FarBottomLeft.y, FarBottomLeft.z);
-
-	glVertex3f(FarBottomLeft.x, FarBottomLeft.y, FarBottomLeft.z);
-	glVertex3f(FarTopLeft.x, FarTopLeft.y, FarTopLeft.z);
-
-	//Perpendicular planes
-	glVertex3f(NearTopLeft.x, NearTopLeft.y, NearTopLeft.z);
-	glVertex3f(FarTopLeft.x, FarTopLeft.y, FarTopLeft.z);
-
-	glVertex3f(NearTopRight.x, NearTopRight.y, NearTopRight.z);
-	glVertex3f(FarTopRight.x, FarTopRight.y, FarTopRight.z);
-
-	glVertex3f(NearBottomLeft.x, NearBottomLeft.y, NearBottomLeft.z);
-	glVertex3f(FarBottomLeft.x, FarBottomLeft.y, FarBottomLeft.z);
-
-	glVertex3f(NearBottomRight.x, NearBottomRight.y, NearBottomRight.z);
-	glVertex3f(FarBottomRight.x, FarBottomRight.y, FarBottomRight.z);
-
-
-	glEnd();
-
-	glUseProgram(0);
-
-	return;
+	float4x4 projectionView = viewMatrix * projectionMatrix;
+	dd::frustum(projectionView.Inverted(), float3(0.f, 0.02f, 0.9f));
 }
 
 void ComponentCamera::drawInspector()

@@ -46,14 +46,18 @@ void ComponentTransform::SetLocalMatrix(float4x4 &newParentGlobalMatrix)
 
 void ComponentTransform::drawInspector()
 {
+	float3 lastEulerRotation = float3(eulerRotation.x, eulerRotation.y, eulerRotation.z);
+	
 	if (ImGui::CollapsingHeader(ICON_FA_HAND_SCISSORS " Transform"))
 	{
-		ImGui::InputFloat3("Position", &position.x);
-		ImGui::InputFloat3("Rotation", &rotation.x);
-		ImGui::InputFloat3("Scale", &scale.x);
+		ImGui::DragFloat3("Position", &position.x);
+		ImGui::DragFloat3("Rotation", &eulerRotation.x);
+		ImGui::DragFloat3("Scale", &scale.x);
 
 		ImGui::Separator();
 	}
+
+	deltaEulerRotation = float3(eulerRotation.x - lastEulerRotation.x, eulerRotation.y - lastEulerRotation.y, eulerRotation.z - lastEulerRotation.z);
 }
 
 

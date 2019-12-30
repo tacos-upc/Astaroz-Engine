@@ -22,7 +22,6 @@ ModuleEditor::~ModuleEditor()
 bool ModuleEditor::Init()
 {
 	//flags to show windows
-	show_log_window = false;
 	show_about_window = false;
 	show_configuration_window = false;
 
@@ -54,8 +53,8 @@ bool ModuleEditor::Start()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
+	//ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
 	ImGui_ImplOpenGL3_Init();
@@ -137,7 +136,6 @@ void ModuleEditor::drawMainMenu()
 	{
 		if (ImGui::BeginMenu("Tools"))
 		{
-			ImGui::MenuItem("Logger console", NULL, &show_log_window);
 			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);
 			ImGui::EndMenu();
 		};

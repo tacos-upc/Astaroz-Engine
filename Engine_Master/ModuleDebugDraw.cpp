@@ -617,8 +617,8 @@ update_status  ModuleDebugDraw::Update()
 
 void ModuleDebugDraw::Draw(ModuleEditorCamera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
 {
-	math::float4x4 view = camera->viewMatrix;
-	math::float4x4 proj = camera->projectionMatrix;
+	math::float4x4 view = camera->view;
+	math::float4x4 proj = camera->proj;
 
     implementation->width     = fb_width;
     implementation->height    = fb_height;

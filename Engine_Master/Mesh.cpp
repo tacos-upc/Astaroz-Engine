@@ -84,12 +84,7 @@ void Mesh::Draw(unsigned int program) const
 	unsigned int normalNr = 1;
 	unsigned int heightNr = 1;
 
-	glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
-	glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
-	glUniform1f(glGetUniformLocation(program, "shininess"), App->modelLoader->materials[material].shininess);
-	glUniform1f(glGetUniformLocation(program, "k_ambient"), App->modelLoader->materials[material].k_ambient);
-	glUniform1f(glGetUniformLocation(program, "k_diffuse"), App->modelLoader->materials[material].k_diffuse);
-	glUniform1f(glGetUniformLocation(program, "k_specular"),App->modelLoader->materials[material].k_specular);
+	
 	
 	if (hastext) {
 		for (unsigned int i = 0; i < textures.size(); i++)
@@ -120,6 +115,12 @@ void Mesh::Draw(unsigned int program) const
 	}
 	else {
 
+		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
+		glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
+		glUniform1f(glGetUniformLocation(program, "shininess"), App->modelLoader->materials[material].shininess);
+		glUniform1f(glGetUniformLocation(program, "k_ambient"), App->modelLoader->materials[material].k_ambient);
+		glUniform1f(glGetUniformLocation(program, "k_diffuse"), App->modelLoader->materials[material].k_diffuse);
+		glUniform1f(glGetUniformLocation(program, "k_specular"), App->modelLoader->materials[material].k_specular);
 		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&transform);
 		
 		glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);

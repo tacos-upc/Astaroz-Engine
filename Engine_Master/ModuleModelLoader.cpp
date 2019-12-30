@@ -54,7 +54,18 @@ bool ModuleModelLoader::Init()
 
 update_status ModuleModelLoader::Update()
 {
+	if (ImGui::Begin("Parameters"))
+	{
 
+
+		if (ImGui::CollapsingHeader("Light"))
+		{
+			ImGui::SliderFloat3("light position", (float*)&App->modelLoader->light_pos, -15.0f, 15.0f);
+			ImGui::SliderFloat("ambient", (float*)&App->modelLoader->ambient, 0.0f, 1.0f);
+		}
+
+		ImGui::End();
+	}
 	return UPDATE_CONTINUE;
 }
 

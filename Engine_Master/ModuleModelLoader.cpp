@@ -35,19 +35,21 @@ bool ModuleModelLoader::Init()
 	aiAttachLogStream(&sLog);
 
 	//Always start by loading the Baker house model
-	//LoadModel(MODEL_BAKER_PATH);
 
-	LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	materials.back().k_specular = 0.9f;
-	materials.back().shininess = 64.0f;
-	materials.back().k_diffuse = 0.5f;
-	materials.back().k_ambient = 1.0f;
+	//LoadModel(MODEL_BUNNY);
+	LoadModel(MODEL_BAKER_PATH);
 
-	LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	materials.back().k_specular = 0.9f;
-	materials.back().shininess = 20.0f;
-	materials.back().k_diffuse = 0.5f;
-	materials.back().k_ambient = 1.0f;
+	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	//materials.back().k_specular = 0.9f;
+	//materials.back().shininess = 64.0f;
+	//materials.back().k_diffuse = 0.5f;
+	//materials.back().k_ambient = 1.0f;
+	//
+	//LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	//materials.back().k_specular = 0.9f;
+	//materials.back().shininess = 20.0f;
+	//materials.back().k_diffuse = 0.5f;
+	//materials.back().k_ambient = 1.0f;
 
 	return true;
 }
@@ -191,6 +193,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	if (textures[0].type == "texture_normal") {
 		textureType = textures[0].type;
 	}
+	
 	// 4. height maps
 	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
@@ -206,6 +209,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
 {
 	std::vector<Texture> textures;
+	int j= mat->GetTextureCount(type);
 	for (unsigned int i=0; i<mat->GetTextureCount(type); i++)
 	{
 		aiString str;

@@ -54,9 +54,10 @@ void main()
     else
     {
         FragColor = object_color;
+	FragColor = vec4(FragColor.rgb*intensity, FragColor.a);
     }
 
-    FragColor = vec4(FragColor.rgb*intensity, FragColor.a);
+    
 
     
 

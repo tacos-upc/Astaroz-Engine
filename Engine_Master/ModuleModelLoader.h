@@ -57,6 +57,9 @@ public:
 	{
 		unsigned program = 0;
 		unsigned diffuse_map = 0;
+		math::float3 diffuse;
+		math::float3 specular;
+		math::float3 ambient;
 		math::float4 object_color = math::float4::zero;
 		float shininess = 0.0f;
 		float k_specular = 0.0f;

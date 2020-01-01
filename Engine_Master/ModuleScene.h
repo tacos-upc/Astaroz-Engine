@@ -37,20 +37,20 @@ public:
 
 	//public variables
 	std::vector<GameObject*> gameObjects;
-	bool showHierarchy = true;
-	bool showInspector = true;
-	GameObject* mainCamera = nullptr;
+	bool showHierarchy;
+	bool showInspector;
+	GameObject* mainCamera;
 
 private:
 	//private variables
-	GameObject* root = nullptr;
-	GameObject* selectedByHierarchy = nullptr;
-	unsigned int nGameObjects = 0;
-	unsigned int numberOfBakerHouse = 0;
-	unsigned int numberOfSphere = 0;
-	unsigned int numberOfCube = 0;
-	unsigned int numberOfTorus = 0;
-	unsigned int numberOfCylinder = 0;
+	GameObject* root;
+	GameObject* selectedByHierarchy;
+	unsigned int nGameObjects;
+	unsigned int numberOfBakerHouse;
+	unsigned int numberOfSphere;
+	unsigned int numberOfCube;
+	unsigned int numberOfTorus;
+	unsigned int numberOfCylinder;
 };
 
 #endif __ModuleScene_H__

@@ -16,11 +16,10 @@ GameObject::GameObject()
 {
 }
 
-GameObject::GameObject(const char * name)
+GameObject::GameObject(const char* name)
 {
 	this->name = name;
 	CreateComponent(TRANSFORM);
-
 }
 
 
@@ -36,45 +35,33 @@ void GameObject::Update()
 		if (component->myType != TRANSFORM)
 			component->Update();
 	}
-
-	return;
 }
 
-void GameObject::SetParent(GameObject * newParent)
-
+void GameObject::SetParent(GameObject* newParent)
 {
-	//Erase me from previous father
 	if (parent != nullptr)
 	{
 		parent->RemoveChildren(this);
 	}
 		
-	
 	if(newParent != nullptr)
 	{
-		LOG("Setting new GamesObject parent and children.")
+		LOG("Setting new parent")
 		parent = newParent;
 		parent->children.push_back(this);
-
-		return;
 	}
-
-
-
-	LOG("ERROR: Cannot set parent because new Parent is nullptr.");
-	return;
-
+	else
+	{
+		LOG("Error setting new parent. Parameter was null.");
+	}
 }
 
-void GameObject::RemoveChildren(GameObject * child)
+void GameObject::RemoveChildren(GameObject* child)
 {
-
 	if(!children.empty())
 	{
 		children.erase(std::remove(children.begin(), children.end(), child), children.end());
 	}
-	
-	return;
 }
 
 void GameObject::DeleteGameObject()
@@ -90,14 +77,12 @@ void GameObject::CleanUp()
 	{
 		delete comp;
 	}
-	
 	delete boundingBox;
 	delete globalBoundingBox;
-
 	delete this;
 }
 
-Component * GameObject::CreateComponent(ComponentType type)
+Component* GameObject::CreateComponent(ComponentType type)
 {
 	Component* component = nullptr;
 

@@ -7,8 +7,7 @@
 #include <string>
 #include <vector>
 
-
-//Class declaration is way faster than include header
+//Class declaration > include header
 class ComponentTransform;
 class ComponentMesh;
 class ComponentMaterial;
@@ -21,69 +20,43 @@ public:
 	GameObject(const char* name);
 	~GameObject();
 
-	//Core
 	void Update();
 	void SetParent(GameObject* newParent);
 	void RemoveChildren(GameObject* child);
 	void DeleteGameObject();
 	void CleanUp();
 
-	//Component Creation
+	//public methods 
 	Component* CreateComponent(ComponentType type);
-
-	//Hierarchy
 	void DrawHierarchy(GameObject* selected);
-
-	//Draw Main Camera
 	void DrawCamera();
-
-	//Update
 	void UpdateTransform();
-
-	//Variables
-	//ID are unique
-	//TODO: ID system
-	unsigned int ID;
-
-	//All GameObjects have a transform
-	ComponentTransform* myTransform = nullptr;
-	ComponentMesh* myMesh = nullptr;
-	ComponentMaterial* myMaterial = nullptr;
-
-	//Parent
-	GameObject* parent = nullptr;
-
-	//Chilren
-	std::vector<GameObject*> children;
-
-	//Components assigned to gameObject
-	std::vector<Component*> components;
-	
-	//Name
+	void DrawInspector(bool &showInspector);
+	void ComputeAABB();
+	void DrawAABB() const;
 	void SetName(const std::string &newName);
 	std::string GetName() const;
 
-	//ID substitute
-	bool isRoot = false;
+	//public variables
+	ComponentTransform* myTransform = nullptr;
+	ComponentMesh* myMesh = nullptr;
+	ComponentMaterial* myMaterial = nullptr;
+	GameObject* parent = nullptr;
+	std::vector<GameObject*> children;
+	std::vector<Component*> components;
 	bool isEnabled = true;
-	bool isStatic = false;
+	bool isRoot = false;
 	bool isParentOfMeshes = false;
-
-	//Compute
-	void ComputeAABB();
-	void DrawAABB() const;
-
+	bool isStatic = false;
 	AABB* boundingBox = nullptr;
 	AABB* globalBoundingBox = nullptr;
 
-	void DrawInspector(bool &showInspector);
-
 private:
+	//private variables
 	std::string name;
 
+	//private methods
 	void CheckDragAndDrop(GameObject* go);
-
-
 };
 
 #endif __GameObject_H__

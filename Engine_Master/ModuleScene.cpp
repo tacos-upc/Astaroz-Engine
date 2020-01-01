@@ -23,6 +23,19 @@ ModuleScene::~ModuleScene()
 
 bool ModuleScene::Init()
 {
+	//Init variables
+	showHierarchy = true;
+	showInspector = true;
+	mainCamera = nullptr;
+	root = nullptr;
+	selectedByHierarchy = nullptr;
+	nGameObjects = 0;
+	numberOfBakerHouse = 0;
+	numberOfSphere = 0;
+	numberOfCube = 0;
+	numberOfTorus = 0;
+	numberOfCylinder = 0;
+
 	mainCamera = CreateGameObject("Main Camera", root);
 	mainCamera->CreateComponent(CAMERA);
 

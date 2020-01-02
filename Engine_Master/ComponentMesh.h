@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Component.h"
 #include "Mesh.h"
+
 #include "Geometry/AABB.h"
 
 class ComponentMesh : public Component
@@ -12,15 +13,12 @@ public:
 	ComponentMesh();
 	~ComponentMesh();
 
-	void Update();
-
+	//public methods
 	void LoadMesh(Mesh* mesh);
 	void Draw(const unsigned int program) const;
 
-	Mesh* mesh;
-
-
-
+	//public variables
+	Mesh* myMesh;
 };
 
 #endif __ComponentMesh_H__

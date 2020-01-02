@@ -11,10 +11,8 @@ public:
 	ComponentMaterial();
 	~ComponentMaterial();
 
-	void Update();
-
-	std::vector<Texture*> textures;
-
+	//public variables
+	std::vector<Texture*> myTextures;
 };
 
 #endif __ComponentMaterial_H__

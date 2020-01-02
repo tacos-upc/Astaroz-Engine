@@ -14,49 +14,25 @@ enum ComponentType
 
 class GameObject;
 
-
 class Component
 {
 public:
-
-	Component()
-	{
-	}
+	Component(){};
 
 	Component(const char* componentName)
 	{
-		name = componentName;
+		myName = componentName;
 	}
 
-	virtual void Enable()
-	{
-		return;
-	}
+	virtual void Enable(){}
+	virtual void Disable(){}
+	virtual void Update(){}
 
-	virtual void Disable()
-	{
-		return;
-	}
-
-	virtual void Update()
-	{
-
-		return;
-	}
-
-	virtual bool CleanUp()
-	{
-		return true;
-	}
-
-	
-
-	//GameObject Parent: 
-	//IMPORTANT, THIS POINTER MUST BE SYNC WITH PARENTS CHILDREN, BE CAREFUL
+	//GameObject myParent;
 	GameObject* myGameObject = nullptr;
 	ComponentType myType = TRANSFORM;
 	bool isActive = true;
-	std::string name = "NewComponent";
+	std::string myName = "NewComponent";
 };
 
 #endif __Component_H__

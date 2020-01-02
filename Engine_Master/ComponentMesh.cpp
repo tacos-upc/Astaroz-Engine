@@ -7,29 +7,17 @@ ComponentMesh::ComponentMesh()
 	myType = MESH;
 }
 
-
 ComponentMesh::~ComponentMesh()
 {
-	delete mesh;
-	
-}
-
-void ComponentMesh::Update()
-{
-
-	return;
+	delete myMesh;
 }
 
 void ComponentMesh::LoadMesh(Mesh* loadedMesh)
 {
-	mesh = loadedMesh;
+	myMesh = loadedMesh;
 }
 
 void ComponentMesh::Draw(const unsigned int program) const
 {
-	mesh->Draw(program);
+	myMesh->Draw(program);
 }
-
-
-
-

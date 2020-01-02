@@ -7,6 +7,7 @@
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentCamera.h"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -109,11 +110,8 @@ Component* GameObject::CreateComponent(ComponentType type)
 			return nullptr;
 			break;
 	}
-
 	component->myGameObject = this;
-
 	components.push_back(component);
-
 
 	return component;
 }
@@ -135,15 +133,12 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	{
 		App->scene->SelectObjectInHierarchy(this);
 	}
-
 	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsItemHovered()) // Could be also || ImGui::IsWindowHovered())
 	{
 		ImGui::OpenPopup("Creation Popup");
 	}
-
 	if (ImGui::BeginPopup("Creation Popup"))
 	{
-		
 		if (ImGui::Selectable("Copy"))
 		{
 			//TODO: Copy gameobjects
@@ -163,7 +158,6 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		{
 			//TODO: Duplicate gameobjects
 		}
-
 		if (ImGui::Selectable("Delete"))
 		{
 			//TODO: Delete gameobjects
@@ -184,7 +178,6 @@ void GameObject::DrawHierarchy(GameObject * selected)
 			{
 				App->scene->CreateGameObjectShape(this, CUBE);
 			}
-
 			if (ImGui::MenuItem("Sphere"))
 			{
 				App->scene->CreateGameObjectShape(this, SPHERE);
@@ -193,25 +186,19 @@ void GameObject::DrawHierarchy(GameObject * selected)
 			{
 				App->scene->CreateGameObjectShape(this, CYLINDER);
 			}
-
 			if (ImGui::MenuItem("Torus"))
 			{
 				App->scene->CreateGameObjectShape(this, TORUS);
 			}
-
 			if (ImGui::MenuItem("Baker House"))
 			{
 				// TODO :CreateGameObjectBakerHouse();
 				App->scene->CreateGameObjectBakerHouse(this);
 			}
-
 			ImGui::EndMenu();
 		}
-
-			
 		ImGui::EndPopup();
 	}
-
 
 	CheckDragAndDrop(this);
 
@@ -288,7 +275,7 @@ void GameObject::ComputeAABB()
 		if(children.size() == 0)
 		{
 			LOG("Cannot compute the AABB because gameObject does not have children.");
-			return;
+			return;	//leave at this point
 		}
 
 		for(auto child : children)
@@ -318,12 +305,10 @@ void GameObject::ComputeAABB()
 		float3x3 globalRot;
 		myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
 		globalBoundingBox = new AABB(min + globalPos, max + globalPos);
-
-		return;
 	}
 		
 
-	for (auto vertex : myMesh->mesh->vertices)
+	for (auto vertex : myMesh->myMesh->vertices)
 	{
 		//Min vertex
 		if (vertex.Position.x < min.x)
@@ -348,8 +333,6 @@ void GameObject::ComputeAABB()
 	float3x3 globalRot;
 	myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
 	globalBoundingBox = new AABB(min + globalPos, max + globalPos);
-
-	return;
 }
 
 void GameObject::DrawAABB() const
@@ -416,10 +399,9 @@ void GameObject::DrawAABB() const
 	glEnd();
 }
 
-void GameObject::DrawInspector(bool &showInspector)
+void GameObject::DrawInspector(bool& showInspector)
 {
 	ImGui::Begin("Inspector", &showInspector);
-
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();
 	
 	char* go_name = new char[64];
@@ -438,19 +420,17 @@ void GameObject::DrawInspector(bool &showInspector)
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("Position");
-		ImGui::DragFloat3("Position", (float *)&myTransform->position, 0.1f);
+		ImGui::DragFloat3("Position", (float*)&myTransform->position, 0.1f);
 		ImGui::Text("Rotation");
-		ImGui::DragFloat3("Rotation", (float *)&myTransform->eulerRotation, 1.0f, -360.0f, 360.0f);
+		ImGui::DragFloat3("Rotation", (float*)&myTransform->eulerRotation, 1.0f, -360.0f, 360.0f);
 		ImGui::Text("Scale");
-		ImGui::DragFloat3("Scale", (float *)&myTransform->scale, 0.01f, 0.01f, 1000.0f);
-
+		ImGui::DragFloat3("Scale", (float*)&myTransform->scale, 0.01f, 0.01f, 1000.0f);
 	}
 	ImGui::End();
-	//Change EulerRotation to Quat
 	myTransform->EulerToQuat();
 }
 
-void GameObject::CheckDragAndDrop(GameObject * go)
+void GameObject::CheckDragAndDrop(GameObject* go)
 {
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
 		ImGui::SetDragDropPayload("DRAG", &go, sizeof(GameObject*));
@@ -460,7 +440,7 @@ void GameObject::CheckDragAndDrop(GameObject * go)
 	if (ImGui::BeginDragDropTarget()) {
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DRAG");
 		if (payload != nullptr) {
-			GameObject * newChild = *reinterpret_cast<GameObject**>(payload->Data);
+			GameObject* newChild = *reinterpret_cast<GameObject**>(payload->Data);
 			newChild->SetParent(go);
 			if(newChild->parent->myTransform != nullptr)
 				newChild->myTransform->SetLocalMatrix(newChild->parent->myTransform->globalModelMatrix);

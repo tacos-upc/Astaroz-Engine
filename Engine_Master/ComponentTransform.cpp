@@ -1,6 +1,7 @@
 #include "ComponentTransform.h"
-#include "Math/MathFunc.h"
 #include "GameObject.h"
+
+#include "Math/MathFunc.h"
 
 ComponentTransform::ComponentTransform(GameObject* gameObject)
 {
@@ -11,8 +12,7 @@ ComponentTransform::ComponentTransform(GameObject* gameObject)
 
 
 ComponentTransform::~ComponentTransform()
-{
-}
+{}
 
 void ComponentTransform::EulerToQuat()
 {
@@ -31,16 +31,14 @@ void ComponentTransform::UpdateMatrices()
 	globalModelMatrix = globalModelMatrix * localModelMatrix;
 }
 
-void ComponentTransform::SetGlobalMatrix(float4x4 &parentGlobal)
+void ComponentTransform::SetGlobalMatrix(float4x4& parentGlobal)
 {
 	globalModelMatrix = parentGlobal * localModelMatrix;
 }
 
-void ComponentTransform::SetLocalMatrix(float4x4 &newParentGlobalMatrix)
+void ComponentTransform::SetLocalMatrix(float4x4& newParentGlobalMatrix)
 {
 	localModelMatrix = newParentGlobalMatrix.Inverted() *  globalModelMatrix;
 	localModelMatrix.Decompose(position, rotation, scale);
 	QuatToEuler();
 }
-
-

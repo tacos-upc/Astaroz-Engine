@@ -29,7 +29,7 @@ public:
 	void SetFOV(float);
 	void SetAspectRatio(float);
 	void SetPlaneDistances(float, float);
-	bool SideOfPlane(float3 &point, Plane &plane);
+	bool sideOfPlane(float3 &point, Plane &plane);
 	void DrawFrustum();
 	void drawInspector() override;
 

@@ -98,37 +98,37 @@ void ComponentCamera::reloadMatrices()
 
 int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 {
+	FrustumCollisionMode result;
+
 	float3 corners[8];
 	aabb.GetCornerPoints(corners);
 
 	int totalWithin = 0;
 	for(int p = 0; p < 6; ++p)
 	{
-		int iInCount = 8;
-		int iPtIn = 1;
+		int insideBuffer = 8;
+		int pointsWithin = 1;
 
 		for(int i = 0; i< 8; ++i)
 		{
-			if(SideOfPlane(corners[i], frustum->GetPlane(p)) == FRONT)
+			if(sideOfPlane(corners[i], frustum->GetPlane(p)))
 			{
-				iPtIn = 0;
-				--iInCount;
+				pointsWithin = 0;
+				--insideBuffer;
 			}
 		}
-		
-		if (iInCount == 0) return AABB_OUT;
-
-		totalWithin += iPtIn;
-
+		if (insideBuffer == 0) result = OUTSIDE;
+		totalWithin += pointsWithin;
 	}
-	// so if iTotalIn is 6, then all are inside the view
-	if (totalWithin == 6)
-		return(AABB_IN);
 
-	return AABB_INTERSECT;
+	if (totalWithin == 6) result = INSIDE;
+	else result = BETWEEN;
+
+	return result;
 }
 
-bool ComponentCamera::SideOfPlane(float3 &point, Plane &plane)
+//True means the point is in front, otherwise it's at the back
+bool ComponentCamera::sideOfPlane(float3 &point, Plane &plane)
 {
 	float value = plane.normal.Dot(point);
 	value -= plane.d;

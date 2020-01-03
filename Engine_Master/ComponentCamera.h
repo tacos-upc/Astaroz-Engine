@@ -10,9 +10,7 @@
 #include "ImGUI/imgui_impl_opengl3.h"
 
 
-const int AABB_OUT = 0;
-const int AABB_IN = 1;
-const int AABB_INTERSECT = 2;
+enum FrustumCollisionMode { OUTSIDE, INSIDE, BETWEEN };
 
 const bool FRONT = true;
 const bool BEHIND = false;

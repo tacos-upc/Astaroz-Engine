@@ -98,16 +98,10 @@ void ComponentCamera::reloadMatrices()
 
 int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 {
-	//Tests if an AABB is within the frusum
-	//returns 0 if out, 1 if in and 2 if intersects
 	float3 corners[8];
 	aabb.GetCornerPoints(corners);
 
-	int iTotalIn = 0;
-
-	//test all 8 corners against the 6 planes of the frustum
-	// if all points are behind 1 specific plane, we are out
-	// if we are in with all points, then we are fully in
+	int totalWithin = 0;
 	for(int p = 0; p < 6; ++p)
 	{
 		int iInCount = 8;
@@ -115,7 +109,6 @@ int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 
 		for(int i = 0; i< 8; ++i)
 		{
-			//test this point against the planes
 			if(SideOfPlane(corners[i], frustum->GetPlane(p)) == FRONT)
 			{
 				iPtIn = 0;
@@ -123,16 +116,13 @@ int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 			}
 		}
 		
-		// were all the points outside of plane p?
-		if (iInCount == 0)
-			return AABB_OUT;
+		if (iInCount == 0) return AABB_OUT;
 
-		// check if they were all on the right side of the plane
-		iTotalIn += iPtIn;
+		totalWithin += iPtIn;
 
 	}
 	// so if iTotalIn is 6, then all are inside the view
-	if (iTotalIn == 6)
+	if (totalWithin == 6)
 		return(AABB_IN);
 
 	return AABB_INTERSECT;

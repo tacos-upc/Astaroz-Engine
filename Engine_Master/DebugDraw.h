@@ -1,7 +1,7 @@
 #ifndef _DEBUGDRAW_H_
 #define _DEBUGDRAW_H_
 
-#include "MathGeoLib.h"
+#include "Math.h"
 
 typedef math::float3 ddVec3;
 
@@ -17,6 +17,6 @@ typedef       ddMat4x4& ddMat4x4_Out;
 
 #define DEBUG_DRAW_MAT4X4_TYPE_DEFINED 1
 
-#include "debug_draw.hpp"
+#include "Util/debug_draw.hpp"
 
-#endif
+#endif /* _DEBUGDRAW_H_ */

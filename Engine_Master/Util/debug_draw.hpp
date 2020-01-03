@@ -2114,26 +2114,26 @@ static inline void vecOrthogonalBasis(ddVec3_Out left, ddVec3_Out up, ddVec3_In 
 
 static inline void matTransformPointXYZ(ddVec3_Out result, ddVec3_In p, ddMat4x4_In m)
 {
-	result[X] = (m[0][0] * p[X]) + (m[0][1] * p[Y]) + (m[0][2] * p[Z]) + m[0][3]; // p[W] assumed to be 1
-	result[Y] = (m[1][0] * p[X]) + (m[1][1] * p[Y]) + (m[1][2] * p[Z]) + m[1][3];
-	result[Z] = (m[2][0] * p[X]) + (m[2][1] * p[Y]) + (m[2][2] * p[Z]) + m[2][3];
+    result[X] = (m[0][0] * p[X]) + (m[0][1] * p[Y]) + (m[0][2] * p[Z]) + m[0][3]; // p[W] assumed to be 1
+    result[Y] = (m[1][0] * p[X]) + (m[1][1] * p[Y]) + (m[1][2] * p[Z]) + m[1][3];
+    result[Z] = (m[2][0] * p[X]) + (m[2][1] * p[Y]) + (m[2][2] * p[Z]) + m[2][3];
 }
 
 static inline void matTransformPointXYZW(float result[4], ddVec3_In p, ddMat4x4_In m)
 {
-	result[X] = (m[0][0] * p[X]) + (m[0][1] * p[Y]) + (m[0][2] * p[Z]) + m[0][3]; // p[W] assumed to be 1
-	result[Y] = (m[1][0] * p[X]) + (m[1][1] * p[Y]) + (m[1][2] * p[Z]) + m[1][3];
-	result[Z] = (m[2][0] * p[X]) + (m[2][1] * p[Y]) + (m[2][2] * p[Z]) + m[2][3];
-	result[W] = (m[3][0] * p[X]) + (m[3][1] * p[Y]) + (m[3][2] * p[Z]) + m[3][3];
+    result[X] = (m[0][0] * p[X]) + (m[0][1] * p[Y]) + (m[0][2] * p[Z]) + m[0][3]; // p[W] assumed to be 1
+    result[Y] = (m[1][0] * p[X]) + (m[1][1] * p[Y]) + (m[1][2] * p[Z]) + m[1][3];
+    result[Z] = (m[2][0] * p[X]) + (m[2][1] * p[Y]) + (m[2][2] * p[Z]) + m[2][3];
+    result[W] = (m[3][0] * p[X]) + (m[3][1] * p[Y]) + (m[3][2] * p[Z]) + m[3][3];
 }
 
 static inline float matTransformPointXYZW2(ddVec3_Out result, const float p[3], ddMat4x4_In m)
 {
-	result[X] = (m[0][0] * p[X]) + (m[0][1] * p[Y]) + (m[0][2] * p[Z]) + m[0][3]; // p[W] assumed to be 1
-	result[Y] = (m[1][0] * p[X]) + (m[1][1] * p[Y]) + (m[1][2] * p[Z]) + m[1][3];
-	result[Z] = (m[2][0] * p[X]) + (m[2][1] * p[Y]) + (m[2][2] * p[Z]) + m[2][3];
-	float rw = (m[3][0] * p[X]) + (m[3][1] * p[Y]) + (m[3][2] * p[Z]) + m[3][3];
-	return rw;
+    result[X] = (m[0][0] * p[X]) + (m[0][1] * p[Y]) + (m[0][2] * p[Z]) + m[0][3]; // p[W] assumed to be 1
+    result[Y] = (m[1][0] * p[X]) + (m[1][1] * p[Y]) + (m[1][2] * p[Z]) + m[1][3];
+    result[Z] = (m[2][0] * p[X]) + (m[2][1] * p[Y]) + (m[2][2] * p[Z]) + m[2][3];
+    float rw  = (m[3][0] * p[X]) + (m[3][1] * p[Y]) + (m[3][2] * p[Z]) + m[3][3];
+    return rw;
 }
 
 // ========================================================

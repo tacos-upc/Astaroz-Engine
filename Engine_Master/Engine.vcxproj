@@ -83,7 +83,6 @@
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
-    <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />

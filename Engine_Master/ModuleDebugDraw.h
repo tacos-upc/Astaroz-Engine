@@ -2,26 +2,29 @@
 #define _MODULE_DEBUGDRAW_H_
 
 #include "Module.h"
-#include "ModuleEditorCamera.h"
+#include "ComponentCamera.h"
 
 class DDRenderInterfaceCoreGL;
+class Camera;
 
 class ModuleDebugDraw : public Module
 {
+
 public:
 
-	ModuleDebugDraw();
-	~ModuleDebugDraw();
+    ModuleDebugDraw();
+    ~ModuleDebugDraw();
 
-	bool Init();
-	bool Start();
-	update_status Update();
-	bool CleanUp();
+	bool Start() override;
 
-	void Draw(ModuleEditorCamera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height);
+	bool            Init();
+	update_status   Update();
+	bool            CleanUp();
+
+    void            Draw(ComponentCamera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height);
 private:
 
-	static DDRenderInterfaceCoreGL* implementation;
+    static DDRenderInterfaceCoreGL* implementation;
 };
 
-#endif
+#endif /* _MODULE_DEBUGDRAW_H_ */

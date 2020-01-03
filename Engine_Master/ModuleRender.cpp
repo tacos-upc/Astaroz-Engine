@@ -234,7 +234,7 @@ void ModuleRender::drawSceneView()
 	App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
 	//This doesn't seem to be working well
-	//drawAllBoundingBoxes();
+	drawAllBoundingBoxes();
 
 	renderGrid(App->editorCamera->cam);
 
@@ -246,7 +246,7 @@ void ModuleRender::drawSceneView()
 		ImVec2(1, 0)
 	);
 
-	App->debugDraw->Draw(App->editorCamera, sceneFBO, App->window->width, App->window->height);
+	App->debugDraw->Draw(App->editorCamera->cam, sceneFBO, App->window->width, App->window->height);
 	endRenderTexture();
 }
 

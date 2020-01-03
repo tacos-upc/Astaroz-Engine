@@ -11,7 +11,7 @@
 #include "glew.h"
 #include "IconsFontAwesome5.h"
 #include "DebugDraw.h"
-#include "debug_draw.hpp"
+#include "Util/debug_draw.hpp"
 
 
 ComponentCamera::ComponentCamera()

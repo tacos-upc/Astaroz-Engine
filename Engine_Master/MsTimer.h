@@ -17,6 +17,10 @@ public:
 public:
 	Uint32 myStartTime, myCurrentTime;
 	bool running;
+
+private:
+
+	void setupCurrentTime();
 };
 
 #endif __MsTimer_H__

@@ -19,11 +19,12 @@ public:
 	~ModuleModelLoader();
 
 	bool Init();
+	bool Start();
 	update_status Update();
 	bool CleanUp();
 
-	void Draw(unsigned int program);
-	void loadModel(const char*);
+	void LoadModel(const char*);
+	void DrawAll(unsigned int program);
 	void processNode(aiNode*, const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);

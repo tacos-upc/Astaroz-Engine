@@ -8,6 +8,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "Math/float4.h"
+#include "IconsFontAwesome5.h"
 
 
 ModuleScene::ModuleScene()
@@ -57,6 +58,8 @@ update_status ModuleScene::Update()
 		gameObject->Update();
 	}
 	
+	drawHierarchy();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -91,15 +94,15 @@ GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent
 	gameObject->SetParent(parent);
 
 	LOG("Creating new GameObject with name: %s", name);
-
 	nGameObjects++;
+
 	return gameObject;
 }
 
 void ModuleScene::LoadModel(const char * path, GameObject* parent)
 {
 	LOG("Trying to load model in path : %s", path);
-	App->modelLoader->loadModel(path);
+	//App->modelLoader->loadModel(path);
 
 	int numObject = 0;
 	std::string name = App->modelLoader->modelName;
@@ -126,11 +129,9 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 
 	//Setting parent as a meshParent
 	parent->isParentOfMeshes = true;
-
-	return;
 }
 
-void ModuleScene::CreateEmpy(GameObject* parent)
+void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* empty = CreateGameObject(defaultName.c_str(), parent);
@@ -143,7 +144,7 @@ void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
 	if(parent == nullptr)
 	{
 		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
-		return;
+		return; //leave
 	}
 
 	LOG("Creating a GameObject with Baker House Mesh.");
@@ -252,4 +253,20 @@ void ModuleScene::RemoveGameObject(GameObject * go)
 void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 {
 	selectedByHierarchy = selected;
+}
+
+void ModuleScene::drawHierarchy()
+{
+	for (unsigned int i = 0; i < root->children.size(); ++i)
+	{
+		root->children[i]->DrawHierarchy(root->children[i]);
+	}
+}
+
+void ModuleScene::drawAllBoundingBoxes()
+{
+	for (unsigned int i = 0; i < root->children.size(); ++i)
+	{
+		root->children[i]->DrawAABB();
+	}
 }

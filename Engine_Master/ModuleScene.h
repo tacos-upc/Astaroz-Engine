@@ -29,22 +29,24 @@ public:
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const char* name, GameObject* parent);
 	void LoadModel(const char* path, GameObject* parent);
-	void CreateEmpy(GameObject* parent);
+	void CreateEmpty(GameObject* parent);
 	void CreateGameObjectBakerHouse(GameObject* parent);
 	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
 	void RemoveGameObject(GameObject* go);
 	void SelectObjectInHierarchy(GameObject* selected);
+	void drawHierarchy();
+	void drawAllBoundingBoxes();
 
 	//public variables
 	std::vector<GameObject*> gameObjects;
 	bool showHierarchy;
 	bool showInspector;
 	GameObject* mainCamera;
+	GameObject* selectedByHierarchy = nullptr;
 
 private:
 	//private variables
 	GameObject* root;
-	GameObject* selectedByHierarchy;
 	unsigned int nGameObjects;
 	unsigned int numberOfBakerHouse;
 	unsigned int numberOfSphere;

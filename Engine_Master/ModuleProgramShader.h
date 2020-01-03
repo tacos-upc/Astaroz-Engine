@@ -12,14 +12,17 @@ public:
 	ModuleProgramShader();
 	~ModuleProgramShader();
 	bool Init();
+	bool Start();
 	bool CleanUp();
 
-	void createProgram();
+	GLuint createProgram(const char*, const char*);
 	GLuint compileShader(const GLuint type, const std::string source);
 	std::string parseShader(const std::string& filepath);
 
 public:
-	GLuint myProgram;
+	GLuint defaultProgram;
+	GLuint gridProgram;
+	GLuint skyboxProgram;
 };
 
 #endif __ModuleProgramShader_H__

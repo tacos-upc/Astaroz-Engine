@@ -8,14 +8,16 @@
 #include "ComponentMaterial.h"
 #include "ComponentCamera.h"
 
+#include "debugdraw.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "SDL.h"
+#include "IconsFontAwesome5.h"
+
 
 GameObject::GameObject()
-{
-}
+{}
 
 GameObject::GameObject(const char* name)
 {
@@ -116,11 +118,22 @@ Component* GameObject::CreateComponent(ComponentType type)
 	return component;
 }
 
+Component* GameObject::GetComponent(ComponentType type)
+{
+	Component* found = nullptr;
+
+	for (auto comp : components)
+	{
+		if (comp->myType == type) found = comp;
+	}
+	
+	return found;
+}
+
 
 void GameObject::DrawHierarchy(GameObject * selected)
 {
-	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen
-		| ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
 
 	ImGui::PushID(this);
 	if (children.empty())
@@ -169,7 +182,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		if(ImGui::Selectable("Create Empty"))
 		{
 			//Create empty gameobject
-			App->scene->CreateEmpy(this);
+			App->scene->CreateEmpty(this);
 		}
 
 		if (ImGui::BeginMenu("Create 3D Object"))
@@ -214,18 +227,6 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		}
 	}
 	ImGui::PopID();
-}
-
-void GameObject::DrawCamera()
-{
-	for(auto comp : components)
-	{
-		if(comp->myType == CAMERA)
-		{
-			ComponentCamera* mainCamera = (ComponentCamera*)comp;
-			mainCamera->DrawFrustum();
-		}
-	}
 }
 
 void GameObject::UpdateTransform()
@@ -335,73 +336,25 @@ void GameObject::ComputeAABB()
 	globalBoundingBox = new AABB(min + globalPos, max + globalPos);
 }
 
-void GameObject::DrawAABB() const
+void GameObject::DrawAABB()
 {
+
 	//Bounding Box
 	glLineWidth(1.0f);
 	float d = 200.0f;
 	glBegin(GL_LINES);
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+	glColor4f(0.6f, 0.6f, 0.6f, 1.0f);
 
-	//0->1 
-	glVertex3f(boundingBox->CornerPoint(0).x, boundingBox->CornerPoint(0).y, boundingBox->CornerPoint(0).z);
-	glVertex3f(boundingBox->CornerPoint(1).x, boundingBox->CornerPoint(1).y, boundingBox->CornerPoint(1).z);
+	ComponentCamera* cam = (ComponentCamera*) GetComponent(CAMERA);
+	if (cam != nullptr) cam->DrawFrustum();
 
-	//1->5
-	glVertex3f(boundingBox->CornerPoint(1).x, boundingBox->CornerPoint(1).y, boundingBox->CornerPoint(1).z);
-	glVertex3f(boundingBox->CornerPoint(5).x, boundingBox->CornerPoint(5).y, boundingBox->CornerPoint(5).z);
-
-	//5-4
-	glVertex3f(boundingBox->CornerPoint(5).x, boundingBox->CornerPoint(5).y, boundingBox->CornerPoint(5).z);
-	glVertex3f(boundingBox->CornerPoint(4).x, boundingBox->CornerPoint(4).y, boundingBox->CornerPoint(4).z);
-
-	//4-0
-	glVertex3f(boundingBox->CornerPoint(0).x, boundingBox->CornerPoint(0).y, boundingBox->CornerPoint(0).z);
-	glVertex3f(boundingBox->CornerPoint(4).x, boundingBox->CornerPoint(4).y, boundingBox->CornerPoint(4).z);
-	
-	//----//
-
-	//2->3 
-	glVertex3f(boundingBox->CornerPoint(2).x, boundingBox->CornerPoint(2).y, boundingBox->CornerPoint(2).z);
-	glVertex3f(boundingBox->CornerPoint(3).x, boundingBox->CornerPoint(3).y, boundingBox->CornerPoint(3).z);
-
-	//3->7
-	glVertex3f(boundingBox->CornerPoint(3).x, boundingBox->CornerPoint(3).y, boundingBox->CornerPoint(3).z);
-	glVertex3f(boundingBox->CornerPoint(7).x, boundingBox->CornerPoint(7).y, boundingBox->CornerPoint(7).z);
-
-	//7-6
-	glVertex3f(boundingBox->CornerPoint(7).x, boundingBox->CornerPoint(7).y, boundingBox->CornerPoint(7).z);
-	glVertex3f(boundingBox->CornerPoint(6).x, boundingBox->CornerPoint(6).y, boundingBox->CornerPoint(6).z);
-
-	//6-2
-	glVertex3f(boundingBox->CornerPoint(6).x, boundingBox->CornerPoint(6).y, boundingBox->CornerPoint(6).z);
-	glVertex3f(boundingBox->CornerPoint(2).x, boundingBox->CornerPoint(2).y, boundingBox->CornerPoint(2).z);
-
-	
-	//Y lines
-	//0->2
-	glVertex3f(boundingBox->CornerPoint(0).x, boundingBox->CornerPoint(0).y, boundingBox->CornerPoint(0).z);
-	glVertex3f(boundingBox->CornerPoint(2).x, boundingBox->CornerPoint(2).y, boundingBox->CornerPoint(2).z);
-
-	//1->3
-	glVertex3f(boundingBox->CornerPoint(1).x, boundingBox->CornerPoint(1).y, boundingBox->CornerPoint(1).z);
-	glVertex3f(boundingBox->CornerPoint(3).x, boundingBox->CornerPoint(3).y, boundingBox->CornerPoint(3).z);
-
-	//5->7
-	glVertex3f(boundingBox->CornerPoint(5).x, boundingBox->CornerPoint(5).y, boundingBox->CornerPoint(5).z);
-	glVertex3f(boundingBox->CornerPoint(7).x, boundingBox->CornerPoint(7).y, boundingBox->CornerPoint(7).z);
-
-	//6->4
-	glVertex3f(boundingBox->CornerPoint(6).x, boundingBox->CornerPoint(6).y, boundingBox->CornerPoint(6).z);
-	glVertex3f(boundingBox->CornerPoint(4).x, boundingBox->CornerPoint(4).y, boundingBox->CornerPoint(4).z);
-	
+	if(boundingBox != NULL) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
 
 	glEnd();
 }
 
-void GameObject::DrawInspector(bool& showInspector)
+void GameObject::DrawInspector()
 {
-	ImGui::Begin("Inspector", &showInspector);
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();
 	
 	char* go_name = new char[64];
@@ -416,17 +369,13 @@ void GameObject::DrawInspector(bool& showInspector)
 
 	ImGui::Checkbox("Static", &isStatic);
 
-
-	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	//Components
+	for (size_t i = 0; i < components.size(); i++)
 	{
-		ImGui::Text("Position");
-		ImGui::DragFloat3("Position", (float*)&myTransform->position, 0.1f);
-		ImGui::Text("Rotation");
-		ImGui::DragFloat3("Rotation", (float*)&myTransform->eulerRotation, 1.0f, -360.0f, 360.0f);
-		ImGui::Text("Scale");
-		ImGui::DragFloat3("Scale", (float*)&myTransform->scale, 0.01f, 0.01f, 1000.0f);
+		components[i]->drawInspector();
 	}
-	ImGui::End();
+
+	//Change EulerRotation to Quat
 	myTransform->EulerToQuat();
 }
 

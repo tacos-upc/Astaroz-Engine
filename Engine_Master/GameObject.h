@@ -28,8 +28,12 @@ public:
 
 	//public methods 
 	Component* CreateComponent(ComponentType type);
+	Component* GetComponent(ComponentType type);
+
+	//Hierarchy
 	void DrawHierarchy(GameObject* selected);
-	void DrawCamera();
+
+	//Update
 	void UpdateTransform();
 	void DrawInspector(bool &showInspector);
 	void ComputeAABB();

@@ -27,6 +27,7 @@ public:
 	virtual void Enable(){}
 	virtual void Disable(){}
 	virtual void Update(){}
+	virtual void drawInspector(){}
 
 	//GameObject myParent;
 	GameObject* myGameObject = nullptr;

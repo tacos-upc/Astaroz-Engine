@@ -32,7 +32,7 @@ public:
 
 	float getWheelSpeed()
 	{
-		LOG("%f", mouseWheel);
+		//LOG("%f", mouseWheel);
 		return mouseWheel;
 	}
 

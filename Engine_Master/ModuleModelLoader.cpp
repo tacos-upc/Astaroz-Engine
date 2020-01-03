@@ -1,6 +1,5 @@
 #include "ModuleModelLoader.h"
 #include "ModuleEditorCamera.h"
-
 #include "cimport.h"
 #include "Importer.hpp"
 
@@ -27,6 +26,11 @@ bool ModuleModelLoader::Init()
 	sLog.callback = addLog;
 	aiAttachLogStream(&sLog);
 
+	return true;
+}
+
+bool ModuleModelLoader::Start()
+{
 	//Always start by loading the Baker house model
 	loadModel(MODEL_BAKER_PATH);
 
@@ -49,7 +53,7 @@ bool ModuleModelLoader::CleanUp()
 	return true;
 }
 
-void ModuleModelLoader::Draw(unsigned int program)
+void ModuleModelLoader::DrawAll(unsigned int program)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)
 		meshes[i]->Draw(program);

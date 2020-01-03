@@ -58,7 +58,7 @@ update_status ModuleScene::Update()
 		gameObject->Update();
 	}
 	
-	drawHierarchy();
+	//drawHierarchy();
 
 	return UPDATE_CONTINUE;
 }
@@ -265,7 +265,7 @@ void ModuleScene::drawHierarchy()
 
 void ModuleScene::drawAllBoundingBoxes()
 {
-	for (unsigned int i = 0; i < root->children.size(); ++i)
+	for (unsigned int i = 0; i < root->children.size(); i++)
 	{
 		root->children[i]->DrawAABB();
 	}

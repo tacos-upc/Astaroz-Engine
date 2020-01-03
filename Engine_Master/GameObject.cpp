@@ -338,7 +338,6 @@ void GameObject::ComputeAABB()
 
 void GameObject::DrawAABB()
 {
-
 	//Bounding Box
 	glLineWidth(1.0f);
 	float d = 200.0f;
@@ -372,7 +371,7 @@ void GameObject::DrawInspector()
 	//Components
 	for (size_t i = 0; i < components.size(); i++)
 	{
-		components[i]->drawInspector();
+		components[i]->DrawInspector();
 	}
 
 	//Change EulerRotation to Quat

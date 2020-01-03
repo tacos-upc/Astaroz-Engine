@@ -44,7 +44,7 @@ update_status ModuleEditorCamera::PreUpdate()
 	updatePosition(dt);
 	updateRotation(dt);
 	updateOrbit(dt);
-	updateFocus(dt);
+	updateFocus();
 
 	cam->reloadMatrices();
 

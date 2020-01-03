@@ -44,7 +44,7 @@ void ComponentTransform::SetLocalMatrix(float4x4& newParentGlobalMatrix)
 	QuatToEuler();
 }
 
-void ComponentTransform::drawInspector()
+void ComponentTransform::DrawInspector()
 {
 	float3 lastEulerRotation = float3(eulerRotation.x, eulerRotation.y, eulerRotation.z);
 	

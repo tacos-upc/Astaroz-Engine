@@ -27,12 +27,13 @@ public:
 	virtual void Enable(){}
 	virtual void Disable(){}
 	virtual void Update(){}
-	virtual void drawInspector(){}
+	virtual void DrawInspector(){}
 
 	//GameObject myParent;
 	GameObject* myGameObject = nullptr;
 	ComponentType myType = TRANSFORM;
 	bool isActive = true;
+	bool allowMany;
 	std::string myName = "NewComponent";
 };
 

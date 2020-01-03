@@ -23,6 +23,7 @@ public:
 	void UpdateMatrices();
 	void SetGlobalMatrix(float4x4& parentGlobal);
 	void SetLocalMatrix(float4x4& newParentGlobalMatrix);
+	void DrawInspector() override;
 
 	//public variables
 	float3 position = float3(0.0f, 0.0f, 0.0f);

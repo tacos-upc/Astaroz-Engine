@@ -35,9 +35,9 @@ public:
 
 	//Update
 	void UpdateTransform();
-	void DrawInspector(bool &showInspector);
+	void DrawInspector();
 	void ComputeAABB();
-	void DrawAABB() const;
+	void DrawAABB();
 	void SetName(const std::string &newName);
 	std::string GetName() const;
 

@@ -234,7 +234,7 @@ void ModuleRender::drawSceneView()
 	App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
 	//This doesn't seem to be working well
-	drawAllBoundingBoxes();
+	//drawAllBoundingBoxes();
 
 	renderGrid(App->editorCamera->cam);
 
@@ -295,7 +295,7 @@ void ModuleRender::drawGameObjects(GLuint program)
 {
 	for (size_t i = 0; i < App->modelLoader->meshes.size(); i++)
 	{
-		if (((ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA))->AABBWithinFrustum(App->modelLoader->myBoundingBox) != AABB_OUT)
+		if (((ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA))->AABBWithinFrustum(App->modelLoader->myBoundingBox) != OUTSIDE)
 		{
 			App->modelLoader->meshes[i]->Draw(program);
 		}

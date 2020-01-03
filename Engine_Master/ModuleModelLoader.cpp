@@ -32,7 +32,7 @@ bool ModuleModelLoader::Init()
 bool ModuleModelLoader::Start()
 {
 	//Always start by loading the Baker house model
-	loadModel(MODEL_BAKER_PATH);
+	LoadModel(MODEL_BAKER_PATH);
 
 	//Init variables
 	numMeshes = 0;
@@ -59,7 +59,7 @@ void ModuleModelLoader::DrawAll(unsigned int program)
 		meshes[i]->Draw(program);
 }
 
-void ModuleModelLoader::loadModel(const char* path)
+void ModuleModelLoader::LoadModel(const char* path)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -223,7 +223,7 @@ void ModuleModelLoader::loadNewModel(const char* path)
 	meshes.clear();
 
 	//Load model
-	loadModel(path);
+	LoadModel(path);
 }
 
 void ModuleModelLoader::generateBoundingBox()

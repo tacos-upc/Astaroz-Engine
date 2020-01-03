@@ -6,6 +6,7 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleTime.h"
 #include "GameObject.h"
+
 #include <math.h>
 #include "Geometry/Plane.h"
 #include "glew.h"
@@ -143,7 +144,7 @@ void ComponentCamera::DrawFrustum()
 	dd::frustum(frustum->ViewProjMatrix().Inverted(), float3(0.f, 0.02f, 0.7f));
 }
 
-void ComponentCamera::drawInspector()
+void ComponentCamera::DrawInspector()
 {
 	if (ImGui::CollapsingHeader(ICON_FA_CAMERA " Camera"))
 	{
@@ -167,5 +168,4 @@ void ComponentCamera::drawInspector()
 		}
 		ImGui::Separator();
 	}
-	
 }

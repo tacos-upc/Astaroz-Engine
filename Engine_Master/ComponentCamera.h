@@ -31,7 +31,7 @@ public:
 	void SetPlaneDistances(float, float);
 	bool sideOfPlane(float3 &point, Plane &plane);
 	void DrawFrustum();
-	void drawInspector() override;
+	void DrawInspector() override;
 
 	int AABBWithinFrustum(const AABB &aabb);
 	void reloadMatrices();
@@ -44,10 +44,10 @@ public:
 	float4x4 projectionMatrix = float4x4::zero;
 	float4x4 viewMatrix = float4x4::zero;
 	ImVec4 clearColor;
-	int selectedClearMode = 0;
+	int selectedClearMode;
 
 private:
-	int selectedProjectionMode = 0;
+	int selectedProjectionMode;
 };
 
 #endif __ComponentCamera_H__

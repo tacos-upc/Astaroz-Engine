@@ -12,23 +12,17 @@
 
 
 ModuleScene::ModuleScene()
-{
-	root = new GameObject("World");
-	root->isRoot = true;
-}
+{}
 
 
 ModuleScene::~ModuleScene()
-{
-}
+{}
 
 bool ModuleScene::Init()
 {
 	//Init variables
 	showHierarchy = true;
 	showInspector = true;
-	mainCamera = nullptr;
-	root = nullptr;
 	selectedByHierarchy = nullptr;
 	nGameObjects = 0;
 	numberOfBakerHouse = 0;
@@ -36,6 +30,9 @@ bool ModuleScene::Init()
 	numberOfCube = 0;
 	numberOfTorus = 0;
 	numberOfCylinder = 0;
+
+	root = new GameObject("World");
+	root->isRoot = true;
 
 	mainCamera = CreateGameObject("Main Camera", root);
 	mainCamera->CreateComponent(CAMERA);
@@ -58,7 +55,7 @@ update_status ModuleScene::Update()
 		gameObject->Update();
 	}
 	
-	//drawHierarchy();
+	drawHierarchy();
 
 	return UPDATE_CONTINUE;
 }

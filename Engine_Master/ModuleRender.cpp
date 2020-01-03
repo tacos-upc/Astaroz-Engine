@@ -234,7 +234,7 @@ void ModuleRender::drawSceneView()
 	App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
 	//This doesn't seem to be working well
-	//drawAllBoundingBoxes();
+	drawAllBoundingBoxes();
 
 	renderGrid(App->editorCamera->cam);
 

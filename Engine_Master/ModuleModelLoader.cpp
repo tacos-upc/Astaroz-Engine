@@ -29,6 +29,7 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
+	
 	//LOG loading process from ASSIMP
 	aiLogStream sLog = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, NULL);
 	sLog.callback = addLog;
@@ -68,6 +69,7 @@ update_status ModuleModelLoader::Update()
 
 		ImGui::End();
 	}
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -86,7 +88,8 @@ void ModuleModelLoader::Draw(unsigned int program)
 void ModuleModelLoader::LoadModel(const char* path)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate| aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		LOG("ERROR::ASSIMP:: %s\n", importer.GetErrorString());
 		return;
@@ -94,9 +97,12 @@ void ModuleModelLoader::LoadModel(const char* path)
 	else {
 		LOG("Path of the geometry correct.\n");
 	}
+	
+	
 	//Next step
 	processNode(scene->mRootNode, scene);
-
+	
+	scene->mNumMeshes;
 	//Fill AABB member value
 	generateBoundingBox();
 
@@ -174,6 +180,10 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	//float colour;
+	//aiColor4D diffuse;
+	//if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) 
+	
 
 	// 1. diffuse maps
 	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -209,7 +219,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
 {
 	std::vector<Texture> textures;
-	int j= mat->GetTextureCount(type);
+	
 	for (unsigned int i=0; i<mat->GetTextureCount(type); i++)
 	{
 		aiString str;

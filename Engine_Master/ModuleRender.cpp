@@ -11,13 +11,11 @@
 
 
 ModuleRender::ModuleRender()
-{
-}
+{}
 
 // Destructor
 ModuleRender::~ModuleRender()
-{
-}
+{}
 
 // Called before render is available
 bool ModuleRender::Init()
@@ -233,7 +231,7 @@ void ModuleRender::drawSceneView()
 	//Todo: Update this thing with mesh gameobjects
 	App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
-	//This doesn't seem to be working well
+	//This doesn't seem to be working well //Todo: Update/delete comments
 	drawAllBoundingBoxes();
 
 	renderGrid(App->editorCamera->cam);

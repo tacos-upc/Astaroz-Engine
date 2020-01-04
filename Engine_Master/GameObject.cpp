@@ -51,7 +51,7 @@ void GameObject::SetParent(GameObject* newParent)
 	{
 		LOG("Setting new parent")
 		parent = newParent;
-		parent->children.push_back(this);
+		parent->childrenVector.push_back(this);
 	}
 	else
 	{
@@ -61,9 +61,9 @@ void GameObject::SetParent(GameObject* newParent)
 
 void GameObject::RemoveChildren(GameObject* child)
 {
-	if(!children.empty())
+	if(!childrenVector.empty())
 	{
-		children.erase(std::remove(children.begin(), children.end(), child), children.end());
+		childrenVector.erase(std::remove(childrenVector.begin(), childrenVector.end(), child), childrenVector.end());
 	}
 }
 
@@ -136,7 +136,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
 
 	ImGui::PushID(this);
-	if (children.empty())
+	if (childrenVector.empty())
 	{
 		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
@@ -146,7 +146,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	{
 		App->scene->SelectObjectInHierarchy(this);
 	}
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsItemHovered()) // Could be also || ImGui::IsWindowHovered())
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsItemHovered())
 	{
 		ImGui::OpenPopup("Creation Popup");
 	}
@@ -179,7 +179,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 
 		ImGui::Separator();
 
-		if(ImGui::Selectable("Create Empty"))
+		if(ImGui::Selectable("Create Empty GameObject"))
 		{
 			//Create empty gameobject
 			App->scene->CreateEmpty(this);
@@ -217,7 +217,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 
 	if(objOpen)
 	{
-		for(auto child : children)
+		for(auto child : childrenVector)
 		{
 			child->DrawHierarchy(selected);
 		}
@@ -273,13 +273,13 @@ void GameObject::ComputeAABB()
 	{
 		LOG("This gameObject does not have a Mesh thus we compute the AABB from his childs.");
 
-		if(children.size() == 0)
+		if(childrenVector.size() == 0)
 		{
 			LOG("Cannot compute the AABB because gameObject does not have children.");
 			return;	//leave at this point
 		}
 
-		for(auto child : children)
+		for(auto child : childrenVector)
 		{
 			if(child->boundingBox != nullptr)
 			{

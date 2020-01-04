@@ -203,7 +203,6 @@ void ModuleEditor::drawMainMenu()
 		//Hardware detection
 		if (ImGui::TreeNode("Hardware detection"))
 		{
-
 			ImGui::Text("CPU cores: %d", SDL_GetCPUCount());
 			ImGui::Text("CPU cache line size : %d B", SDL_GetCPUCacheLineSize());
 			ImGui::Separator();
@@ -241,6 +240,13 @@ void ModuleEditor::drawHierarchyPanel()
 	{
 		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
 		{
+			//Hierarchy tab
+			if (ImGui::BeginTabItem(ICON_FA_SITEMAP " Hierarchy"))
+			{
+				App->scene->drawHierarchy();
+
+				ImGui::EndTabItem();
+			}
 			//Settings tab
 			if (ImGui::BeginTabItem(ICON_FA_COG " Engine Settings"))
 			{
@@ -254,14 +260,6 @@ void ModuleEditor::drawHierarchyPanel()
 					App->renderer->drawSceneRenderSettings();
 					ImGui::Separator();
 				}
-				ImGui::EndTabItem();
-			}
-			
-			//HIierarchy tab
-			if (ImGui::BeginTabItem(ICON_FA_SITEMAP " Hierarchy"))
-			{
-				App->scene->drawHierarchy();
-
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();
@@ -293,7 +291,6 @@ void ModuleEditor::drawCameraPanel()
 			}
 			ImGui::EndTabBar();
 		}
-
 		ImGui::End();
 	}
 }

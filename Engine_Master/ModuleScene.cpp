@@ -55,7 +55,7 @@ update_status ModuleScene::Update()
 		gameObject->Update();
 	}
 	
-	drawHierarchy();
+	//drawHierarchy(); --> This is being done in ModuleEditor
 
 	return UPDATE_CONTINUE;
 }
@@ -254,16 +254,16 @@ void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 
 void ModuleScene::drawHierarchy()
 {
-	for (unsigned int i = 0; i < root->children.size(); ++i)
+	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{
-		root->children[i]->DrawHierarchy(root->children[i]);
+		root->childrenVector[i]->DrawHierarchy(root->childrenVector[i]);
 	}
 }
 
 void ModuleScene::drawAllBoundingBoxes()
 {
-	for (unsigned int i = 0; i < root->children.size(); i++)
+	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{
-		root->children[i]->DrawAABB();
+		root->childrenVector[i]->DrawAABB();
 	}
 }

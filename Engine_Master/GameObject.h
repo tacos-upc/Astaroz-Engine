@@ -46,7 +46,7 @@ public:
 	ComponentMesh* myMesh = nullptr;
 	ComponentMaterial* myMaterial = nullptr;
 	GameObject* parent = nullptr;
-	std::vector<GameObject*> children;
+	std::vector<GameObject*> childrenVector;
 	std::vector<Component*> components;
 	bool isEnabled = true;
 	bool isRoot = false;

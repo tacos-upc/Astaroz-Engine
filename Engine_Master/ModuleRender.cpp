@@ -8,7 +8,7 @@
 #include "Skybox.h"
 #include "glew.h"
 #include "ModuleDebugDraw.h"
-
+#include "debugdraw.h"
 
 ModuleRender::ModuleRender()
 {}
@@ -123,42 +123,8 @@ void ModuleRender::renderGrid(ComponentCamera* cam)
 	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "view"), 1, GL_TRUE, &cam->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(gridProgram, "proj"), 1, GL_TRUE, &cam->projectionMatrix[0][0]);
 
-	//Grid
-	glLineWidth(1.0f);
-	float d = 35.0f;
-	glBegin(GL_LINES);
-	for (float i = -d; i <= d; i += 1.0f)
-	{
-		glColor4f(gridColor.x, gridColor.y, gridColor.z, gridColor.w);
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
-	glEnd();
-
-	//Axis
-	glLineWidth(2.0f);
-	glBegin(GL_LINES);
-	// red X
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-	// green Y
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-	// blue Z
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-	glEnd();
-	glLineWidth(1.0f);
+	dd::xzSquareGrid(-100.f, 100.f, 0.f, 5.f, float3(gridColor.x, gridColor.y, gridColor.z));
+	dd::axisTriad(float4x4::identity, 0.f, 1.f);
 
 	glUseProgram(App->programShader->defaultProgram);
 }

@@ -168,7 +168,7 @@ bool ModuleRender::endRenderTexture()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	
-	return true;
+	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
 
 void ModuleRender::drawAllBoundingBoxes()
@@ -197,18 +197,9 @@ void ModuleRender::drawSceneView()
 	//Todo: Update this thing with mesh gameobjects
 	App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
-	//This doesn't seem to be working well //Todo: Update/delete comments
 	drawAllBoundingBoxes();
-
 	renderGrid(App->editorCamera->cam);
-
-	ImGui::GetWindowDrawList()->AddImage(
-		(void *)sceneTexture,
-		ImVec2(ImGui::GetCursorScreenPos()),
-		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y),
-		ImVec2(0, 1),
-		ImVec2(1, 0)
-	);
+	ImGui::Image((void*)sceneTexture, ImVec2(size.x, size.y - 40), ImVec2(0, 1), ImVec2(1, 0));
 
 	App->debugDraw->Draw(App->editorCamera->cam, sceneFBO, App->window->width, App->window->height);
 	endRenderTexture();
@@ -230,17 +221,9 @@ void ModuleRender::drawGameView()
 
 	drawGameObjects(App->programShader->defaultProgram);
 
-
 	if(cam->selectedClearMode == SKYBOX) skybox->draw(cam);
 
-	ImGui::GetWindowDrawList()->AddImage(
-		(void *)gameTexture,
-		ImVec2(ImGui::GetCursorScreenPos()),
-		ImVec2(ImGui::GetCursorScreenPos().x + size.x, ImGui::GetCursorScreenPos().y + size.y),
-		ImVec2(0, 1),
-		ImVec2(1, 0)
-	);
-
+	ImGui::Image((void*)gameTexture, ImVec2(size.x, size.y - 40), ImVec2(0, 1), ImVec2(1, 0));
 	endRenderTexture();
 }
 

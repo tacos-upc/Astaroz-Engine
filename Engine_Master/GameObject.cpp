@@ -302,11 +302,12 @@ void GameObject::createAABBs()
 		for (Vertex vertex : myMesh->myMesh->vertices)
 		{
 			float3 v = float3(vertex.Position.x, vertex.Position.y, vertex.Position.z);
-			boundingBox->Enclose(v);
 			obb->Enclose(v);
 		}
 	}
 
+	findOBBPoints();
+	boundingBox->Enclose(obbPoints, 8);
 	boundingBox->TransformAsAABB(myTransform->localModelMatrix);
 	obb->Transform(myTransform->localModelMatrix);
 }
@@ -324,7 +325,7 @@ void GameObject::DrawAABB()
 
 	if (obb != nullptr)
 	{
-		findOBBPoints();
+		findOBBPointsForRender();
 		dd::box(obbPoints, float3(0.7f, 0.7f, 0.7f));
 	}
 	if (boundingBox != nullptr) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
@@ -385,7 +386,7 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 	}
 }
 
-void GameObject::findOBBPoints()
+void GameObject::findOBBPointsForRender()
 {
 	obbPoints[0] = obb->CornerPoint(0);
 	obbPoints[1] = obb->CornerPoint(1);
@@ -395,4 +396,16 @@ void GameObject::findOBBPoints()
 	obbPoints[5] = obb->CornerPoint(5);
 	obbPoints[6] = obb->CornerPoint(7);
 	obbPoints[7] = obb->CornerPoint(6);
+}
+
+void GameObject::findOBBPoints()
+{
+	obbPoints[0] = obb->CornerPoint(0);
+	obbPoints[1] = obb->CornerPoint(1);
+	obbPoints[2] = obb->CornerPoint(2);
+	obbPoints[3] = obb->CornerPoint(3);
+	obbPoints[4] = obb->CornerPoint(4);
+	obbPoints[5] = obb->CornerPoint(5);
+	obbPoints[6] = obb->CornerPoint(6);
+	obbPoints[7] = obb->CornerPoint(7);
 }

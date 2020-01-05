@@ -38,7 +38,9 @@ public:
 	void UpdateTransform();
 	void DrawInspector();
 	void createAABBs();
+	void findOBBPointsForRender();
 	void findOBBPoints();
+
 	void DrawAABB();
 	void Draw(GLuint program);
 	void SetName(const std::string &newName);

@@ -38,6 +38,7 @@ public:
 	void DrawInspector();
 	void ComputeAABB();
 	void DrawAABB();
+	void Draw(GLuint program);
 	void SetName(const std::string &newName);
 	std::string GetName() const;
 

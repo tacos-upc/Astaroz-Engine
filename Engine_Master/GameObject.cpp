@@ -364,6 +364,15 @@ void GameObject::DrawAABB()
 	glEnd();
 }
 
+void GameObject::Draw(GLuint program)
+{
+	ComponentMesh* mesh = (ComponentMesh*)GetComponent(MESH);
+	if (mesh != nullptr)
+	{
+		mesh->Draw(program);
+	}
+}
+
 void GameObject::DrawInspector()
 {
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();

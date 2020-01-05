@@ -9,6 +9,7 @@
 #include "glew.h"
 #include "ModuleDebugDraw.h"
 #include "debugdraw.h"
+#include "ComponentTransform.h"
 
 ModuleRender::ModuleRender()
 {}
@@ -195,7 +196,9 @@ void ModuleRender::drawSceneView()
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
 	//Todo: Update this thing with mesh gameobjects
-	App->modelLoader->DrawAll(App->programShader->defaultProgram);
+	//App->modelLoader->DrawAll(App->programShader->defaultProgram);
+
+	drawGameObjects(App->programShader->defaultProgram);
 
 	drawAllBoundingBoxes();
 	renderGrid(App->editorCamera->cam);
@@ -240,11 +243,14 @@ void ModuleRender::drawSceneRenderSettings()
 //TODO: Update this method with proper gameobjects
 void ModuleRender::drawGameObjects(GLuint program)
 {
-	for (size_t i = 0; i < App->modelLoader->meshes.size(); i++)
+	for (size_t i = 0; i < App->scene->gameObjects.size(); i++)
 	{
 		if (((ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA))->AABBWithinFrustum(App->modelLoader->myBoundingBox) != OUTSIDE)
 		{
-			App->modelLoader->meshes[i]->Draw(program);
+			ComponentTransform * transform = (ComponentTransform*)App->scene->gameObjects.at(i)->GetComponent(TRANSFORM);
+			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
+
+			App->scene->gameObjects.at(i)->Draw(program);
 		}
 	}
 }

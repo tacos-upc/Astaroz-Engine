@@ -30,7 +30,6 @@ Application::Application()
 	modules.push_back(modelLoader = new ModuleModelLoader());
 	modules.push_back(debugDraw = new ModuleDebugDraw());
 	modules.push_back(renderer = new ModuleRender());
-
 }
 
 Application::~Application()

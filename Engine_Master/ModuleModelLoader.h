@@ -25,8 +25,8 @@ public:
 
 	void LoadModel(const char*);
 	void DrawAll(unsigned int program);
-	void processNode(aiNode*, const aiScene*);
-	Mesh processMesh(aiMesh*, const aiScene*);
+	void processNode(aiNode*, const aiScene*, const char* path);
+	Mesh processMesh(aiMesh*, const aiScene*, const char* path);
 	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
 	void loadNewModel(const char* path);
 	void generateBoundingBox();

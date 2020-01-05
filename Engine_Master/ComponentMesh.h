@@ -19,9 +19,9 @@ public:
 	void DrawInspector() override;
 	//public variables
 	Mesh* myMesh;
-	char meshPath[1000] = {};
 
 private:
+	int selectedMesh;
 	bool isLoaded;
 };
 

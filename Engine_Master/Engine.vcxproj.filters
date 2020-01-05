@@ -140,6 +140,7 @@
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ModuleSpacePartition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -376,6 +377,7 @@
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Dummy.h" />
+    <ClInclude Include="ModuleSpacePartition.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

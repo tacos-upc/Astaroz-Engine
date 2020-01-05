@@ -59,7 +59,6 @@ public:
 	bool isStatic = false;
 	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
-	AABB* globalBoundingBox = nullptr;
 
 private:
 	//private variables

@@ -83,7 +83,7 @@ void GameObject::CleanUp()
 		delete comp;
 	}
 	delete boundingBox;
-	delete globalBoundingBox;
+	delete obb;
 	delete this;
 }
 
@@ -253,7 +253,7 @@ void GameObject::UpdateTransform()
 		}
 		myTransform->UpdateMatrices();
 
-		if(globalBoundingBox != nullptr && boundingBox != nullptr)
+		if(boundingBox != nullptr)
 		{
 			createAABBs();
 		}
@@ -276,7 +276,6 @@ void GameObject::createAABBs()
 	float3 max = float3::zero;
 	boundingBox = new AABB(min, max);
 	obb = new OBB(*boundingBox);
-	globalBoundingBox = new AABB(min, max);
 
 	if(myMesh == nullptr)
 	{

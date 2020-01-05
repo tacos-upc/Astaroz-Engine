@@ -157,11 +157,10 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		isSelectedInHierarchy = !isSelectedInHierarchy;
 	}
 
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsWindowHovered())
 	{
 		ImGui::OpenPopup("Creation Popup");
 	}
-
 
 	if (ImGui::BeginPopup("Creation Popup"))
 	{

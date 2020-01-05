@@ -85,10 +85,16 @@ void ModuleModelLoader::LoadModel(const char* path)
 
 void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
 {
+	
+	LOG("Before Meshes: %d", meshes.size());
+	LOG("------------------------------------------")
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(new Mesh(processMesh(mesh, scene)));
+		
+		LOG("After Meshes: %d", meshes.size());
+		LOG("------------------------------------------");
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -182,7 +188,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	numPolys /= 3;
 	numTextures += textures.size();
 
-	return Mesh(vertices, indices, textures);
+	return Mesh(vertices, indices, textures, mesh->mName.C_Str());
 }
 
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)

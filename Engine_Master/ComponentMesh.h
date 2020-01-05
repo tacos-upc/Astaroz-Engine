@@ -16,9 +16,13 @@ public:
 	//public methods
 	void LoadMesh(Mesh* mesh);
 	void Draw(const unsigned int program) const;
-
+	void DrawInspector() override;
 	//public variables
 	Mesh* myMesh;
+	char meshPath[1000] = {};
+
+private:
+	bool isLoaded;
 };
 
 #endif __ComponentMesh_H__

@@ -4,11 +4,12 @@
 #include "glew.h"
 #include <string>
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures)
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures, const char* name)
 {
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;
+	this->name = name;
 
 	setupMesh();
 }

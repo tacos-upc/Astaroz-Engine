@@ -341,6 +341,7 @@ void ModuleEditor::drawComponentsMenu(float y)
 					openComponentsMenu = false;
 				}
 			}
+			if (!ImGui::IsWindowFocused()) openComponentsMenu = false;
 			ImGui::End();
 		}
 	}

@@ -14,6 +14,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "SDL.h"
 #include "IconsFontAwesome5.h"
+#include "Geometry/AABB.h"
 
 
 GameObject::GameObject()
@@ -101,6 +102,7 @@ Component* GameObject::CreateComponent(ComponentType type)
 		case MESH:
 			component = new ComponentMesh();
 			myMesh = (ComponentMesh*)component;
+			createAABBs();
 			break;
 		case MATERIAL:
 			component = new ComponentMaterial();
@@ -253,15 +255,7 @@ void GameObject::UpdateTransform()
 
 		if(globalBoundingBox != nullptr && boundingBox != nullptr)
 		{
-			//AABB Global Update
-			//Compute globalBoundingBox
-
-			float3 globalPos, globalScale;
-			float3x3 globalRot;
-			myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-
-			globalBoundingBox->minPoint = (boundingBox->minPoint + globalPos);
-			globalBoundingBox->maxPoint = (boundingBox->maxPoint + globalPos);
+			createAABBs();
 		}
 	}
 }
@@ -276,10 +270,13 @@ std::string GameObject::GetName() const
 	return name;
 }
 
-void GameObject::ComputeAABB()
+void GameObject::createAABBs()
 {
 	float3 min = float3::zero;
 	float3 max = float3::zero;
+	boundingBox = new AABB(min, max);
+	obb = new OBB(*boundingBox);
+	globalBoundingBox = new AABB(min, max);
 
 	if(myMesh == nullptr)
 	{
@@ -295,57 +292,23 @@ void GameObject::ComputeAABB()
 		{
 			if(child->boundingBox != nullptr)
 			{
-				//Min vertex
-				if (child->boundingBox->minPoint.x < min.x)
-					min.x = child->boundingBox->minPoint.x;
-				if (child->boundingBox->minPoint.y < min.y)
-					min.y = child->boundingBox->minPoint.y;
-				if (child->boundingBox->minPoint.z < min.z)
-					min.z = child->boundingBox->minPoint.z;
-				//Max vertex
-				if (child->boundingBox->maxPoint.x > max.x)
-					max.x = child->boundingBox->maxPoint.x;
-				if (child->boundingBox->maxPoint.y > max.y)
-					max.y = child->boundingBox->maxPoint.y;
-				if (child->boundingBox->maxPoint.z > max.z)
-					max.z = child->boundingBox->maxPoint.z;
+				boundingBox->Enclose(*child->boundingBox);
 			}
 		}
-
-		boundingBox = new AABB(min, max);
-		//Compute globalBoundingBox
-		float3 globalPos, globalScale;
-		float3x3 globalRot;
-		myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-		globalBoundingBox = new AABB(min + globalPos, max + globalPos);
 	}
 		
-
-	for (auto vertex : myMesh->myMesh->vertices)
+	if (myMesh->myMesh != nullptr)
 	{
-		//Min vertex
-		if (vertex.Position.x < min.x)
-			min.x = vertex.Position.x;
-		if (vertex.Position.y < min.y)
-			min.y = vertex.Position.y;
-		if (vertex.Position.z < min.z)
-			min.z = vertex.Position.z;
-		//Max vertex
-		if (vertex.Position.x > max.x)
-			max.x = vertex.Position.x;
-		if (vertex.Position.y > max.y)
-			max.y = vertex.Position.y;
-		if (vertex.Position.z > max.z)
-			max.z = vertex.Position.z;
+		for (Vertex vertex : myMesh->myMesh->vertices)
+		{
+			float3 v = float3(vertex.Position.x, vertex.Position.y, vertex.Position.z);
+			boundingBox->Enclose(v);
+			obb->Enclose(v);
+		}
 	}
-	
-	boundingBox = new AABB(min, max);
 
-	//Compute globalBoundingBox
-	float3 globalPos, globalScale;
-	float3x3 globalRot;
-	myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-	globalBoundingBox = new AABB(min + globalPos, max + globalPos);
+	boundingBox->TransformAsAABB(myTransform->localModelMatrix);
+	obb->Transform(myTransform->localModelMatrix);
 }
 
 void GameObject::DrawAABB()
@@ -359,17 +322,21 @@ void GameObject::DrawAABB()
 	ComponentCamera* cam = (ComponentCamera*) GetComponent(CAMERA);
 	if (cam != nullptr) cam->DrawFrustum();
 
-	if(boundingBox != NULL) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
-
+	if (obb != nullptr)
+	{
+		findOBBPoints();
+		dd::box(obbPoints, float3(0.7f, 0.7f, 0.7f));
+	}
+	if (boundingBox != nullptr) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
 	glEnd();
 }
 
 void GameObject::Draw(GLuint program)
 {
-	ComponentMesh* mesh = (ComponentMesh*)GetComponent(MESH);
-	if (mesh != nullptr)
+	if (myMesh != nullptr)
 	{
-		mesh->Draw(program);
+		myMesh->Draw(program);
+		DrawAABB();
 	}
 }
 
@@ -385,7 +352,7 @@ void GameObject::DrawInspector()
 	}
 	ImGui::SameLine();
 
-	delete[] go_name;
+	delete go_name;
 
 	ImGui::Checkbox("Static", &isStatic);
 
@@ -416,4 +383,16 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 		}
 		ImGui::EndDragDropTarget();
 	}
+}
+
+void GameObject::findOBBPoints()
+{
+	obbPoints[0] = obb->CornerPoint(0);
+	obbPoints[1] = obb->CornerPoint(1);
+	obbPoints[2] = obb->CornerPoint(3);
+	obbPoints[3] = obb->CornerPoint(2);
+	obbPoints[4] = obb->CornerPoint(4);
+	obbPoints[5] = obb->CornerPoint(5);
+	obbPoints[6] = obb->CornerPoint(7);
+	obbPoints[7] = obb->CornerPoint(6);
 }

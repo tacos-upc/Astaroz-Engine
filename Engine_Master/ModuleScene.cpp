@@ -124,7 +124,7 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 		ComponentMesh* myMeshCreated = (ComponentMesh*)newMeshObject->CreateComponent(MESH);
 		
 		myMeshCreated->LoadMesh(mesh);
-		newMeshObject->ComputeAABB();
+		newMeshObject->createAABBs();
 		gameObjects.push_back(newMeshObject);
 
 		numObject++;
@@ -132,7 +132,7 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 
 	LOG("Deleting info from ModelLoader");
 	App->modelLoader->emptyScene();
-	parent->ComputeAABB();
+	parent->createAABBs();
 
 	//Setting parent as a meshParent
 	parent->isParentOfMeshes = true;

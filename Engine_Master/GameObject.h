@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Component.h"
 #include "Geometry/AABB.h"
+#include "Geometry/OBB.h"
 #include <string>
 #include <vector>
 
@@ -36,7 +37,8 @@ public:
 	//Update
 	void UpdateTransform();
 	void DrawInspector();
-	void ComputeAABB();
+	void createAABBs();
+	void findOBBPoints();
 	void DrawAABB();
 	void Draw(GLuint program);
 	void SetName(const std::string &newName);
@@ -53,6 +55,7 @@ public:
 	bool isRoot = false;
 	bool isParentOfMeshes = false;
 	bool isStatic = false;
+	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
 	AABB* globalBoundingBox = nullptr;
 
@@ -60,8 +63,9 @@ private:
 	//private variables
 	std::string name;
 	bool isSelectedInHierarchy;
+	float3 obbPoints[8];
+
 	//private methods
 	void CheckDragAndDrop(GameObject* go);
 };
-
 #endif __GameObject_H__

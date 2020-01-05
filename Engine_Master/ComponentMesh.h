@@ -18,7 +18,7 @@ public:
 	void Draw(const unsigned int program) const;
 	void DrawInspector() override;
 	//public variables
-	Mesh* myMesh;
+	Mesh* myMesh = nullptr;
 
 private:
 	int selectedMesh;

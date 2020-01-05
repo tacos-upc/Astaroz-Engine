@@ -69,8 +69,6 @@ update_status ModuleRender::PreUpdate()
 	//Program (shaders: vertex shader + fragment shader)
 	glUseProgram(App->programShader->defaultProgram);
 	
-	float4x4 model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
-	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &App->editorCamera->cam->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &App->editorCamera->cam->projectionMatrix[0][0]);
 
@@ -247,7 +245,7 @@ void ModuleRender::drawGameObjects(GLuint program)
 	{
 		if (((ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA))->AABBWithinFrustum(App->modelLoader->myBoundingBox) != OUTSIDE)
 		{
-			ComponentTransform * transform = (ComponentTransform*)App->scene->gameObjects.at(i)->GetComponent(TRANSFORM);
+			ComponentTransform * transform = (ComponentTransform*)App->scene->gameObjects.at(i)->myTransform;
 			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
 
 			App->scene->gameObjects.at(i)->Draw(program);

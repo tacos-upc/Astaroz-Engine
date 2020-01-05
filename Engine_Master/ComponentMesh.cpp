@@ -2,6 +2,7 @@
 #include "ModuleModelLoader.h"
 #include "Application.h"
 #include "IconsFontAwesome5.h"
+#include "GameObject.h"
 #include <list>
 
 ComponentMesh::ComponentMesh()
@@ -39,7 +40,11 @@ void ComponentMesh::DrawInspector()
 
 		ImGui::Combo("Target Mesh", &selectedMesh, meshNames.c_str(), 3);
 
-		if (selectedMesh >= 0 && myMesh != App->modelLoader->meshes.at(selectedMesh)) myMesh = App->modelLoader->meshes.at(selectedMesh);
+		if (selectedMesh >= 0 && myMesh != App->modelLoader->meshes.at(selectedMesh))
+		{
+			myMesh = App->modelLoader->meshes.at(selectedMesh);
+			myGameObject->createAABBs();
+		}
 
 		ImGui::Separator();
 	}

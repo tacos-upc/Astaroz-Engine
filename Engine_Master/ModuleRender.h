@@ -61,6 +61,8 @@ private:
 	ImVec4 sceneClearColor;
 	bool usesGrid = true;
 	ImVec4 gridColor;
+	bool drawAll;
+	bool drawSpacePartition;
 
 	void generateBuffers(GLuint*, GLuint*, GLuint*);
 	bool beginRenderTexture(int, int, GLuint*, GLuint*, GLuint*);

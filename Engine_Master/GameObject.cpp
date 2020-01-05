@@ -143,8 +143,12 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	{
 		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
+	if (App->scene->selectedByHierarchy == this) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.52f, 1.f));
+	
 	bool objOpen = ImGui::TreeNodeEx(this, flags, name.c_str());
-
+	
+	if (App->scene->selectedByHierarchy == this) ImGui::PopStyleColor();
+	
 	if(ImGui::IsItemClicked())
 	{
 		if (isSelectedInHierarchy) App->scene->selectRoot();

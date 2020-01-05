@@ -304,7 +304,7 @@ void ModuleEditor::drawInspectorPanel()
 	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 	{
 		GameObject* obj = App->scene->selectedByHierarchy;
-		if (obj != nullptr)
+		if (obj != nullptr && obj != App->scene->getRoot())
 		{
 			obj->DrawInspector();
 

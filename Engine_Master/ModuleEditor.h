@@ -39,7 +39,10 @@ private:
 	void drawHierarchyPanel();
 	void drawCameraPanel();
 	void drawInspectorPanel();
+	void drawComponentsMenu(float);
 	void drawLogPanel();
+
+	bool openComponentsMenu;
 };
 
 #endif __ModuleEditor_H__

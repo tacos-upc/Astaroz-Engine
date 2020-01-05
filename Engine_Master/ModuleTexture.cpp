@@ -144,7 +144,7 @@ void ModuleTexture::loadSkybox(const char* path, int index)
 	ilBindImage(img);
 
 	ilLoadImage(path);
-	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); //Convert image in case it comes on whatever it's not rgb
+	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
 
 	ILinfo ImageInfo;
 	iluGetImageInfo(&ImageInfo);
@@ -158,7 +158,7 @@ void ModuleTexture::loadSkybox(const char* path, int index)
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, 0, GL_RGB, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		ilDeleteImages(1, &img); //Once the texture is generated we can elete the IL image
+		ilDeleteImages(1, &img);
 	}
 
 	return;

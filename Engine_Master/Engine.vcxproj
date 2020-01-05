@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />

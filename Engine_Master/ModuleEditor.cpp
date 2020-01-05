@@ -24,7 +24,7 @@ bool ModuleEditor::Init()
 	//flags to show windows
 	show_about_window = false;
 	show_configuration_window = false;
-
+	openComponentsMenu = false;
 	return true;
 }
 
@@ -297,6 +297,8 @@ void ModuleEditor::drawCameraPanel()
 
 void ModuleEditor::drawInspectorPanel()
 {
+	float componentsMenuY = 0;
+
 	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height));
 	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 50.0f));
 	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
@@ -312,10 +314,35 @@ void ModuleEditor::drawInspectorPanel()
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
 			if (ImGui::Button("Add Component", ImVec2(ImGui::GetWindowSize().x * 0.6f, 25.0f)))
 			{
-				//TODO: Add Component
+				openComponentsMenu = true;
 			}
+			componentsMenuY = ImGui::GetCursorPosY() + 40.f;
 		}
 		ImGui::End();
+		drawComponentsMenu(componentsMenuY);
+
+	}
+}
+
+void ModuleEditor::drawComponentsMenu(float y)
+{
+	if (openComponentsMenu)
+	{
+		ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, y));
+		ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, 200.f));
+		if (ImGui::Begin("Components", &openComponentsMenu, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+		{
+			for (size_t i = 0; i < ComponentType::COMPONENT_TYPE_COUNT; i++)
+			{
+				ImGui::SetNextItemWidth(App->window->width * 0.2f - 5.f);
+				if (ImGui::Button(Component::typeToString(i)))
+				{
+					App->scene->selectedByHierarchy->CreateComponent((ComponentType)i);
+					openComponentsMenu = false;
+				}
+			}
+			ImGui::End();
+		}
 	}
 }
 

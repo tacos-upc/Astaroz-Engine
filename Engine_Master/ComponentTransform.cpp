@@ -6,6 +6,7 @@
 
 ComponentTransform::ComponentTransform(GameObject* gameObject)
 {
+	allowMany = false;
 	myGameObject = gameObject;
 	myType = TRANSFORM;
 	UpdateMatrices();

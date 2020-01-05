@@ -94,7 +94,7 @@ void ModuleEditorCamera::updatePosition(float dt)
 
 void ModuleEditorCamera::updateRotation(float dt)
 {
-	if (navigationMode != FREE) return;
+	if (navigationMode != MovementMode::FREE) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
 	if (math::Abs(mouseMotion.x) > 10.0f) cam->yaw(mouseMotion.x, dt);
@@ -103,7 +103,7 @@ void ModuleEditorCamera::updateRotation(float dt)
 
 void ModuleEditorCamera::updateOrbit(float dt)
 {
-	if (navigationMode != ORBIT) return;
+	if (navigationMode != MovementMode::ORBIT) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
 	if (math::Abs(mouseMotion.x) > 2.0f && App->input->isKeyDown(SDL_SCANCODE_LALT))
@@ -135,13 +135,13 @@ void ModuleEditorCamera::updateNavModes()
 
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
 	{
-		navigationMode = FREE;
+		navigationMode = MovementMode::FREE;
 		return;
 	}
-	else navigationMode = NONE;
+	else navigationMode = MovementMode::MOVEMENT_MODE_NONE ;
 	
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = ORBIT;
-	else navigationMode = NONE;
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = MovementMode::ORBIT;
+	else navigationMode = MovementMode::MOVEMENT_MODE_NONE;
 	
 }
 

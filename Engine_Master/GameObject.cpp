@@ -22,6 +22,7 @@ GameObject::GameObject()
 GameObject::GameObject(const char* name)
 {
 	this->name = name;
+	isSelectedInHierarchy = false;
 	CreateComponent(TRANSFORM);
 }
 
@@ -87,7 +88,9 @@ void GameObject::CleanUp()
 
 Component* GameObject::CreateComponent(ComponentType type)
 {
-	Component* component = nullptr;
+	
+	Component* component = GetComponent(type);
+	if (component != nullptr && !component->allowMany) return nullptr;
 
 	switch(type)
 	{
@@ -144,12 +147,18 @@ void GameObject::DrawHierarchy(GameObject * selected)
 
 	if(ImGui::IsItemClicked())
 	{
-		App->scene->SelectObjectInHierarchy(this);
+		if (isSelectedInHierarchy) App->scene->selectRoot();
+		else App->scene->SelectObjectInHierarchy(this);
+
+		isSelectedInHierarchy = !isSelectedInHierarchy;
 	}
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsItemHovered())
+
+	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
 		ImGui::OpenPopup("Creation Popup");
 	}
+
+
 	if (ImGui::BeginPopup("Creation Popup"))
 	{
 		if (ImGui::Selectable("Copy"))

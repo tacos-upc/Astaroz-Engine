@@ -6,10 +6,15 @@
 
 enum ComponentType
 {
+	COMPONENT_TYPE_NONE = -1,
+	//Don't add anything above here
 	TRANSFORM = 0,
 	MESH,
 	MATERIAL,
-	CAMERA
+	CAMERA,
+
+	//Don't add anything below here
+	COMPONENT_TYPE_COUNT
 };
 
 class GameObject;
@@ -28,7 +33,8 @@ public:
 	virtual void Disable(){}
 	virtual void Update(){}
 	virtual void DrawInspector(){}
-
+	static const char* typeToString(int);
+	
 	//GameObject myParent;
 	GameObject* myGameObject = nullptr;
 	ComponentType myType = TRANSFORM;

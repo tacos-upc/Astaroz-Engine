@@ -97,7 +97,6 @@ void Skybox::draw(ComponentCamera* camera)
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 
-	//reset the functions
 	glDepthFunc(GL_LESS);
 	glUseProgram(0);
 }

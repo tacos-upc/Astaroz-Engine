@@ -5,6 +5,7 @@
 ComponentMesh::ComponentMesh()
 {
 	myType = MESH;
+	allowMany = false;
 }
 
 ComponentMesh::~ComponentMesh()

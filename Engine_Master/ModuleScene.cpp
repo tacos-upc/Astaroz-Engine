@@ -96,6 +96,16 @@ GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent
 	return gameObject;
 }
 
+GameObject * ModuleScene::getRoot()
+{
+	return root;
+}
+
+void ModuleScene::selectRoot()
+{
+	selectedByHierarchy = root;
+}
+
 void ModuleScene::LoadModel(const char * path, GameObject* parent)
 {
 	LOG("Trying to load model in path : %s", path);
@@ -131,7 +141,7 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
-	GameObject* empty = CreateGameObject(defaultName.c_str(), parent);
+	GameObject* empty = CreateGameObject(defaultName.c_str(), selectedByHierarchy == parent ? parent : root);
 	
 	gameObjects.push_back(empty);
 }
@@ -254,6 +264,8 @@ void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 
 void ModuleScene::drawHierarchy()
 {
+	if (selectedByHierarchy == nullptr) selectedByHierarchy = root;
+
 	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{
 		root->childrenVector[i]->DrawHierarchy(root->childrenVector[i]);

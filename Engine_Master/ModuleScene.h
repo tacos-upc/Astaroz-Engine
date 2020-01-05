@@ -28,6 +28,8 @@ public:
 	//public methods
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const char* name, GameObject* parent);
+	GameObject* getRoot();
+	void selectRoot();
 	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);
 	void CreateGameObjectBakerHouse(GameObject* parent);

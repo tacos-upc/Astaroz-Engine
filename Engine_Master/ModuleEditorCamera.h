@@ -18,10 +18,10 @@
 enum MovementMode
 {
 	MOVEMENT_ERROR = -1,
-	NONE,
+	MOVEMENT_MODE_NONE,
 	FREE,
 	ORBIT,
-	COUNT
+	MOVEMENT_MODE_COUNT
 };
 
 class ModuleEditorCamera :
@@ -52,7 +52,7 @@ public:
 
 private:
 
-	MovementMode navigationMode = NONE;
+	MovementMode navigationMode = MOVEMENT_MODE_NONE;
 	bool isFastMode = false;
 	float orbitAngleX = 0.0f;
 	float orbitAngleY = 0.0f;

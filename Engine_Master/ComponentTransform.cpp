@@ -12,6 +12,15 @@ ComponentTransform::ComponentTransform(GameObject* gameObject)
 	UpdateMatrices();
 }
 
+ComponentTransform::ComponentTransform(GameObject* gameObject, ComponentTransform* componentTransform)
+{
+	myGameObject = gameObject;
+	myType = TRANSFORM;
+	position = componentTransform->position;
+	rotation = componentTransform->rotation;
+	scale = componentTransform->scale;
+	UpdateMatrices();
+}
 
 ComponentTransform::~ComponentTransform()
 {}

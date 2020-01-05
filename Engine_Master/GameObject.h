@@ -18,6 +18,7 @@ class GameObject
 public:
 	GameObject();
 	GameObject(const char* name);
+	GameObject(const GameObject& go);
 	~GameObject();
 
 	void Update();
@@ -47,7 +48,7 @@ public:
 	ComponentMaterial* myMaterial = nullptr;
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childrenVector;
-	std::vector<Component*> components;
+	std::vector<Component*> componentVector;
 	bool isEnabled = true;
 	bool isRoot = false;
 	bool isParentOfMeshes = false;
@@ -57,7 +58,7 @@ public:
 
 private:
 	//private variables
-	std::string name;
+	std::string myName;
 	bool isSelectedInHierarchy;
 	//private methods
 	void CheckDragAndDrop(GameObject* go);

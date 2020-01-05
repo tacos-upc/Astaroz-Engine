@@ -21,11 +21,61 @@ GameObject::GameObject()
 
 GameObject::GameObject(const char* name)
 {
-	this->name = name;
+	this->myName = name;
 	isSelectedInHierarchy = false;
 	CreateComponent(TRANSFORM);
 }
 
+GameObject::GameObject(const GameObject& go)
+{
+	//copy attributes
+	myName = go.myName;
+	parent = go.parent;
+
+	//copy components
+	for (auto cp : go.componentVector)
+	{
+		Component* aux;
+		switch (cp->myType)
+		{
+		case TRANSFORM:
+			aux = new ComponentTransform(this, (ComponentTransform*)cp);
+			break;
+		case MESH:
+			aux = new ComponentMesh(this, (ComponentMesh*)cp);
+			break;
+		case MATERIAL:
+			aux = new ComponentMaterial(this, (ComponentMaterial*)cp);
+			break;
+		case CAMERA:
+			aux = new ComponentCamera(this, (ComponentCamera*)cp);
+			break;
+		default:
+			break;
+		}
+		componentVector.push_back(aux);
+	}
+
+	for (auto myComp : componentVector)
+	{
+		if (myComp->myType == TRANSFORM)
+			myTransform = (ComponentTransform*)myComp;
+
+		if (myComp->myType == MESH)
+			myMesh = (ComponentMesh*)myComp;
+
+		if (myComp->myType == MATERIAL)
+			myMaterial = (ComponentMaterial*)myComp;
+	}
+
+	//copy children
+	for (const auto& child : go.childrenVector)
+	{
+		GameObject* childCopy = new GameObject(*child);
+		childCopy->parent = this;
+		childrenVector.push_back(childCopy);
+	}
+}
 
 GameObject::~GameObject()
 {
@@ -34,7 +84,7 @@ GameObject::~GameObject()
 
 void GameObject::Update()
 {
-	for(auto component : components)
+	for(auto component : componentVector)
 	{
 		if (component->myType != TRANSFORM)
 			component->Update();
@@ -77,7 +127,7 @@ void GameObject::DeleteGameObject()
 
 void GameObject::CleanUp()
 {
-	for(auto comp : components)
+	for(auto comp : componentVector)
 	{
 		delete comp;
 	}
@@ -116,7 +166,7 @@ Component* GameObject::CreateComponent(ComponentType type)
 			break;
 	}
 	component->myGameObject = this;
-	components.push_back(component);
+	componentVector.push_back(component);
 
 	return component;
 }
@@ -125,7 +175,7 @@ Component* GameObject::GetComponent(ComponentType type)
 {
 	Component* found = nullptr;
 
-	for (auto comp : components)
+	for (auto comp : componentVector)
 	{
 		if (comp->myType == type) found = comp;
 	}
@@ -145,7 +195,7 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	}
 	if (App->scene->selectedByHierarchy == this) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.52f, 1.f));
 	
-	bool objOpen = ImGui::TreeNodeEx(this, flags, name.c_str());
+	bool objOpen = ImGui::TreeNodeEx(this, flags, myName.c_str());
 	
 	if (App->scene->selectedByHierarchy == this) ImGui::PopStyleColor();
 	
@@ -157,49 +207,22 @@ void GameObject::DrawHierarchy(GameObject * selected)
 		isSelectedInHierarchy = !isSelectedInHierarchy;
 	}
 
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsWindowHovered())
+	if(ImGui::IsWindowHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
-		ImGui::OpenPopup("Creation Popup");
+		ImGui::OpenPopup("RightClick Popup");
 	}
 
-	if (ImGui::BeginPopup("Creation Popup"))
+	if (ImGui::BeginPopup("RightClick Popup"))
 	{
-		if (ImGui::Selectable("Copy"))
+		if (ImGui::Selectable("Create Empty GameObject"))
 		{
-			//TODO: Copy gameobjects
-		}
-		if (ImGui::Selectable("Paste"))
-		{
-			//TODO: Paste gameobjects
-		}
-		
-		ImGui::Separator();
-
-		if (ImGui::Selectable("Rename"))
-		{
-			//TODO: Rename gameobjects
-		}
-		if (ImGui::Selectable("Duplicate"))
-		{
-			//TODO: Duplicate gameobjects
-		}
-		if (ImGui::Selectable("Delete"))
-		{
-			//TODO: Delete gameobjects
-			//DeleteGameObject();
-		}
-
-		ImGui::Separator();
-
-		if(ImGui::Selectable("Create Empty GameObject"))
-		{
-			//Create empty gameobject
 			App->scene->CreateEmpty(this);
 		}
 
+		// TODO:Revise this menu
 		if (ImGui::BeginMenu("Create 3D Object"))
 		{
-			if(ImGui::MenuItem("Cube"))
+			if (ImGui::MenuItem("Cube"))
 			{
 				App->scene->CreateGameObjectShape(this, CUBE);
 			}
@@ -217,10 +240,22 @@ void GameObject::DrawHierarchy(GameObject * selected)
 			}
 			if (ImGui::MenuItem("Baker House"))
 			{
-				// TODO :CreateGameObjectBakerHouse();
 				App->scene->CreateGameObjectBakerHouse(this);
 			}
 			ImGui::EndMenu();
+		}
+		ImGui::Separator();
+
+		if (ImGui::Selectable("Duplicate"))
+		{
+			//TODO: Duplicate gameobjects
+			App->scene->DuplicateGameObject(this);
+		}
+
+		if (ImGui::Selectable("Delete"))
+		{
+			//TODO: Delete gameobjects
+			//DeleteGameObject();
 		}
 		ImGui::EndPopup();
 	}
@@ -268,12 +303,12 @@ void GameObject::UpdateTransform()
 
 void GameObject::SetName(const std::string &newName)
 {
-	name = newName;
+	myName = newName;
 }
 
 std::string GameObject::GetName() const
 {
-	return name;
+	return myName;
 }
 
 void GameObject::ComputeAABB()
@@ -369,10 +404,10 @@ void GameObject::DrawInspector()
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();
 	
 	char* go_name = new char[64];
-	strcpy(go_name, name.c_str());
+	strcpy(go_name, myName.c_str());
 	if(ImGui::InputText("##Name", go_name, 64))
 	{
-		name = std::string(go_name);
+		myName = std::string(go_name);
 	}
 	ImGui::SameLine();
 
@@ -381,9 +416,9 @@ void GameObject::DrawInspector()
 	ImGui::Checkbox("Static", &isStatic);
 
 	//Components
-	for (size_t i = 0; i < components.size(); i++)
+	for (size_t i = 0; i < componentVector.size(); i++)
 	{
-		components[i]->DrawInspector();
+		componentVector[i]->DrawInspector();
 	}
 
 	//Change EulerRotation to Quat
@@ -392,15 +427,17 @@ void GameObject::DrawInspector()
 
 void GameObject::CheckDragAndDrop(GameObject* go)
 {
+	//Drag source
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-		ImGui::SetDragDropPayload("DRAG", &go, sizeof(GameObject*));
+		ImGui::SetDragDropPayload("dragGO", &go, sizeof(GameObject*));
 		ImGui::EndDragDropSource();
 	}
 
+	//Drag target
 	if (ImGui::BeginDragDropTarget()) {
-		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DRAG");
-		if (payload != nullptr) {
-			GameObject* newChild = *reinterpret_cast<GameObject**>(payload->Data);
+		const ImGuiPayload* itemDragged = ImGui::AcceptDragDropPayload("dragGO");
+		if (itemDragged != nullptr) {
+			GameObject* newChild = *reinterpret_cast<GameObject**>(itemDragged->Data);
 			newChild->SetParent(go);
 			if(newChild->parent->myTransform != nullptr)
 				newChild->myTransform->SetLocalMatrix(newChild->parent->myTransform->globalModelMatrix);

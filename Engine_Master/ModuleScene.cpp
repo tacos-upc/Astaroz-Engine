@@ -249,7 +249,7 @@ void ModuleScene::CreateGameObjectShape(GameObject * parent, ShapeType shape)
 	*/
 }
 
-void ModuleScene::RemoveGameObject(GameObject * go)
+void ModuleScene::RemoveGameObject(GameObject* go)
 {
 	if (!gameObjects.empty())
 	{
@@ -257,7 +257,15 @@ void ModuleScene::RemoveGameObject(GameObject * go)
 	}
 }
 
-void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
+void ModuleScene::DuplicateGameObject(GameObject* go)
+{
+	GameObject* duplicate = new GameObject(*go);
+	go->parent->childrenVector.push_back(duplicate);
+	gameObjects.push_back(duplicate);
+	nGameObjects++;
+}
+
+void ModuleScene::SelectObjectInHierarchy(GameObject* selected)
 {
 	selectedByHierarchy = selected;
 }

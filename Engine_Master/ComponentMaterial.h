@@ -9,6 +9,7 @@ class ComponentMaterial : public Component
 {
 public:
 	ComponentMaterial();
+	ComponentMaterial(GameObject* gameObject, ComponentMaterial* componentMaterial);
 	~ComponentMaterial();
 
 	//public variables

@@ -11,6 +11,7 @@ class ComponentMesh : public Component
 {
 public:
 	ComponentMesh();
+	ComponentMesh(GameObject* gameObject, ComponentMesh* componentMesh);
 	~ComponentMesh();
 
 	//public methods

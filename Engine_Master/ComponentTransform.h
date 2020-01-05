@@ -15,6 +15,7 @@ class ComponentTransform : public Component
 {
 public:
 	ComponentTransform(GameObject* gameObject);
+	ComponentTransform(GameObject* gameObject, ComponentTransform* componentTransform);
 	~ComponentTransform();
 
 	//public methods

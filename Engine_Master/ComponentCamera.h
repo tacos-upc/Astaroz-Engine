@@ -22,6 +22,7 @@ class ComponentCamera : public Component
 {
 public:
 	ComponentCamera();
+	ComponentCamera(GameObject* gameObject, ComponentCamera* componentCamera);
 	~ComponentCamera();
 
 	void Update() override;

@@ -141,6 +141,8 @@
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ModuleSpacePartition.cpp" />
+    <ClCompile Include="AABBTree.cpp" />
+    <ClCompile Include="AABBTreeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -378,6 +380,8 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="ModuleSpacePartition.h" />
+    <ClInclude Include="AABBTree.h" />
+    <ClInclude Include="AABBTreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

@@ -59,14 +59,15 @@ public:
 	bool isStatic = false;
 	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
+	AABB* fatBoundingBox = nullptr;//Used for AABB tree
 
 private:
 	//private variables
 	std::string name;
-	bool isSelectedInHierarchy;
 	float3 obbPoints[8];
 
 	//private methods
 	void CheckDragAndDrop(GameObject* go);
+	bool isfatBoxTooFat();//Area diff between regular aabb and fat one
 };
 #endif __GameObject_H__

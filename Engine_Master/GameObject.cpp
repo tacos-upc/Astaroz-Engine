@@ -23,7 +23,6 @@ GameObject::GameObject()
 GameObject::GameObject(const char* name)
 {
 	this->name = name;
-	isSelectedInHierarchy = false;
 	CreateComponent(TRANSFORM);
 }
 
@@ -151,12 +150,10 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	
 	if (App->scene->selectedByHierarchy == this) ImGui::PopStyleColor();
 	
-	if(ImGui::IsItemClicked())
+	if(ImGui::IsItemHovered() && ImGui::IsItemClicked())
 	{
-		if (isSelectedInHierarchy) App->scene->selectRoot();
+		if (App->scene->selectedByHierarchy == this) App->scene->SelectObjectInHierarchy(nullptr);
 		else App->scene->SelectObjectInHierarchy(this);
-
-		isSelectedInHierarchy = !isSelectedInHierarchy;
 	}
 
 	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsWindowHovered())
@@ -309,6 +306,15 @@ void GameObject::createAABBs()
 	boundingBox->Enclose(obbPoints, 8);
 	boundingBox->TransformAsAABB(myTransform->localModelMatrix);
 	obb->Transform(myTransform->localModelMatrix);
+
+	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox) || isfatBoxTooFat())
+	{
+		fatBoundingBox = new AABB(*boundingBox);
+		fatBoundingBox->Scale(boundingBox->CenterPoint(), float3(1.5f, 1.5f, 1.5f));
+
+		LOG("Area normal %f", boundingBox->SurfaceArea());
+		LOG("Area fat %f", fatBoundingBox->SurfaceArea());
+	}
 }
 
 void GameObject::DrawAABB()
@@ -328,6 +334,7 @@ void GameObject::DrawAABB()
 		dd::box(obbPoints, float3(0.7f, 0.7f, 0.7f));
 	}
 	if (boundingBox != nullptr) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
+	if (fatBoundingBox != nullptr) dd::aabb(fatBoundingBox->minPoint, fatBoundingBox->maxPoint, float3(0.8f, 0.8f, 0.8f));
 	glEnd();
 }
 
@@ -383,6 +390,15 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 		}
 		ImGui::EndDragDropTarget();
 	}
+}
+
+bool GameObject::isfatBoxTooFat()
+{
+	return (
+		fatBoundingBox->Size().x > boundingBox->Size().x *1.5f ||
+		fatBoundingBox->Size().y > boundingBox->Size().y *1.5f ||
+		fatBoundingBox->Size().z > boundingBox->Size().z * 1.5f
+		);
 }
 
 void GameObject::findOBBPointsForRender()

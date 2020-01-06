@@ -30,6 +30,11 @@ public:
 		return mouseButtons[id - 1] == KEY_DOWN || mouseButtons[id - 1] == KEY_REPEAT;
 	}
 
+	bool GetMouseButtonUp(int id) const
+	{
+		return mouseButtons[id - 1] == KEY_UP;
+	}
+
 	float getWheelSpeed()
 	{
 		//LOG("%f", mouseWheel);

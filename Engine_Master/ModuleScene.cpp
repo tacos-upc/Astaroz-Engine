@@ -264,12 +264,12 @@ void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 
 void ModuleScene::drawHierarchy()
 {
-	if (selectedByHierarchy == nullptr) selectedByHierarchy = root;
-
 	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{
 		root->childrenVector[i]->DrawHierarchy(root->childrenVector[i]);
 	}
+
+	if (selectedByHierarchy == nullptr) selectedByHierarchy = root;
 }
 
 void ModuleScene::drawAllBoundingBoxes()

@@ -12,6 +12,7 @@
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleSpacePartition.h"
 #include "MsTimer.h"
 
 using namespace std;
@@ -28,6 +29,7 @@ Application::Application()
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(modelLoader = new ModuleModelLoader());
+	modules.push_back(spacePartition = new ModuleSpacePartition());
 	modules.push_back(debugDraw = new ModuleDebugDraw());
 	modules.push_back(renderer = new ModuleRender());
 }

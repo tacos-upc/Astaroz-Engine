@@ -15,6 +15,7 @@
 #include "SDL.h"
 #include "IconsFontAwesome5.h"
 #include "Geometry/AABB.h"
+#include "ModuleSpacePartition.h"
 
 
 GameObject::GameObject()
@@ -312,8 +313,10 @@ void GameObject::createAABBs()
 		fatBoundingBox = new AABB(*boundingBox);
 		fatBoundingBox->Scale(boundingBox->CenterPoint(), float3(1.5f, 1.5f, 1.5f));
 
-		LOG("Area normal %f", boundingBox->SurfaceArea());
-		LOG("Area fat %f", fatBoundingBox->SurfaceArea());
+		if (boundingBox->SurfaceArea() > 0)
+		{
+			App->spacePartition->recalculateTree(this);
+		}
 	}
 }
 
@@ -334,7 +337,7 @@ void GameObject::DrawAABB()
 		dd::box(obbPoints, float3(0.7f, 0.7f, 0.7f));
 	}
 	if (boundingBox != nullptr) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
-	if (fatBoundingBox != nullptr) dd::aabb(fatBoundingBox->minPoint, fatBoundingBox->maxPoint, float3(0.8f, 0.8f, 0.8f));
+	//if (fatBoundingBox != nullptr) dd::aabb(fatBoundingBox->minPoint, fatBoundingBox->maxPoint, float3(0.8f, 0.8f, 0.8f));
 	glEnd();
 }
 

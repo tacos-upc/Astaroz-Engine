@@ -18,6 +18,7 @@ class ModuleModelLoader;
 class ModuleTime;
 class ModuleScene;
 class ModuleDebugDraw;
+class ModuleSpacePartition;
 
 class Application
 {
@@ -43,6 +44,7 @@ public:
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
+	ModuleSpacePartition* spacePartition = nullptr;
 
 private:
 	std::list<Module*> modules;

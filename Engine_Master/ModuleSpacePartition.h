@@ -1,7 +1,13 @@
 #pragma once
 #include "Module.h"
+#include "Geometry/AABB.h"
+#include "Math/MathAll.h"
+#include "AABBTree.h"
+#include "GameObject.h"
+
 class ModuleSpacePartition : public Module
 {
+public:
 	ModuleSpacePartition();
 	~ModuleSpacePartition();
 
@@ -13,5 +19,9 @@ class ModuleSpacePartition : public Module
 	update_status PostUpdate() override;
 
 	bool CleanUp() override;
+	void recalculateTree(GameObject*);
+
+private:
+	AABBTree* tree;
 };
 

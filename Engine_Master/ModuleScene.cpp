@@ -85,7 +85,7 @@ GameObject* ModuleScene::CreateGameObject()
 	return gameObject;
 }
 
-GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent)
+GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent)
 {
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
@@ -96,7 +96,7 @@ GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent
 	return gameObject;
 }
 
-GameObject * ModuleScene::getRoot()
+GameObject* ModuleScene::getRoot()
 {
 	return root;
 }
@@ -106,7 +106,7 @@ void ModuleScene::selectRoot()
 	selectedByHierarchy = root;
 }
 
-void ModuleScene::LoadModel(const char * path, GameObject* parent)
+void ModuleScene::LoadModel(const char* path, GameObject* parent)
 {
 	LOG("Trying to load model in path : %s", path);
 	//App->modelLoader->loadModel(path);
@@ -146,7 +146,7 @@ void ModuleScene::CreateEmpty(GameObject* parent)
 	gameObjects.push_back(empty);
 }
 
-void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
+void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
 {
 	if(parent == nullptr)
 	{
@@ -164,7 +164,7 @@ void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
 	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
 }
 
-void ModuleScene::CreateGameObjectShape(GameObject * parent, ShapeType shape)
+void ModuleScene::CreateGameObjectShape(GameObject* parent, ShapeType shape)
 {
 	/*
 	if (parent == nullptr)

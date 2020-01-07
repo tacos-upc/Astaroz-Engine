@@ -10,11 +10,12 @@ Mesh::Mesh()
 	
 }
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures)
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures, unsigned int material)
 {
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;
+	this->material = material;
 
 	setupMesh();
 }
@@ -85,52 +86,62 @@ void Mesh::Draw(unsigned int program) const
 	unsigned int heightNr = 1;
 
 	
+	App->modelLoader->materials[material].SetUniforms();
+	glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
+	glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&App->editorCamera->proj);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&App->editorCamera->view);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&App->editorCamera->model);
+
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 	
-	if (hastext) {
-		for (unsigned int i = 0; i < textures.size(); i++)
-		{
-			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
-			glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
-
-			// retrieve texture number (the N in diffuse_textureN)
-			std::string number;
-			std::string name = textures[i].type;
-			if (name == "texture_diffuse")
-				number = std::to_string(++diffuseNr);
-			else if (name == "texture_specular")
-				number = std::to_string(++specularNr);
-			else if (name == "texture_normal")
-				number = std::to_string(++normalNr);
-			else if (name == "texture_height")
-				number = std::to_string(++heightNr);
-			glUniform1i(glGetUniformLocation(program, (name + number).c_str()), i);
-			glBindTexture(GL_TEXTURE_2D, textures[i].id);
-		}
-
-		//This will actually Draw the prepared mesh
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-		glActiveTexture(GL_TEXTURE0);
-	}
-	else {
-
-		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
-		//glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
-		//glUniform1f(glGetUniformLocation(program, "shininess"), App->modelLoader->materials[material].shininess);
-		//glUniform1f(glGetUniformLocation(program, "k_ambient"), App->modelLoader->materials[material].k_ambient);
-		//glUniform1f(glGetUniformLocation(program, "k_diffuse"), App->modelLoader->materials[material].k_diffuse);
-		//glUniform1f(glGetUniformLocation(program, "k_specular"), App->modelLoader->materials[material].k_specular);
-		//glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&transform);
-		App->modelLoader->materials[material].SetUniforms();
-		//glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
-		//glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&App->modelLoader->materials[material].object_color);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
-		glBindVertexArray(0);
-		
-	
-	}
+	//if (hastext) {
+	//	for (unsigned int i = 0; i < textures.size(); i++)
+	//	{
+	//		glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
+	//		glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
+	//
+	//		// retrieve texture number (the N in diffuse_textureN)
+	//		std::string number;
+	//		std::string name = textures[i].type;
+	//		if (name == "texture_diffuse")
+	//			number = std::to_string(++diffuseNr);
+	//		else if (name == "texture_specular")
+	//			number = std::to_string(++specularNr);
+	//		else if (name == "texture_normal")
+	//			number = std::to_string(++normalNr);
+	//		else if (name == "texture_height")
+	//			number = std::to_string(++heightNr);
+	//		glUniform1i(glGetUniformLocation(program, (name + number).c_str()), i);
+	//		glBindTexture(GL_TEXTURE_2D, textures[i].id);
+	//	}
+	//
+	//	//This will actually Draw the prepared mesh
+	//	glBindVertexArray(VAO);
+	//	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	//	glBindVertexArray(0);
+	//	glActiveTexture(GL_TEXTURE0);
+	//}
+	//else {
+	//
+	//	glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
+	//	//glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
+	//	//glUniform1f(glGetUniformLocation(program, "shininess"), App->modelLoader->materials[material].shininess);
+	//	//glUniform1f(glGetUniformLocation(program, "k_ambient"), App->modelLoader->materials[material].k_ambient);
+	//	//glUniform1f(glGetUniformLocation(program, "k_diffuse"), App->modelLoader->materials[material].k_diffuse);
+	//	//glUniform1f(glGetUniformLocation(program, "k_specular"), App->modelLoader->materials[material].k_specular);
+	//	//glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&transform);
+	//	App->modelLoader->materials[material]->SetUniforms();
+	//	//glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
+	//	//glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&App->modelLoader->materials[material].object_color);
+	//	glBindVertexArray(VAO);
+	//	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
+	//	glBindVertexArray(0);
+	//	
+	//
+	//}
 
 
 	

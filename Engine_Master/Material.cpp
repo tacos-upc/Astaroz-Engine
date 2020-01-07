@@ -1,26 +1,15 @@
 #include "Material.h"
 
 
-//Texture * Material::GetTexture(char* type) const
-//{
-//	//return textures[(unsigned)type];
-//}
-
-//std::list<Texture*> Material::GetTextures() const
-//{
-//	std::list<Texture*> mytextures;
-//	for (unsigned i = 0; i < MAXTEXTURES; i++)
-//	{
-//		if (textures[i] != nullptr)
-//		{
-//			mytextures.push_back(textures[i]);
-//		}
-//	}
-//	return mytextures;
-//}
-
 Material::Material()
 {
+	diffuse_color = float4::one;
+	specular_color = float3::one;
+	emissive_color = float3::one;
+	k_ambient = 0.3f;
+	k_diffuse = 0.2f;
+	k_specular = 0.1f;
+	shininess = 32.f;
 }
 
 Material::Material(const Material & material)
@@ -33,7 +22,7 @@ Material::~Material()
 
 void Material::SetUniforms() const
 {
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 
@@ -50,7 +39,7 @@ void Material::SetUniforms() const
 		else if (textures[i].type == "texture_occlusion") {
 			textureType = "occlusion";
 		}
-		else if (textures[i].type == "texture_emissive"){
+		else if (textures[i].type == "texture_emissive") {
 			textureType = "emissive";
 			color = (float*)&emissive_color;
 		}
@@ -61,32 +50,21 @@ void Material::SetUniforms() const
 		char uniform[32];
 		sprintf(uniform, "material.%s_color", textureType);
 
-		if (1==1)
-		{
-			if (textures[i].type== "texture_diffuse")
-			{
-				glUniform4fv(glGetUniformLocation(program,
-					uniform), 1, color);
-			}
-			else
-			{
-				glUniform3fv(glGetUniformLocation(program,
-					uniform), 1, color);
-			}
-			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 
-			glUniform1i(glGetUniformLocation(program, texture), i);
+		if (textures[i].type == "texture_diffuse")
+		{
+			glUniform4fv(glGetUniformLocation(program,
+				uniform), 1, color);
 		}
 		else
 		{
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glUniform1i(glGetUniformLocation(program, texture), i);
-			float3 noColor = float3::zero; //Used as a fallback
-
 			glUniform3fv(glGetUniformLocation(program,
-				uniform), 1, (GLfloat*)&noColor);
+				uniform), 1, color);
 		}
-		glDisable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, textures[i].id);
+
+		glUniform1i(glGetUniformLocation(program, texture), i);
+
 	}
 
 	glUniform1fv(glGetUniformLocation(program,

@@ -15,12 +15,9 @@ public:
 	Material(const Material& material);
 
 	~Material();
-	void Material::SetUniforms() const;
 	
-	//Texture * GetTexture(char* type) const;
-	//std::list<Texture*> GetTextures() const;
 
-	//void SetUniforms(unsigned shader) const;
+    void SetUniforms() const;
 
 public:
 	std::string name;
@@ -29,14 +26,14 @@ public:
 	
 	std::vector<Texture> textures;
 
-	float4 diffuse_color = float4::one;
-	float3 specular_color = float3::one;
-	float3 emissive_color = float3::one;
+	float4 diffuse_color;
+	float3 specular_color;
+	float3 emissive_color;
 
-	float k_ambient = 0.3f;
-	float k_diffuse = 0.2f;
-	float k_specular = 0.1f;
-	float shininess = 32.f;
+	float k_ambient;
+	float k_diffuse;
+	float k_specular;
+	float shininess;
 
 };
 

@@ -116,7 +116,7 @@ void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(new Mesh(processMesh(mesh, scene)));
-		meshes.back()->material = materials.size();
+		meshes.back()->material = materials.size()-1;
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -180,78 +180,110 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	}
 
 	// process materials
-	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	Material* finmaterial = new Material();
+	//aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	Material material;
 	
-	
+	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
+	texture.type = "diffuse";
+	textures.push_back(texture);
+	material.textures.push_back(texture);
+	texturesLoaded.push_back(texture);
 
-	// 1. diffuse maps
-	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	if (textures[0].type == "texture_diffuse") {
-		textureType = textures[0].type;
-	}
-	if (diffuseMaps.size() > 0) {
-		finmaterial->textures.insert(finmaterial->textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	}
-	//difuse color
-	
-	aiColor4D diffuse;
-	aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
-	finmaterial->diffuse_color[0] = diffuse.r;
-	finmaterial->diffuse_color[1] = diffuse.g;
-	finmaterial->diffuse_color[2] = diffuse.b;
-	finmaterial->diffuse_color[3] = diffuse.a;
-	// 2. specular maps
-	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	if (textures[0].type == "texture_specular") {
-		textureType = textures[0].type;
-	}
-	if (specularMaps.size() > 0) {
-		finmaterial->textures.insert(finmaterial->textures.end(), specularMaps.begin(), specularMaps.end());
-	}
-	//specular color
-	aiColor4D specular;
-	aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
-	finmaterial->specular_color[0] = specular.r;
-	finmaterial->specular_color[1] = specular.g;
-	finmaterial->specular_color[2] = specular.b;
+	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
+	texture2.type = "specular";
+	textures.push_back(texture2);
+	material.textures.push_back(texture2);
+	texturesLoaded.push_back(texture2);
+
+	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
+	texture3.type = "emissive";
+	textures.push_back(texture3);
+	material.textures.push_back(texture3);
+	texturesLoaded.push_back(texture3);
 	
 
-	// 3. normal maps
-	std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-	if (textures[0].type == "texture_normal") {
-		textureType = textures[0].type;
-	}
-	if (normalMaps.size() > 0) {
-		finmaterial->textures.insert(finmaterial->textures.end(), normalMaps.begin(), normalMaps.end());
-	}
-	// 4. height maps
-	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-	if (heightMaps.size() > 0) {
-		finmaterial->textures.insert(finmaterial->textures.end(), heightMaps.begin(), heightMaps.end());
-	}
+	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
+	texture4.type = "occlusion";
+	textures.push_back(texture4);
+	material.textures.push_back(texture4);
+	texturesLoaded.push_back(texture4);
 
-	std::vector<Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive");
-	textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
-	if (textures[0].type == "texture_normal") {
-		textureType = textures[0].type;
-	}
-	if (emissiveMaps.size() > 0) {
-		finmaterial->textures.insert(finmaterial->textures.end(), emissiveMaps.begin(), emissiveMaps.end());
-	}
+	
+	
+	
+	
+	materials.push_back(material);
 
+	
 
+	//// 1. diffuse maps
+	//std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+	//textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	//if (textures[0].type == "texture_diffuse") {
+	//	textureType = textures[0].type;
+	//}
+	//if (diffuseMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	//}
+	////difuse color
+	//
+	//aiColor4D diffuse;
+	//aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
+	//finmaterial->diffuse_color[0] = diffuse.r;
+	//finmaterial->diffuse_color[1] = diffuse.g;
+	//finmaterial->diffuse_color[2] = diffuse.b;
+	//finmaterial->diffuse_color[3] = diffuse.a;
+	//// 2. specular maps
+	//std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+	//textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	//if (textures[0].type == "texture_specular") {
+	//	textureType = textures[0].type;
+	//}
+	//if (specularMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), specularMaps.begin(), specularMaps.end());
+	//}
+	////specular color
+	//aiColor4D specular;
+	//aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
+	//finmaterial->specular_color[0] = specular.r;
+	//finmaterial->specular_color[1] = specular.g;
+	//finmaterial->specular_color[2] = specular.b;
+	//
+	//
+	//// 3. normal maps
+	//std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+	//textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+	//if (textures[0].type == "texture_normal") {
+	//	textureType = textures[0].type;
+	//}
+	//if (normalMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), normalMaps.begin(), normalMaps.end());
+	//}
+	//// 4. height maps
+	//std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+	//textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+	//if (heightMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), heightMaps.begin(), heightMaps.end());
+	//}
+	//
+	//std::vector<Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive");
+	//textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+	//if (textures[0].type == "texture_normal") {
+	//	textureType = textures[0].type;
+	//}
+	//if (emissiveMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+	//}
+	//
+	//
+	//
+	//textureWidth = textures[0].width;
+	//textureHeight = textures[0].height;
+	//textureId = textures[0].id;
+	//numPolys /= 3;
 
-	textureWidth = textures[0].width;
-	textureHeight = textures[0].height;
-	textureId = textures[0].id;
-	numPolys /= 3;
-
-	return Mesh(vertices, indices, textures);
+	unsigned int aux = materials.size() - 1;
+	return Mesh(vertices, indices, textures, aux );
 }
 
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)

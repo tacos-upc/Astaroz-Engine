@@ -24,16 +24,15 @@ public:
 	unsigned program = 0;
 	math::float4 object_color = math::float4::zero;
 	
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 
-	float4 diffuse_color;
-	float3 specular_color;
-	float3 emissive_color;
-
-	float k_ambient;
-	float k_diffuse;
-	float k_specular;
-	float shininess;
+	float4 diffuse_color = float4::one;
+	float3 specular_color = float3::one;
+	float3 emissive_color = float3::one;
+	float k_ambient = 0.3f;
+	float k_diffuse = 0.2f;
+	float k_specular = 0.1f;
+	float shininess = 32.f;
 
 };
 

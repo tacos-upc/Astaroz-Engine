@@ -85,10 +85,9 @@ void Mesh::Draw(unsigned int program) const
 	unsigned int normalNr = 1;
 	unsigned int heightNr = 1;
 
+	App->modelLoader->materials[material]->SetUniforms();
 	
-	App->modelLoader->materials[material].SetUniforms();
 	glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
-	glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&App->editorCamera->proj);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&App->editorCamera->view);
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&App->editorCamera->model);

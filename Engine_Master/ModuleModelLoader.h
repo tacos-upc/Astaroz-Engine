@@ -54,7 +54,7 @@ public:
 	char* textureType = nullptr;
 	int textureId;
 	
-	std::vector<Material> materials;
+	std::vector<Material*> materials;
 	math::float3 min_v = math::float3(FLT_MAX, FLT_MAX, FLT_MAX);
 	math::float3 max_v = math::float3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	struct Sphere

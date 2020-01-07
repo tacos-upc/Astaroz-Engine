@@ -73,7 +73,7 @@ vec3 directional_phong(vec3 normal, vec3 viewPos, vec3 light_pos, vec4 diffuse_c
 	float diffuse = lambert(light_dir , normal);
 	float specular = specular_phong(light_dir, position, normal, viewPos, material.shininess);
 
-	vec3 color = dir.color * (diffuse_color.rgb * diffuse * material.k_diffuse + //diffuse
+	vec3 color =(diffuse_color.rgb * diffuse * material.k_diffuse + //diffuse
 				 specular_color.rgb * specular * material.k_specular); //specular
 	
 	return color;

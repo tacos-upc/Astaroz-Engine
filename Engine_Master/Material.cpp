@@ -3,13 +3,7 @@
 
 Material::Material()
 {
-	diffuse_color = float4::one;
-	specular_color = float3::one;
-	emissive_color = float3::one;
-	k_ambient = 0.3f;
-	k_diffuse = 0.2f;
-	k_specular = 0.1f;
-	shininess = 32.f;
+
 }
 
 Material::Material(const Material & material)
@@ -22,24 +16,25 @@ Material::~Material()
 
 void Material::SetUniforms() const
 {
+	
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 
 		char* textureType = nullptr;
 		float* color = (float*)&float3::zero;
-		if (textures[i].type == "diffuse") {
+		if (textures[i]->type == "diffuse") {
 			textureType = "diffuse";
 			color = (float*)&diffuse_color;
 		}
-		else if (textures[i].type == "texture_specular") {
+		else if (textures[i]->type == "specular") {
 			textureType = "specular";
 			color = (float*)&specular_color;
 		}
-		else if (textures[i].type == "texture_occlusion") {
+		else if (textures[i]->type == "occlusion") {
 			textureType = "occlusion";
 		}
-		else if (textures[i].type == "texture_emissive") {
+		else if (textures[i]->type == "emissive") {
 			textureType = "emissive";
 			color = (float*)&emissive_color;
 		}
@@ -51,19 +46,20 @@ void Material::SetUniforms() const
 		sprintf(uniform, "material.%s_color", textureType);
 
 
-		if (textures[i].type == "texture_diffuse")
+		if (textures[i]->type == "diffuse")
 		{
 			glUniform4fv(glGetUniformLocation(program,
 				uniform), 1, color);
 		}
-		else
+		else if(textures[i]->type != "occlusion")
 		{
 			glUniform3fv(glGetUniformLocation(program,
 				uniform), 1, color);
 		}
-		glBindTexture(GL_TEXTURE_2D, textures[i].id);
-
 		glUniform1i(glGetUniformLocation(program, texture), i);
+		glBindTexture(GL_TEXTURE_2D, textures[i]->id);
+
+		
 
 	}
 

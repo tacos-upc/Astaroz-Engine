@@ -181,31 +181,32 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	// process materials
 	//aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	Material material;
+	Material* material = new Material();
 	
 	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
 	texture.type = "diffuse";
+	
 	textures.push_back(texture);
-	material.textures.push_back(texture);
+	material->textures.push_back(&texture);
 	texturesLoaded.push_back(texture);
 
 	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
 	texture2.type = "specular";
 	textures.push_back(texture2);
-	material.textures.push_back(texture2);
+	material->textures.push_back(&texture2);
 	texturesLoaded.push_back(texture2);
 
 	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
 	texture3.type = "emissive";
 	textures.push_back(texture3);
-	material.textures.push_back(texture3);
+	material->textures.push_back(&texture3);
 	texturesLoaded.push_back(texture3);
 	
 
 	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
 	texture4.type = "occlusion";
 	textures.push_back(texture4);
-	material.textures.push_back(texture4);
+	material->textures.push_back(&texture4);
 	texturesLoaded.push_back(texture4);
 
 	
@@ -213,7 +214,8 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	
 	
 	materials.push_back(material);
-
+	App->modelLoader->materials[0]->textures.size();
+	
 	
 
 	//// 1. diffuse maps
@@ -277,10 +279,10 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	//
 	//
 	//
-	//textureWidth = textures[0].width;
-	//textureHeight = textures[0].height;
-	//textureId = textures[0].id;
-	//numPolys /= 3;
+	textureWidth = textures[0].width;
+	textureHeight = textures[0].height;
+	textureId = textures[0].id;
+	numPolys /= 3;
 
 	unsigned int aux = materials.size() - 1;
 	return Mesh(vertices, indices, textures, aux );
@@ -380,7 +382,7 @@ bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, co
 		mat.program = App->programShader->myProgram;
 		mat.object_color = color;
 
-		materials.push_back(mat);
+		materials.push_back(&mat);
 
 		return true;
 	}
@@ -407,7 +409,7 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 		mat.program = App->programShader->myProgram;
 		mat.object_color = color;
 
-		materials.push_back(mat);
+		materials.push_back(&mat);
 
 		return true;
 	}

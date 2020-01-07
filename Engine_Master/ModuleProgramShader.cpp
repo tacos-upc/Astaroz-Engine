@@ -27,7 +27,7 @@ void ModuleProgramShader::createProgram()
 
 	//create first our vertex and fragments shaders
 	std::string vsSource = parseShader("shaders/vertexShader.vs");
-	std::string fsSource = parseShader("shaders/fragmentShader.fs");
+	std::string fsSource = parseShader("shaders/fragmentShaderMat.fs");
 	GLuint vs = compileShader(GL_VERTEX_SHADER, vsSource);
 	GLuint fs = compileShader(GL_FRAGMENT_SHADER, fsSource);
 

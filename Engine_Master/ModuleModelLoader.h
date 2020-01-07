@@ -7,7 +7,7 @@
 #include "Mesh.h"
 #include "ModuleTexture.h"
 #include "ModuleEditor.h"
-
+#include "Material.h"
 #include "scene.h"
 #include "postprocess.h"
 #include "Geometry/AABB.h"
@@ -53,19 +53,7 @@ public:
 	int textureHeight;
 	char* textureType = nullptr;
 	int textureId;
-	struct Material
-	{
-		unsigned program = 0;
-		unsigned diffuse_map = 0;
-		math::float3 diffuse;
-		math::float3 specular;
-		math::float3 ambient;
-		math::float4 object_color = math::float4::zero;
-		float shininess = 0.0f;
-		float k_specular = 0.0f;
-		float k_diffuse = 0.0f;
-		float k_ambient = 0.0f;
-	};
+	
 	std::vector<Material> materials;
 	math::float3 min_v = math::float3(FLT_MAX, FLT_MAX, FLT_MAX);
 	math::float3 max_v = math::float3(-FLT_MAX, -FLT_MAX, -FLT_MAX);

@@ -5,16 +5,8 @@
 #include <list>
 #include "Mesh.h"
 
-#define MAXTEXTURES 4
-#define DEFAULTMAT "Default"
 
-enum class TextureType
-{
-	DIFFUSE = 0,
-	SPECULAR,
-	OCCLUSION,
-	EMISSIVE
-};
+#define DEFAULTMAT "Default"
 
 class Material
 {
@@ -23,26 +15,27 @@ public:
 	Material(const Material& material);
 
 	~Material();
-
+	void Material::SetUniforms() const;
 	
-	Texture * GetTexture(TextureType type) const;
-	std::list<Texture*> GetTextures() const;
+	//Texture * GetTexture(char* type) const;
+	//std::list<Texture*> GetTextures() const;
 
 	//void SetUniforms(unsigned shader) const;
 
 public:
 	std::string name;
+	unsigned program = 0;
+	math::float4 object_color = math::float4::zero;
 	
-
-	Texture* textures[MAXTEXTURES]{ nullptr };
+	std::vector<Texture> textures;
 
 	float4 diffuse_color = float4::one;
 	float3 specular_color = float3::one;
 	float3 emissive_color = float3::one;
 
-	float kAmbient = 0.3f;
-	float kDiffuse = 0.2f;
-	float kSpecular = 0.1f;
+	float k_ambient = 0.3f;
+	float k_diffuse = 0.2f;
+	float k_specular = 0.1f;
 	float shininess = 32.f;
 
 };

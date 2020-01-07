@@ -37,8 +37,8 @@ bool ModuleModelLoader::Init()
 
 	//Always start by loading the Baker house model
 
-	//LoadModel(MODEL_BUNNY);
-	LoadModel(MODEL_BAKER_PATH);
+	LoadModel(MODEL_BUNNY);
+	//LoadModel(MODEL_BAKER_PATH);
 
 	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
 	//materials.back().k_specular = 0.9f;
@@ -116,6 +116,7 @@ void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(new Mesh(processMesh(mesh, scene)));
+		meshes.back()->material = materials.size();
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -180,9 +181,8 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	//float colour;
-	//aiColor4D diffuse;
-	//if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse)) 
+	Material* finmaterial = new Material();
+	
 	
 
 	// 1. diffuse maps
@@ -191,22 +191,60 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	if (textures[0].type == "texture_diffuse") {
 		textureType = textures[0].type;
 	}
+	if (diffuseMaps.size() > 0) {
+		finmaterial->textures.insert(finmaterial->textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	}
+	//difuse color
+	
+	aiColor4D diffuse;
+	aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
+	finmaterial->diffuse_color[0] = diffuse.r;
+	finmaterial->diffuse_color[1] = diffuse.g;
+	finmaterial->diffuse_color[2] = diffuse.b;
+	finmaterial->diffuse_color[3] = diffuse.a;
 	// 2. specular maps
 	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	if (textures[0].type == "texture_specular") {
 		textureType = textures[0].type;
 	}
+	if (specularMaps.size() > 0) {
+		finmaterial->textures.insert(finmaterial->textures.end(), specularMaps.begin(), specularMaps.end());
+	}
+	//specular color
+	aiColor4D specular;
+	aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
+	finmaterial->specular_color[0] = specular.r;
+	finmaterial->specular_color[1] = specular.g;
+	finmaterial->specular_color[2] = specular.b;
+	
+
 	// 3. normal maps
 	std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 	if (textures[0].type == "texture_normal") {
 		textureType = textures[0].type;
 	}
-	
+	if (normalMaps.size() > 0) {
+		finmaterial->textures.insert(finmaterial->textures.end(), normalMaps.begin(), normalMaps.end());
+	}
 	// 4. height maps
 	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+	if (heightMaps.size() > 0) {
+		finmaterial->textures.insert(finmaterial->textures.end(), heightMaps.begin(), heightMaps.end());
+	}
+
+	std::vector<Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive");
+	textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+	if (textures[0].type == "texture_normal") {
+		textureType = textures[0].type;
+	}
+	if (emissiveMaps.size() > 0) {
+		finmaterial->textures.insert(finmaterial->textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+	}
+
+
 
 	textureWidth = textures[0].width;
 	textureHeight = textures[0].height;

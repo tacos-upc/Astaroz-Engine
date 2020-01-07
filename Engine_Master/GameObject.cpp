@@ -38,17 +38,17 @@ GameObject::GameObject(const GameObject& go)
 		Component* aux;
 		switch (cp->myType)
 		{
-		case TRANSFORM:
-			aux = new ComponentTransform(this, (ComponentTransform*)cp);
-			break;
 		case MESH:
-			aux = new ComponentMesh(this, (ComponentMesh*)cp);
+			aux = new ComponentMesh(this, (ComponentMesh*) cp);
 			break;
 		case MATERIAL:
-			aux = new ComponentMaterial(this, (ComponentMaterial*)cp);
+			aux = new ComponentMaterial(this, (ComponentMaterial*) cp);
+			break;
+		case TRANSFORM:
+			aux = new ComponentTransform(this, (ComponentTransform*) cp);
 			break;
 		case CAMERA:
-			aux = new ComponentCamera(this, (ComponentCamera*)cp);
+			aux = new ComponentCamera(this, (ComponentCamera*) cp);
 			break;
 		default:
 			break;

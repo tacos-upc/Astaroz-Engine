@@ -39,6 +39,7 @@ public:
 	void SelectObjectInHierarchy(GameObject* selected);
 	void drawHierarchy();
 	void drawAllBoundingBoxes();
+	void countGameObjects();
 
 	//public variables
 	std::vector<GameObject*> gameObjects;

@@ -254,6 +254,7 @@ void ModuleScene::RemoveGameObject(GameObject* go)
 	if (!gameObjects.empty())
 	{
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), go), gameObjects.end());
+		countGameObjects();
 	}
 }
 
@@ -262,7 +263,15 @@ void ModuleScene::DuplicateGameObject(GameObject* go)
 	GameObject* duplicate = new GameObject(*go);
 	go->parent->childrenVector.push_back(duplicate);
 	gameObjects.push_back(duplicate);
-	nGameObjects++;
+	countGameObjects();
+}
+
+void ModuleScene::countGameObjects()
+{
+	if (!gameObjects.empty())
+	{
+		nGameObjects = gameObjects.size();
+	}
 }
 
 void ModuleScene::SelectObjectInHierarchy(GameObject* selected)

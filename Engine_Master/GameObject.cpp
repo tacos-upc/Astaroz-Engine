@@ -122,6 +122,15 @@ void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
 	App->scene->RemoveGameObject(this);
+	for (auto child : childrenVector)
+	{
+		child->DeleteGameObject();
+	}
+
+	if (App->scene->selectedByHierarchy == this)
+	{
+		App->scene->selectedByHierarchy = nullptr;
+	}
 	CleanUp();
 }
 
@@ -248,14 +257,12 @@ void GameObject::DrawHierarchy(GameObject * selected)
 
 		if (ImGui::Selectable("Duplicate"))
 		{
-			//TODO: Duplicate gameobjects
 			App->scene->DuplicateGameObject(this);
 		}
 
 		if (ImGui::Selectable("Delete"))
 		{
-			//TODO: Delete gameobjects
-			//DeleteGameObject();
+			DeleteGameObject();
 		}
 		ImGui::EndPopup();
 	}

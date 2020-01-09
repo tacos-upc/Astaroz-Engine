@@ -29,6 +29,7 @@ public:
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const char* name, GameObject* parent);
 	GameObject* getRoot();
+	GameObject* findById(std::string id);
 	void selectRoot();
 	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);

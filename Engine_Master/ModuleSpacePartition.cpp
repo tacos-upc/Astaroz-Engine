@@ -56,6 +56,6 @@ bool ModuleSpacePartition::CleanUp()
 
 void ModuleSpacePartition::recalculateTree(GameObject* obj)
 {
-	tree->removeLeaf(obj);
-	tree->insertLeaf(obj);
+	tree->removeLeaf(obj->id);
+	tree->insertLeaf(obj->id);
 }

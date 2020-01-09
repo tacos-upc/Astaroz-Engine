@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include <list>
 #include <map>
+#include <string>
 
 class AABBTree
 {
@@ -16,18 +17,18 @@ public:
 	AABBTreeNode* root;
 	AABB* Union(AABBTreeNode* A, AABBTreeNode* B);
 
-	void insertLeaf(GameObject* obj);
-	void removeLeaf(GameObject* obj);
+	void insertLeaf(std::string id);
+	void removeLeaf(std::string id);
 	AABBTreeNode* getNode(int);
 	int count();
 
 private:
 	std::vector<AABBTreeNode*> siblingsPriorityQueue;
 	std::vector<AABBTreeNode*> nodes;
-	AABBTreeNode* createLeaf(GameObject*);
+	AABBTreeNode* createLeaf(std::string id);
 	AABBTreeNode* createEmptyNode();
 	AABBTreeNode* pickBestSibling(AABBTreeNode*, AABBTreeNode*, float);
-
+	bool hasLeaf(std::string id);
 	void refit(AABBTreeNode*);
 };
 #endif __AABBTree_H__

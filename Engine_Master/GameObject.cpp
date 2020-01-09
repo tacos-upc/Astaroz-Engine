@@ -18,11 +18,13 @@
 #include "ModuleSpacePartition.h"
 
 
-GameObject::GameObject()
-{}
+GameObject::GameObject() : Object::Object()
+{
+}
 
 GameObject::GameObject(const char* name)
 {
+	GameObject();
 	this->name = name;
 	CreateComponent(TRANSFORM);
 }
@@ -274,27 +276,8 @@ void GameObject::createAABBs()
 	float3 max = float3::zero;
 	boundingBox = new AABB(min, max);
 	obb = new OBB(*boundingBox);
-
-	if(myMesh == nullptr)
-	{
-		LOG("This gameObject does not have a Mesh thus we compute the AABB from his childs.");
-
-		if(childrenVector.size() == 0)
-		{
-			LOG("Cannot compute the AABB because gameObject does not have children.");
-			return;	//leave at this point
-		}
-
-		for(auto child : childrenVector)
-		{
-			if(child->boundingBox != nullptr)
-			{
-				boundingBox->Enclose(*child->boundingBox);
-			}
-		}
-	}
 		
-	if (myMesh->myMesh != nullptr)
+	if (myMesh != nullptr && myMesh->myMesh != nullptr)
 	{
 		for (Vertex vertex : myMesh->myMesh->vertices)
 		{
@@ -305,8 +288,8 @@ void GameObject::createAABBs()
 
 	findOBBPoints();
 	boundingBox->Enclose(obbPoints, 8);
-	boundingBox->TransformAsAABB(myTransform->localModelMatrix);
-	obb->Transform(myTransform->localModelMatrix);
+	boundingBox->TransformAsAABB(myTransform->globalModelMatrix);
+	obb->Transform(myTransform->globalModelMatrix);
 
 	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox) || isfatBoxTooFat())
 	{

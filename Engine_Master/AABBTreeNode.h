@@ -17,10 +17,11 @@ public:
 
 	AABB* box;
 
-	GameObject* gameObject;
+	std::string gameObjectID;
 	int depth;
+	int index;
+	bool isRoot;
 
-	bool isRoot();
 	bool isLeaf();
 	bool isLeft();
 	float cost();

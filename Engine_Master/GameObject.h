@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Geometry/AABB.h"
 #include "Geometry/OBB.h"
+#include "Object.h"
 #include <string>
 #include <vector>
 
@@ -14,7 +15,7 @@ class ComponentMesh;
 class ComponentMaterial;
 class ComponentCamera;
 
-class GameObject
+class GameObject : public Object
 {
 public:
 	GameObject();

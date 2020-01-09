@@ -101,6 +101,16 @@ GameObject * ModuleScene::getRoot()
 	return root;
 }
 
+GameObject * ModuleScene::findById(std::string id)
+{
+	GameObject* found = nullptr;
+	for (size_t i = 0; i < gameObjects.size(); i++)
+	{
+		if (gameObjects.at(i)->id == id) found = gameObjects.at(i);
+	}
+	return found;
+}
+
 void ModuleScene::selectRoot()
 {
 	selectedByHierarchy = root;

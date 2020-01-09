@@ -6,20 +6,15 @@ AABBTreeNode::AABBTreeNode()
 	leftChild = nullptr;
 	rightChild = nullptr;
 	parent = nullptr;
-	gameObject = nullptr;
+	gameObjectID = "";
+	isRoot = false;
 
 	depth = 1;
+	index = 0;
 }
 
 AABBTreeNode::~AABBTreeNode()
 {
-	delete leftChild;
-	delete rightChild;
-}
-
-bool AABBTreeNode::isRoot()
-{
-	return parent == nullptr;
 }
 
 bool AABBTreeNode::isLeaf()
@@ -34,7 +29,7 @@ bool AABBTreeNode::isLeft()
 
 float AABBTreeNode::cost()
 {
-	return box == nullptr? 0.f : box->SurfaceArea();
+	return this == nullptr || box == nullptr? 0.f : box->SurfaceArea();
 }
 
 float AABBTreeNode::costWith(AABBTreeNode* theOther)
@@ -44,7 +39,7 @@ float AABBTreeNode::costWith(AABBTreeNode* theOther)
 
 float AABBTreeNode::inheritedCost()
 {
-	if (parent == nullptr) return 0.0f;
+	if (this == nullptr || parent == nullptr) return 0.0f;
 	return parent->cost() + parent->inheritedCost();
 }
 
@@ -79,7 +74,7 @@ void AABBTreeNode::receiveDepthData(int depthReceived, bool isLeft, bool querySi
 	}
 	else depth += depthReceived;
 
-	if (parent == nullptr) return;
+	if (isRoot) return;
 	else parent->receiveDepthData(depth, parent->leftChild == this, false);
 }
 

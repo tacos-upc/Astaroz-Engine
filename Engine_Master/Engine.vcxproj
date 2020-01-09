@@ -178,8 +178,15 @@
     <ClInclude Include="ModuleTriangle.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MsTimer.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Util\debug_draw.hpp" />
+    <ClInclude Include="Util\par_shapes.h" />
+    <ClInclude Include="Util\uuid\export.h" />
+    <ClInclude Include="Util\uuid\uuid-io.h" />
+    <ClInclude Include="Util\uuid\uuid.h" />
+    <ClInclude Include="Util\uuid\version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBTree.cpp" />
@@ -247,7 +254,11 @@
     <ClCompile Include="ModuleTriangle.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MsTimer.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Util\uuid\uuid-io.cpp" />
+    <ClCompile Include="Util\uuid\uuid-windows.cpp" />
+    <ClCompile Include="Util\uuid\uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl" />
@@ -256,6 +267,7 @@
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+    <None Include="Util\uuid\uuid.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

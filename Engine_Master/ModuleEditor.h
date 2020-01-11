@@ -37,7 +37,8 @@ private:
 	void loadIcons();
 	void drawMainMenu();
 	void drawHierarchyPanel();
-	void drawCameraPanel();
+	void drawScenePanel();
+	void drawGamePanel();
 	void drawInspectorPanel();
 	void drawLogPanel();
 };

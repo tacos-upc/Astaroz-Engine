@@ -77,9 +77,11 @@ update_status ModuleEditor::Update()
 {
 	drawMainMenu();
 	drawHierarchyPanel();
-	drawCameraPanel();
+	drawScenePanel();
 	drawInspectorPanel(); 
 	drawLogPanel();
+
+	drawGamePanel();
 
 	return UPDATE_CONTINUE;
 }
@@ -270,33 +272,26 @@ void ModuleEditor::drawHierarchyPanel()
 	}
 }
 
-void ModuleEditor::drawCameraPanel()
+void ModuleEditor::drawScenePanel()
 {
 	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.6f, App->window->height * 0.65f));
 	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
-	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+	if (ImGui::Begin(ICON_FA_FEATHER_ALT "Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
-		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
-		{
-			//Settings tab
-			if (ImGui::BeginTabItem(ICON_FA_FEATHER_ALT " Scene"))
-			{
-				App->renderer->drawSceneView();
-				ImGui::EndTabItem();
-			}
-
-			//HIierarchy tab
-			if (ImGui::BeginTabItem(ICON_FA_GAMEPAD " Game"))
-			{
-				App->renderer->drawGameView();
-				ImGui::EndTabItem();
-			}
-			ImGui::EndTabBar();
-		}
-
+		App->renderer->drawSceneView();
 		ImGui::End();
 	}
 }
+
+void ModuleEditor::drawGamePanel()
+{
+	if (ImGui::Begin(ICON_FA_GAMEPAD " Game", NULL, ImGuiWindowFlags_NoCollapse))
+	{
+		App->renderer->drawGameView();
+		ImGui::End();
+	}
+}
+
 
 void ModuleEditor::drawInspectorPanel()
 {

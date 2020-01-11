@@ -264,10 +264,8 @@ void ModuleRender::drawGameView()
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &cam->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &cam->projectionMatrix[0][0]);
 
-	drawGameObjects(App->programShader->defaultProgram);
-
-
 	if(cam->selectedClearMode == SKYBOX) skybox->draw(cam);
+	drawGameObjects(App->programShader->defaultProgram);
 
 	ImGui::GetWindowDrawList()->AddImage(
 		(void *)gameTexture,

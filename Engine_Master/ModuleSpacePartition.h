@@ -22,6 +22,7 @@ public:
 	void recalculateTree(GameObject*);
 
 private:
+	void drawTree(int);
 	AABBTree* tree;
 };
 

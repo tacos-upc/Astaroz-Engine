@@ -20,15 +20,14 @@ public:
 	std::string gameObjectID;
 	int depth;
 	int index;
-	bool isRoot;
 
+	bool isRoot();
 	bool isLeaf();
 	bool isLeft();
 	float cost();
 	float costWith(AABBTreeNode*);
 	float inheritedCost();
 	AABB* Union(AABBTreeNode* B);
-	void receiveDepthData(int depth, bool isLeft, bool querySibling);
 	int calculateDepth();
 	AABBTreeNode* getDeepestChild();
 	AABBTreeNode* getShallowestChild();

@@ -22,14 +22,15 @@ public:
 	AABBTreeNode* getNode(int);
 	int count();
 
-private:
-	std::vector<AABBTreeNode*> siblingsPriorityQueue;
+private:	
 	std::vector<AABBTreeNode*> nodes;
+	std::vector<AABBTreeNode*> siblingsPriorityQueue;
 	AABBTreeNode* createLeaf(std::string id);
 	AABBTreeNode* createEmptyNode();
 	AABBTreeNode* pickBestSibling(AABBTreeNode*, AABBTreeNode*, float);
-	bool hasLeaf(std::string id);
 	void refit(AABBTreeNode*);
+	void printTree();
+	void printNode(AABBTreeNode*, int);
 };
 #endif __AABBTree_H__
 

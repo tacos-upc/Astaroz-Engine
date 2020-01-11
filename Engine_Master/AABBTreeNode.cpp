@@ -7,7 +7,6 @@ AABBTreeNode::AABBTreeNode()
 	rightChild = nullptr;
 	parent = nullptr;
 	gameObjectID = "";
-	isRoot = false;
 
 	depth = 1;
 	index = 0;
@@ -15,6 +14,16 @@ AABBTreeNode::AABBTreeNode()
 
 AABBTreeNode::~AABBTreeNode()
 {
+	delete box;
+	box = nullptr;
+	leftChild = nullptr;
+	rightChild = nullptr;
+	parent = nullptr;
+}
+
+bool AABBTreeNode::isRoot()
+{
+	return parent == nullptr;
 }
 
 bool AABBTreeNode::isLeaf()
@@ -47,7 +56,7 @@ AABB * AABBTreeNode::Union(AABBTreeNode* B)
 {
 	AABB* C = nullptr;
 
-	if (B == nullptr || B->box == nullptr)
+	if (B == nullptr || B->box == nullptr || B->box == (AABB*)0xdddddddd)
 	{
 		C = new AABB(*box);
 	}
@@ -64,27 +73,13 @@ AABB * AABBTreeNode::Union(AABBTreeNode* B)
 	return C;
 }
 
-void AABBTreeNode::receiveDepthData(int depthReceived, bool isLeft, bool querySibling)
-{
-	depth = 1;
-	if (querySibling)
-	{
-		int otherDepth = isLeft ? rightChild->calculateDepth() : leftChild->calculateDepth();
-		depth = depth += math::Max(depthReceived, otherDepth);
-	}
-	else depth += depthReceived;
-
-	if (isRoot) return;
-	else parent->receiveDepthData(depth, parent->leftChild == this, false);
-}
-
 int AABBTreeNode::calculateDepth()
 {
-	depth = 1;
-	int rightDepth = rightChild == nullptr ? 0 : rightChild->calculateDepth();
-	int leftDepth = leftChild == nullptr ? 0 : leftChild->calculateDepth();
+	if (parent == nullptr) depth = 0;
+	else depth = 1 + parent->depth;
 
-	depth = depth + math::Max(leftDepth, rightDepth);
+	if(rightChild != nullptr) rightChild->calculateDepth();
+	if(leftChild != nullptr) leftChild->calculateDepth();
 
 	return depth;
 }

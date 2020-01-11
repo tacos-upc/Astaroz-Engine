@@ -4,12 +4,11 @@
 #include "ModuleScene.h"
 #include "Globals.h"
 #include "Application.h"
+#include <algorithm>  // remove and remove_if
+
 
 AABBTree::AABBTree()
 {
-	root = new AABBTreeNode();
-	root->box = new AABB(float3::zero, float3::zero);
-	root->isRoot = true;
 }
 
 AABBTree::~AABBTree()
@@ -26,42 +25,55 @@ AABB * AABBTree::Union(AABBTreeNode* A, AABBTreeNode* B)
 	return C;
 }
 
-void AABBTree::insertLeaf(std::string id)
+void AABBTree::insertLeaf(std::string objectIndex)
 {
-	if (hasLeaf(id)) return;
-	LOG("Entro a insertar un nodo: %d", count());
-
+	LOG("------------------------------------------------- INSERT LEAF ---------------------------------------------------------");
 	siblingsPriorityQueue.clear();
 
-	AABBTreeNode* leaf = createLeaf(id);
+	AABBTreeNode* leaf = createLeaf(objectIndex);
 	if (count() <= 1)
 	{
-		leaf->parent = root;
-		root->leftChild = leaf;
+		root = leaf;
 		return;
 	}
 
 	// Stage 1: find the best sibling for the new leaf
 	AABBTreeNode* sibling = nullptr;
-	if (count() <= 2)
-	{
-		sibling = sibling = root->leftChild;
-	}
-	else sibling = pickBestSibling(leaf, root->leftChild, math::floatMax);
+	if (count() <= 2) sibling = root;
+	else sibling = pickBestSibling(leaf, root, math::floatMax);
+
+	LOG("I've chosen my sibling: ");
+	printNode(sibling, -1);
 
 	// Stage 2: create a new parent
 	AABBTreeNode* newParent = createEmptyNode();
-	
+	LOG("The new parent: ");
+	printNode(newParent, -1);
+
 	newParent->parent = sibling->parent;
 	
+	if (sibling->parent != nullptr)
+	{
+		if (sibling->isLeft()) sibling->parent->leftChild = newParent;
+		else sibling->parent->rightChild = newParent;
+	}
 	newParent->leftChild = leaf;
 	leaf->parent = newParent;
 
 	newParent->rightChild = sibling;
 	sibling->parent = newParent;
+	
+
+	if (sibling == root) root = newParent;
+
+	LOG("After insertion");
+	printTree();
 
 	//Stage 3: Rebalance the tree if required
-	leaf->receiveDepthData(0, false, false);
+	root->calculateDepth();
+	LOG("After depth calculation");
+	printTree();
+
 	if (math::Abs(newParent->rightChild->depth - newParent->leftChild->depth) >= 2)
 	{
 		//The tree is out of balance
@@ -72,7 +84,7 @@ void AABBTree::insertLeaf(std::string id)
 		AABBTreeNode* shallowestGrandChildren = deepNode->getShallowestChild();
 
 		//Is rotation necessary?
-		if (shallowestGrandChildren->costWith(shallowNode) < newParent->cost())
+		if (shallowestGrandChildren != nullptr && shallowestGrandChildren->costWith(shallowNode) < newParent->cost())
 		{
 			deepestGrandChildren->parent = shallowNode->parent;
 			if (shallowNode->isLeft()) deepestGrandChildren->parent->leftChild = deepestGrandChildren;
@@ -84,52 +96,127 @@ void AABBTree::insertLeaf(std::string id)
 		}
 	}
 
-
 	// Stage 4: walk back up the tree refitting AABBs
 	refit(leaf->parent);
+
+	LOG("Finished Tree");
+	printTree();
 }
+
 
 void AABBTree::removeLeaf(std::string id)
 {
-	//We never include the root
-	for (size_t i = 1; i < nodes.size(); i++)
+	LOG("------------------------------------------------- REMOVE LEAF ---------------------------------------------------------");
+	printTree();
+
+	for (size_t i = 0; i < nodes.size(); i++)
 	{
 		AABBTreeNode* node = nodes.at(i);
 		if (node->gameObjectID == id)
 		{
-			if (!node->isRoot)
+			LOG("I've found it: %d", i);
+
+			AABBTreeNode* parent = node->parent;
+			
+			if (parent != nullptr)
 			{
+				LOG("Node %x has a parent: %x", nodes.at(i), nodes.at(i)->parent);
+
+				AABBTreeNode* granpa = parent->parent;
+
 				if (node->isLeft())
 				{
-					node->parent->rightChild->parent = node->parent->parent;
+					LOG("The node is left");
+					parent->rightChild->parent = granpa;
+					printTree();
+
+					if (granpa != nullptr)
+					{
+						LOG("There's a granpa %x", granpa);
+
+						if (parent->isLeft())
+						{
+							LOG("The parent is left");
+							granpa->leftChild = parent->rightChild;
+							printTree();
+						}
+						else
+						{
+							LOG("The parent is right");
+							granpa->rightChild = parent->rightChild;
+							printTree();
+						}
+					}
+					else
+					{
+						LOG("The granpa is null");
+						root = parent->rightChild;
+						printTree();
+					}
 				}
 				else
 				{
-					node->parent->leftChild->parent = node->parent->parent;
+					LOG("The node is right");
+					parent->leftChild->parent = granpa;
+					printTree();
+
+					if (granpa != nullptr)
+					{
+						LOG("There's a granpa %x", granpa);
+
+						if (parent->isLeft())
+						{
+							LOG("The parent is left");
+							granpa->leftChild = parent->leftChild;
+							printTree();
+						}
+						else
+						{
+							LOG("The parent is right");
+							granpa->rightChild = parent->leftChild;
+							printTree();
+						}
+					}
+					else
+					{
+						LOG("The granpa is null");
+						root = parent->leftChild;
+						printTree();
+					}
 				}
 			}
-			refit(node->parent);
-			nodes.erase(nodes.begin() + i);
 
-			if (!node->parent->isRoot)
-			{
-				nodes.erase(nodes.begin() + (node->parent->index >= count() ? node->parent->index - 1 : node->parent->index));
-				delete node->parent;
-			}
+			nodes[i] = nullptr;
+			printTree();
+
+			if(parent != nullptr) nodes[parent->index] = nullptr;
+			printTree();
+
+
 			delete node;
+			printTree();
+
+			delete parent;
+			printTree();
 
 			break;
 		}
 	}
 
 	//Redo all indices
+	nodes.erase(std::remove(nodes.begin(), nodes.end(), nullptr), nodes.end());
+	printTree();
+
 	for (size_t i = 0; i < count(); i++) nodes.at(i)->index = i;
+	printTree();
+
+	if(nodes.size() > 0) root->calculateDepth();
 }
 
 AABBTreeNode * AABBTree::getNode(int index)
 {
 	AABBTreeNode* node = nullptr;
-	if (index > 0 && index < nodes.size()) node = nodes.at(index);
+	if (index >= 0 && index < nodes.size()) node = nodes.at(index);
 	return node;
 }
 
@@ -138,11 +225,11 @@ int AABBTree::count()
 	return nodes.size();
 }
 
-AABBTreeNode* AABBTree::createLeaf(std::string id)
+AABBTreeNode* AABBTree::createLeaf(std::string go)
 {
 	AABBTreeNode* node = createEmptyNode();
-	node->gameObjectID = id;
-	node->box = new AABB(*App->scene->findById(id)->fatBoundingBox);
+	node->gameObjectID = go;
+	node->box = new AABB(*App->scene->findById(go)->fatBoundingBox);
 
 	return node;
 }
@@ -150,7 +237,7 @@ AABBTreeNode* AABBTree::createLeaf(std::string id)
 AABBTreeNode * AABBTree::createEmptyNode()
 {
 	AABBTreeNode* node = new AABBTreeNode();
-	node->box = new AABB(float3(0,0,0), float3(0,0,0));
+	node->box = new AABB(float3(0, 0, 0), float3(0, 0, 0));
 	nodes.push_back(node);
 	node->index = count() - 1;
 	return node;
@@ -158,7 +245,7 @@ AABBTreeNode * AABBTree::createEmptyNode()
 
 AABBTreeNode * AABBTree::pickBestSibling(AABBTreeNode * newLeaf, AABBTreeNode* candidate, float currentBestCost)
 {
-	if (count() <= 1) return candidate;
+	if (count() == 1) return root;
 
 	float cost = newLeaf->costWith(candidate) + candidate->inheritedCost();
 	if (cost < currentBestCost)
@@ -177,38 +264,52 @@ AABBTreeNode * AABBTree::pickBestSibling(AABBTreeNode * newLeaf, AABBTreeNode* c
 	return siblingsPriorityQueue.at(siblingsPriorityQueue.size() - 1);
 }
 
-bool AABBTree::hasLeaf(std::string id)
-{
-	bool isThere = false;
-	for (size_t i = 0; i < count(); i++)
-	{
-		if (nodes.at(i)->gameObjectID == id)
-		{
-			isThere = true;
-			break;
-		}
-	}
-	return isThere;
-}
-
 void AABBTree::refit(AABBTreeNode * index)
 {
-	if(index->isRoot)
+	while (index != nullptr)
 	{
-		if (index->gameObjectID != "")
-		{
-			index->box = App->scene->findById(index->gameObjectID)->fatBoundingBox;
-		}
-	}
-	else
-	{
-		while (index != nullptr)
-		{
-			AABBTreeNode* child1 = index->leftChild;
-			AABBTreeNode* child2 = index->rightChild;
-			index->box = Union(child1, child2);
-			index = index->parent;
-		}
+		AABBTreeNode* child1 = index->leftChild;
+		AABBTreeNode* child2 = index->rightChild;
+		index->box = Union(child1, child2);
+		index = index->parent;
 	}
 }
 
+void AABBTree::printTree()
+{
+	LOG("---------------------- TREE STATE ------------------------");
+	int depth = 0;
+	int counting = 0;
+	while (counting < nodes.size())
+	{
+		for (size_t i = 0; i < nodes.size(); i++)
+		{
+			if (nodes.at(i) == nullptr)
+			{
+				counting += 1;
+				continue;
+			}
+
+			if(nodes.at(i)->depth == depth)
+			{
+				printNode(nodes.at(i), depth);
+				counting += 1;
+			}
+		}
+		depth += 1;
+	}
+	LOG("--------------------------------------------------------------------");
+}
+
+void AABBTree::printNode(AABBTreeNode* node, int depth)
+{
+	LOG("Index: %d, Address: %x, Depth: %d, ID: %s, parent address: %x, leftChild: %x, rightChild: %x",
+		node->index,
+		node,
+		depth,
+		node->gameObjectID.c_str(),
+		node->parent == nullptr ? 0 : node->parent,
+		node->leftChild == nullptr ? 0 : node->leftChild,
+		node->rightChild == nullptr ? 0 : node->rightChild
+	);
+}

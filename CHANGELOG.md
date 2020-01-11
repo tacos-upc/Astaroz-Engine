@@ -1,3 +1,4 @@
+* Now each GameObject has a unique ID by way of inheritance from the Object class
 * Space partitioning
 * Debug draw correctly implemented
 * Readme updated

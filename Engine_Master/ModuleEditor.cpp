@@ -77,11 +77,10 @@ update_status ModuleEditor::Update()
 {
 	drawMainMenu();
 	drawHierarchyPanel();
+	drawGamePanel();
 	drawScenePanel();
 	drawInspectorPanel(); 
 	drawLogPanel();
-
-	drawGamePanel();
 
 	return UPDATE_CONTINUE;
 }

@@ -1,5 +1,6 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleModelLoader.h"
+#include "ModuleEditor.h"
 #include "ModuleTime.h"
 #include "ComponentCamera.h"
 #include "Point.h"
@@ -53,6 +54,13 @@ update_status ModuleEditorCamera::PreUpdate()
 
 update_status ModuleEditorCamera::Update()
 {
+	if (App->editor->getFocusedWindowData()->name == "Scene")
+	{
+		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+		{
+			
+		}
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -63,6 +71,7 @@ update_status ModuleEditorCamera::PostUpdate()
 
 bool ModuleEditorCamera::CleanUp()
 {
+	delete cam;
 	return true;
 }
 
@@ -256,4 +265,23 @@ float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
 	else theta = math::Atan(dY / dX);
 	
 	return float2(r, theta);
+}
+
+void ModuleEditorCamera::raycast()
+{
+
+}
+
+float3 ModuleEditorCamera::getMouseToViewportPosition()
+{
+	iPoint touch = App->input->GetMousePosition();
+	fPoint windowPos = fPoint(App->editor->getFocusedWindowData()->posX, App->editor->getFocusedWindowData()->posY);
+	fPoint windowSize = fPoint(App->editor->getFocusedWindowData()->width, App->editor->getFocusedWindowData()->height);
+
+	//Normalize point
+	float x = (touch.x - windowPos.x / 2 - windowSize.x / 4) / (windowSize.x / 4);
+	float y = -(touch.y - windowPos.y / 2 - windowSize.y / 4) / (windowSize.y / 4);
+	float z = 1.0f;
+
+	return float3(x, y, z);
 }

@@ -14,6 +14,15 @@
 #include "ImGUI/imgui_impl_opengl3.h"
 
 
+struct FocusedWindowData
+{
+	const char* name;
+	float posX;
+	float posY;
+	float width;
+	float height;
+};
+
 class ModuleEditor : public Module{
 public:
 	ModuleEditor();
@@ -32,6 +41,7 @@ public:
 	bool scrollToBottom, show_about_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
+	FocusedWindowData* getFocusedWindowData();
 
 private:
 	void loadIcons();
@@ -41,8 +51,10 @@ private:
 	void drawInspectorPanel();
 	void drawComponentsMenu(float);
 	void drawLogPanel();
+	void updateFocusedWindowData(const char*);
 
 	bool openComponentsMenu;
+	FocusedWindowData* focusedWindowData;
 };
 
 #endif __ModuleEditor_H__

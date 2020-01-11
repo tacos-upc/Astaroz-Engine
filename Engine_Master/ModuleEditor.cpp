@@ -25,6 +25,7 @@ bool ModuleEditor::Init()
 	show_about_window = false;
 	show_configuration_window = false;
 	openComponentsMenu = false;
+	focusedWindowData = new FocusedWindowData();
 	return true;
 }
 
@@ -100,6 +101,7 @@ bool ModuleEditor::CleanUp()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+	delete focusedWindowData;
 
 	return true;
 }
@@ -107,6 +109,11 @@ bool ModuleEditor::CleanUp()
 void ModuleEditor::processEvent(SDL_Event event)
 {
 	ImGui_ImplSDL2_ProcessEvent(&event);
+}
+
+FocusedWindowData* ModuleEditor::getFocusedWindowData()
+{
+	return focusedWindowData;
 }
 
 void ModuleEditor::loadIcons()
@@ -144,91 +151,99 @@ void ModuleEditor::drawMainMenu()
 			ImGui::MenuItem("About", NULL, &show_about_window);
 			ImGui::EndMenu();
 		};
+
 		ImGui::EndMainMenuBar();
 	}
 	//About flag
 	if (show_about_window)
 	{
-		ImGui::Begin("About...", &show_about_window);
-		ImGui::BulletText("Engine name: Astaroz engine");
-		ImGui::Text("This engine was performed in UPC master - game programming");
-		ImGui::BulletText("Author: Pau Casas");
-		ImGui::BulletText("MIT License:"); ImGui::SameLine();
-		if (ImGui::SmallButton("License"))
+		if (ImGui::Begin("About...", &show_about_window))
 		{
-			ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine/blob/master/LICENSE", nullptr, nullptr, SW_SHOWNORMAL);
+			updateFocusedWindowData("About");
+			
+			ImGui::BulletText("Engine name: Astaroz engine");
+			ImGui::Text("This engine was performed in UPC master - game programming");
+			ImGui::BulletText("Author: Pau Casas");
+			ImGui::BulletText("MIT License:"); ImGui::SameLine();
+			if (ImGui::SmallButton("License"))
+			{
+				ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine/blob/master/LICENSE", nullptr, nullptr, SW_SHOWNORMAL);
+			}
+			ImGui::Separator();
+			ImGui::Text("Github repository:"); ImGui::SameLine();
+			if (ImGui::SmallButton("Astaroz engine link github"))
+			{
+				ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine", nullptr, nullptr, SW_SHOWNORMAL);
+			}
+			ImGui::End();
 		}
-		ImGui::Separator();
-		ImGui::Text("Github repository:"); ImGui::SameLine();
-		if (ImGui::SmallButton("Astaroz engine link github"))
-		{
-			ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine", nullptr, nullptr, SW_SHOWNORMAL);
-		}
-		ImGui::End();
 	}
 	//Configuration flag
 	if (show_configuration_window)
 	{
-		ImGui::Begin("Configuration", &show_configuration_window);
-
-		//FPS
-		fps_log.push_back(ImGui::GetIO().Framerate);
-		if (fps_log.size() > 25) //Divides graph by sections like in PDF image
+		if (ImGui::Begin("Configuration", &show_configuration_window))
 		{
-			char title[25];
-			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
-			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-			fps_log.erase(fps_log.begin());
-		}
+			updateFocusedWindowData("Configuration");
 
-		//Memory consumption
-		if (ImGui::TreeNode("Memory consumption"))
-		{
-			MEMORYSTATUSEX memInfo;
-			memInfo.dwLength = sizeof(MEMORYSTATUSEX);
-			GlobalMemoryStatusEx(&memInfo);
-			DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
-			DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
-			DWORDLONG totalPhysMem = memInfo.ullTotalPhys;
-			DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
-			ImGui::Text("Total virtual memory: %u KB", totalVirtualMem / 1024);
-			ImGui::Text("Virtual memory used: %u KB", virtualMemUsed / 1024);
-			ImGui::Separator();
-			ImGui::Text("Total physical memory: %u KB", totalPhysMem / 1024);
-			ImGui::Text("Physical memory used: %u KB", physMemUsed / 1024);
-			ImGui::TreePop();
-			ImGui::Separator();
-		}
+			//FPS
+			fps_log.push_back(ImGui::GetIO().Framerate);
+			if (fps_log.size() > 25) //Divides graph by sections like in PDF image
+			{
+				char title[25];
+				sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+				ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+				fps_log.erase(fps_log.begin());
+			}
 
-		//Hardware detection
-		if (ImGui::TreeNode("Hardware detection"))
-		{
-			ImGui::Text("CPU cores: %d", SDL_GetCPUCount());
-			ImGui::Text("CPU cache line size : %d B", SDL_GetCPUCacheLineSize());
-			ImGui::Separator();
-			ImGui::Text("Total system RAM : %d MB", SDL_GetSystemRAM());
-			ImGui::Separator();
-			ImGui::Text("GPU: %s", glGetString(GL_RENDERER));
-			ImGui::Text("GPU company: %s", glGetString(GL_VENDOR));
-			ImGui::TreePop();
-			ImGui::Separator();
-		}
+			//Memory consumption
+			if (ImGui::TreeNode("Memory consumption"))
+			{
+				MEMORYSTATUSEX memInfo;
+				memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+				GlobalMemoryStatusEx(&memInfo);
+				DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
+				DWORDLONG virtualMemUsed = memInfo.ullTotalPageFile - memInfo.ullAvailPageFile;
+				DWORDLONG totalPhysMem = memInfo.ullTotalPhys;
+				DWORDLONG physMemUsed = memInfo.ullTotalPhys - memInfo.ullAvailPhys;
+				ImGui::Text("Total virtual memory: %u KB", totalVirtualMem / 1024);
+				ImGui::Text("Virtual memory used: %u KB", virtualMemUsed / 1024);
+				ImGui::Separator();
+				ImGui::Text("Total physical memory: %u KB", totalPhysMem / 1024);
+				ImGui::Text("Physical memory used: %u KB", physMemUsed / 1024);
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
 
-		//Software versions
-		if (ImGui::TreeNode("Software versions"))
-		{
-			SDL_version sdlVersion;
-			SDL_GetVersion(&sdlVersion);
-			ImGui::BulletText("SDL (version %d.%d.%d)", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
-			ImGui::BulletText("Imgui (version %s)", ImGui::GetVersion());
-			ImGui::BulletText("MathGeoLib");
-			ImGui::BulletText("glew (version %s)", glewGetString(GLEW_VERSION));
-			ImGui::BulletText("Assimp (version %d.%d.%d)", aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
-			ImGui::BulletText("DevIL (version %d)", IL_VERSION);
-			ImGui::TreePop();
-			ImGui::Separator();
+			//Hardware detection
+			if (ImGui::TreeNode("Hardware detection"))
+			{
+				ImGui::Text("CPU cores: %d", SDL_GetCPUCount());
+				ImGui::Text("CPU cache line size : %d B", SDL_GetCPUCacheLineSize());
+				ImGui::Separator();
+				ImGui::Text("Total system RAM : %d MB", SDL_GetSystemRAM());
+				ImGui::Separator();
+				ImGui::Text("GPU: %s", glGetString(GL_RENDERER));
+				ImGui::Text("GPU company: %s", glGetString(GL_VENDOR));
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
+
+			//Software versions
+			if (ImGui::TreeNode("Software versions"))
+			{
+				SDL_version sdlVersion;
+				SDL_GetVersion(&sdlVersion);
+				ImGui::BulletText("SDL (version %d.%d.%d)", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+				ImGui::BulletText("Imgui (version %s)", ImGui::GetVersion());
+				ImGui::BulletText("MathGeoLib");
+				ImGui::BulletText("glew (version %s)", glewGetString(GLEW_VERSION));
+				ImGui::BulletText("Assimp (version %d.%d.%d)", aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
+				ImGui::BulletText("DevIL (version %d)", IL_VERSION);
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
+			ImGui::End();
 		}
-		ImGui::End();
 	}
 }
 
@@ -238,6 +253,8 @@ void ModuleEditor::drawHierarchyPanel()
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
 	if (ImGui::Begin("Left panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
+		updateFocusedWindowData("Left Panel");
+
 		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
 		{
 			//Hierarchy tab
@@ -274,6 +291,8 @@ void ModuleEditor::drawCameraPanel()
 	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
 	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
+		updateFocusedWindowData("Scene");
+
 		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
 		{
 			//Settings tab
@@ -303,6 +322,8 @@ void ModuleEditor::drawInspectorPanel()
 	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 50.0f));
 	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 	{
+		updateFocusedWindowData("Inspector");
+
 		GameObject* obj = App->scene->selectedByHierarchy;
 		if (obj != nullptr && obj != App->scene->getRoot())
 		{
@@ -332,6 +353,8 @@ void ModuleEditor::drawComponentsMenu(float y)
 		ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, 200.f));
 		if (ImGui::Begin("Components", &openComponentsMenu, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 		{
+			updateFocusedWindowData("Components");
+
 			for (size_t i = 0; i < ComponentType::COMPONENT_TYPE_COUNT; i++)
 			{
 				ImGui::SetNextItemWidth(App->window->width * 0.2f - 5.f);
@@ -354,10 +377,24 @@ void ModuleEditor::drawLogPanel()
 
 	if (ImGui::Begin(ICON_FA_TAPE " Logs", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 	{
+		updateFocusedWindowData("Log");
+
 		ImGui::TextUnformatted(myBuffer.begin());
 		if (scrollToBottom)
 			ImGui::SetScrollHere(1.0f);
 		scrollToBottom = false;
 		ImGui::End();
+	}
+}
+
+void ModuleEditor::updateFocusedWindowData(const char * name)
+{
+	if (ImGui::IsWindowFocused())
+	{
+		focusedWindowData->name = name;
+		focusedWindowData->posX = ImGui::GetWindowPos().x;
+		focusedWindowData->posY = ImGui::GetWindowPos().y;
+		focusedWindowData->width = ImGui::GetWindowWidth();
+		focusedWindowData->height = ImGui::GetWindowHeight();
 	}
 }

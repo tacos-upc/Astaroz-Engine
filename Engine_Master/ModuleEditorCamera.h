@@ -73,6 +73,9 @@ private:
 
 	float2 polarToCartesian(float2);
 	float2 cartesianToPolar(float2, float2);
+
+	void raycast();
+	float3 getMouseToViewportPosition();
 };
 
 #endif __ModuleEditorCamera_H__

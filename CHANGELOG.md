@@ -1,3 +1,4 @@
+* Game view is now rendered on a different window than the scene one
 * Space partitioning
 * Debug draw correctly implemented
 * Readme updated

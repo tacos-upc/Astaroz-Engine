@@ -1,3 +1,4 @@
+* Mouse picking
 * Space partitioning
 * Debug draw correctly implemented
 * Readme updated

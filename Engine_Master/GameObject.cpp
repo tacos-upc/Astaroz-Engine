@@ -228,7 +228,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 		}
 	}
 
-	if(ImGui::IsWindowHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
+	if(ImGui::IsItemHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
 		ImGui::OpenPopup("RightClick Popup");
 	}

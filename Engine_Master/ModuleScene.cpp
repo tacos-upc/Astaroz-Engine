@@ -34,7 +34,7 @@ bool ModuleScene::Init()
 	root = new GameObject("World");
 	root->isRoot = true;
 
-	mainCamera = CreateGameObject("Main Camera", root);
+	mainCamera = CreateGameObject("Main Camera (root)", root);
 	mainCamera->CreateComponent(CAMERA);
 
 	gameObjects.push_back(mainCamera);
@@ -149,17 +149,9 @@ void ModuleScene::LoadModel(const char* path, GameObject* parent)
 
 void ModuleScene::CreateEmpty(GameObject* parent)
 {
-	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
-	GameObject* empty = nullptr;
-	if (selectedByHierarchy == parent)
-	{
-		empty = CreateGameObject(defaultName.c_str(), parent);
-	}
-	else
-	{
-		empty = CreateGameObject(defaultName.c_str(), root);
-	}
-	gameObjects.push_back(empty);
+	std::string tempName = "NewGameObject" + std::to_string(nGameObjects + 1);
+	GameObject* gameObject = CreateGameObject(tempName.c_str(), parent);
+	gameObjects.push_back(gameObject);
 }
 
 void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)

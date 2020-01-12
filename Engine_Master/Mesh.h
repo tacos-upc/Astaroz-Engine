@@ -36,6 +36,7 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
+	const char* name;
 
 	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures, const char* name);
 	~Mesh();
@@ -46,7 +47,6 @@ public:
 
 private:
 	unsigned int VAO = 0, VBO = 0, EBO = 0;
-	const char* name;
 	void setupMesh();
 };
 

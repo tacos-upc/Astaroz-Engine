@@ -100,6 +100,16 @@ GameObject* ModuleScene::getRoot()
 	return root;
 }
 
+GameObject * ModuleScene::findById(std::string id)
+{
+	GameObject* found = nullptr;
+	for (size_t i = 0; i < gameObjects.size(); i++)
+	{
+		if (gameObjects.at(i)->id == id) found = gameObjects.at(i);
+	}
+	return found;
+}
+
 void ModuleScene::selectRoot()
 {
 	selectedByHierarchy = root;
@@ -123,7 +133,7 @@ void ModuleScene::LoadModel(const char* path, GameObject* parent)
 		ComponentMesh* myMeshCreated = (ComponentMesh*)newMeshObject->CreateComponent(MESH);
 		
 		myMeshCreated->LoadMesh(mesh);
-		newMeshObject->ComputeAABB();
+		newMeshObject->createAABBs();
 		gameObjects.push_back(newMeshObject);
 
 		numObject++;
@@ -131,7 +141,7 @@ void ModuleScene::LoadModel(const char* path, GameObject* parent)
 
 	LOG("Deleting info from ModelLoader");
 	App->modelLoader->emptyScene();
-	parent->ComputeAABB();
+	parent->createAABBs();
 
 	//Setting parent as a meshParent
 	parent->isParentOfMeshes = true;
@@ -288,7 +298,9 @@ void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 void ModuleScene::drawHierarchy()
 {
 	if (selectedByHierarchy == nullptr)
+	{
 		selectedByHierarchy = root;
+	}
 
 	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{

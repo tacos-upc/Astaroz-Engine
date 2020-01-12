@@ -19,10 +19,10 @@ public:
 	void Draw(const unsigned int program) const;
 	void DrawInspector() override;
 	//public variables
-	Mesh* myMesh;
-	char meshPath[1000] = {};
+	Mesh* myMesh = nullptr;
 
 private:
+	int selectedMesh;
 	bool isLoaded;
 };
 

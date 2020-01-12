@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include "Component.h"
 #include "Geometry/AABB.h"
+#include "Geometry/OBB.h"
+#include "Object.h"
 #include <string>
 #include <vector>
 
@@ -13,7 +15,7 @@ class ComponentMesh;
 class ComponentMaterial;
 class ComponentCamera;
 
-class GameObject
+class GameObject : public Object
 {
 public:
 	GameObject();
@@ -37,8 +39,12 @@ public:
 	//Update
 	void UpdateTransform();
 	void DrawInspector();
-	void ComputeAABB();
+	void createAABBs();
+	void findOBBPointsForRender();
+	void findOBBPoints();
+
 	void DrawAABB();
+	void Draw(GLuint program);
 	void SetName(const std::string &newName);
 	std::string GetName() const;
 
@@ -53,15 +59,17 @@ public:
 	bool isRoot = false;
 	bool isParentOfMeshes = false;
 	bool isStatic = false;
+	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
-	AABB* globalBoundingBox = nullptr;
+	AABB* fatBoundingBox = nullptr;//Used for AABB tree
 
 private:
 	//private variables
 	std::string myName;
+	float3 obbPoints[8];
 
 	//private methods
 	void CheckDragAndDrop(GameObject* go);
+	bool isfatBoxTooFat();//Area diff between regular aabb and fat one
 };
-
 #endif __GameObject_H__

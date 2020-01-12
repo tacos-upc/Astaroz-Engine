@@ -71,7 +71,7 @@ void ModuleModelLoader::LoadModel(const char* path)
 		LOG("Path of the geometry correct.\n");
 	}
 	//Next step
-	processNode(scene->mRootNode, scene);
+	processNode(scene->mRootNode, scene, path);
 
 	//Fill AABB member value
 	generateBoundingBox();
@@ -83,7 +83,7 @@ void ModuleModelLoader::LoadModel(const char* path)
 	modelName = path; //TODO --> extract name from path and not the full route
 }
 
-void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
+void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene, const char* path)
 {
 	
 	LOG("Before Meshes: %d", meshes.size());
@@ -91,7 +91,7 @@ void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(new Mesh(processMesh(mesh, scene)));
+		meshes.push_back(new Mesh(processMesh(mesh, scene, path)));
 		
 		LOG("After Meshes: %d", meshes.size());
 		LOG("------------------------------------------");
@@ -99,11 +99,11 @@ void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(node->mChildren[i], scene);
+		processNode(node->mChildren[i], scene, path);
 	}
 }
 
-Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -188,7 +188,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	numPolys /= 3;
 	numTextures += textures.size();
 
-	return Mesh(vertices, indices, textures, mesh->mName.C_Str());
+	return Mesh(vertices, indices, textures, path);
 }
 
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
@@ -224,10 +224,6 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 
 void ModuleModelLoader::loadNewModel(const char* path)
 {
-	//Clear lists from member variables
-	texturesLoaded.clear();
-	meshes.clear();
-
 	//Load model
 	LoadModel(path);
 }

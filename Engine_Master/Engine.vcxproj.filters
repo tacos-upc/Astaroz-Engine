@@ -140,6 +140,19 @@
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ModuleSpacePartition.cpp" />
+    <ClCompile Include="AABBTree.cpp" />
+    <ClCompile Include="AABBTreeNode.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Util\uuid\uuid-windows.cpp">
+      <Filter>uuid</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\uuid\uuid-io.cpp">
+      <Filter>uuid</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\uuid\uuid.cpp">
+      <Filter>uuid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -376,6 +389,24 @@
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Dummy.h" />
+    <ClInclude Include="ModuleSpacePartition.h" />
+    <ClInclude Include="AABBTree.h" />
+    <ClInclude Include="AABBTreeNode.h" />
+    <ClInclude Include="Util\debug_draw.hpp" />
+    <ClInclude Include="Util\par_shapes.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Util\uuid\uuid-io.h">
+      <Filter>uuid</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\uuid\uuid.h">
+      <Filter>uuid</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\uuid\export.h">
+      <Filter>uuid</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\uuid\version.h">
+      <Filter>uuid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
@@ -383,6 +414,9 @@
     </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{b6885186-5696-4a2f-b51e-ec951e957dea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uuid">
+      <UniqueIdentifier>{18051d56-9fa0-4397-ac44-86ab3fbd809d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -403,6 +437,9 @@
     </None>
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl">
       <Filter>MathGeoLib</Filter>
+    </None>
+    <None Include="Util\uuid\uuid.ixx">
+      <Filter>uuid</Filter>
     </None>
   </ItemGroup>
 </Project>

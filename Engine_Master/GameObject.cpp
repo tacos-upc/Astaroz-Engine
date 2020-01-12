@@ -14,10 +14,13 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "SDL.h"
 #include "IconsFontAwesome5.h"
+#include "Geometry/AABB.h"
+#include "ModuleSpacePartition.h"
 
 
-GameObject::GameObject()
-{}
+GameObject::GameObject() : Object::Object()
+{
+}
 
 GameObject::GameObject(const char* name)
 {
@@ -140,13 +143,12 @@ void GameObject::CleanUp()
 		delete comp;
 	}
 	delete boundingBox;
-	delete globalBoundingBox;
+	delete obb;
 	delete this;
 }
 
 Component* GameObject::CreateComponent(ComponentType type)
 {
-	
 	Component* component = GetComponent(type);
 	if (component != nullptr && !component->allowMany) return nullptr;
 
@@ -159,6 +161,7 @@ Component* GameObject::CreateComponent(ComponentType type)
 		case MESH:
 			component = new ComponentMesh();
 			myMesh = (ComponentMesh*)component;
+			createAABBs();
 			break;
 		case MATERIAL:
 			component = new ComponentMaterial();
@@ -213,9 +216,16 @@ void GameObject::DrawHierarchy(GameObject* selected)
 		ImGui::PopStyleColor();
 	}
 	
-	if(ImGui::IsItemClicked())
+	if(ImGui::IsItemHovered() && ImGui::IsItemClicked())
 	{
-		App->scene->SelectGameObjectInHierarchy(this);
+		if (App->scene->selectedByHierarchy == this)
+		{
+			App->scene->SelectGameObjectInHierarchy(nullptr);
+		}
+		else
+		{
+			App->scene->SelectGameObjectInHierarchy(this);
+		}
 	}
 
 	if(ImGui::IsWindowHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
@@ -294,17 +304,9 @@ void GameObject::UpdateTransform()
 		}
 		myTransform->UpdateMatrices();
 
-		if(globalBoundingBox != nullptr && boundingBox != nullptr)
+		if(boundingBox != nullptr)
 		{
-			//AABB Global Update
-			//Compute globalBoundingBox
-
-			float3 globalPos, globalScale;
-			float3x3 globalRot;
-			myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-
-			globalBoundingBox->minPoint = (boundingBox->minPoint + globalPos);
-			globalBoundingBox->maxPoint = (boundingBox->maxPoint + globalPos);
+			createAABBs();
 		}
 	}
 }
@@ -319,76 +321,37 @@ std::string GameObject::GetName() const
 	return myName;
 }
 
-void GameObject::ComputeAABB()
+void GameObject::createAABBs()
 {
 	float3 min = float3::zero;
 	float3 max = float3::zero;
-
-	if(myMesh == nullptr)
-	{
-		LOG("This gameObject does not have a Mesh thus we compute the AABB from his childs.");
-
-		if(childrenVector.size() == 0)
-		{
-			LOG("Cannot compute the AABB because gameObject does not have children.");
-			return;	//leave at this point
-		}
-
-		for(auto child : childrenVector)
-		{
-			if(child->boundingBox != nullptr)
-			{
-				//Min vertex
-				if (child->boundingBox->minPoint.x < min.x)
-					min.x = child->boundingBox->minPoint.x;
-				if (child->boundingBox->minPoint.y < min.y)
-					min.y = child->boundingBox->minPoint.y;
-				if (child->boundingBox->minPoint.z < min.z)
-					min.z = child->boundingBox->minPoint.z;
-				//Max vertex
-				if (child->boundingBox->maxPoint.x > max.x)
-					max.x = child->boundingBox->maxPoint.x;
-				if (child->boundingBox->maxPoint.y > max.y)
-					max.y = child->boundingBox->maxPoint.y;
-				if (child->boundingBox->maxPoint.z > max.z)
-					max.z = child->boundingBox->maxPoint.z;
-			}
-		}
-
-		boundingBox = new AABB(min, max);
-		//Compute globalBoundingBox
-		float3 globalPos, globalScale;
-		float3x3 globalRot;
-		myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-		globalBoundingBox = new AABB(min + globalPos, max + globalPos);
-	}
-		
-
-	for (auto vertex : myMesh->myMesh->vertices)
-	{
-		//Min vertex
-		if (vertex.Position.x < min.x)
-			min.x = vertex.Position.x;
-		if (vertex.Position.y < min.y)
-			min.y = vertex.Position.y;
-		if (vertex.Position.z < min.z)
-			min.z = vertex.Position.z;
-		//Max vertex
-		if (vertex.Position.x > max.x)
-			max.x = vertex.Position.x;
-		if (vertex.Position.y > max.y)
-			max.y = vertex.Position.y;
-		if (vertex.Position.z > max.z)
-			max.z = vertex.Position.z;
-	}
-	
 	boundingBox = new AABB(min, max);
+	obb = new OBB(*boundingBox);
+		
+	if (myMesh != nullptr && myMesh->myMesh != nullptr)
+	{
+		for (Vertex vertex : myMesh->myMesh->vertices)
+		{
+			float3 v = float3(vertex.Position.x, vertex.Position.y, vertex.Position.z);
+			obb->Enclose(v);
+		}
+	}
 
-	//Compute globalBoundingBox
-	float3 globalPos, globalScale;
-	float3x3 globalRot;
-	myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-	globalBoundingBox = new AABB(min + globalPos, max + globalPos);
+	findOBBPoints();
+	boundingBox->Enclose(obbPoints, 8);
+	boundingBox->TransformAsAABB(myTransform->globalModelMatrix);
+	obb->Transform(myTransform->globalModelMatrix);
+
+	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox) || isfatBoxTooFat())
+	{
+		fatBoundingBox = new AABB(*boundingBox);
+		fatBoundingBox->Scale(boundingBox->CenterPoint(), float3(1.5f, 1.5f, 1.5f));
+
+		if (boundingBox->SurfaceArea() > 0)
+		{
+			App->spacePartition->recalculateTree(this);
+		}
+	}
 }
 
 void GameObject::DrawAABB()
@@ -402,9 +365,23 @@ void GameObject::DrawAABB()
 	ComponentCamera* cam = (ComponentCamera*) GetComponent(CAMERA);
 	if (cam != nullptr) cam->DrawFrustum();
 
-	if(boundingBox != NULL) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
-
+	if (obb != nullptr)
+	{
+		findOBBPointsForRender();
+		dd::box(obbPoints, float3(0.7f, 0.7f, 0.7f));
+	}
+	if (boundingBox != nullptr) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
+	//if (fatBoundingBox != nullptr) dd::aabb(fatBoundingBox->minPoint, fatBoundingBox->maxPoint, float3(0.8f, 0.8f, 0.8f));
 	glEnd();
+}
+
+void GameObject::Draw(GLuint program)
+{
+	if (myMesh != nullptr)
+	{
+		myMesh->Draw(program);
+		DrawAABB();
+	}
 }
 
 void GameObject::DrawInspector()
@@ -419,7 +396,7 @@ void GameObject::DrawInspector()
 	}
 	ImGui::SameLine();
 
-	delete[] go_name;
+	delete go_name;
 
 	ImGui::Checkbox("Static", &isStatic);
 
@@ -452,4 +429,37 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 		}
 		ImGui::EndDragDropTarget();
 	}
+}
+
+bool GameObject::isfatBoxTooFat()
+{
+	return (
+		fatBoundingBox->Size().x > boundingBox->Size().x *1.5f ||
+		fatBoundingBox->Size().y > boundingBox->Size().y *1.5f ||
+		fatBoundingBox->Size().z > boundingBox->Size().z * 1.5f
+		);
+}
+
+void GameObject::findOBBPointsForRender()
+{
+	obbPoints[0] = obb->CornerPoint(0);
+	obbPoints[1] = obb->CornerPoint(1);
+	obbPoints[2] = obb->CornerPoint(3);
+	obbPoints[3] = obb->CornerPoint(2);
+	obbPoints[4] = obb->CornerPoint(4);
+	obbPoints[5] = obb->CornerPoint(5);
+	obbPoints[6] = obb->CornerPoint(7);
+	obbPoints[7] = obb->CornerPoint(6);
+}
+
+void GameObject::findOBBPoints()
+{
+	obbPoints[0] = obb->CornerPoint(0);
+	obbPoints[1] = obb->CornerPoint(1);
+	obbPoints[2] = obb->CornerPoint(2);
+	obbPoints[3] = obb->CornerPoint(3);
+	obbPoints[4] = obb->CornerPoint(4);
+	obbPoints[5] = obb->CornerPoint(5);
+	obbPoints[6] = obb->CornerPoint(6);
+	obbPoints[7] = obb->CornerPoint(7);
 }

@@ -22,7 +22,6 @@ GameObject::GameObject()
 GameObject::GameObject(const char* name)
 {
 	this->myName = name;
-	isSelectedInHierarchy = false;
 	CreateComponent(TRANSFORM);
 }
 
@@ -193,7 +192,7 @@ Component* GameObject::GetComponent(ComponentType type)
 }
 
 
-void GameObject::DrawHierarchy(GameObject * selected)
+void GameObject::DrawHierarchy(GameObject* selected)
 {
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
 
@@ -202,18 +201,21 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	{
 		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
-	if (App->scene->selectedByHierarchy == this) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.52f, 1.f));
+
+	if (App->scene->selectedByHierarchy == this)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.52f, 1.f));
+	}
 	
 	bool objOpen = ImGui::TreeNodeEx(this, flags, myName.c_str());
-	
-	if (App->scene->selectedByHierarchy == this) ImGui::PopStyleColor();
+	if (App->scene->selectedByHierarchy == this)
+	{
+		ImGui::PopStyleColor();
+	}
 	
 	if(ImGui::IsItemClicked())
 	{
-		if (isSelectedInHierarchy) App->scene->selectRoot();
-		else App->scene->SelectObjectInHierarchy(this);
-
-		isSelectedInHierarchy = !isSelectedInHierarchy;
+		App->scene->SelectGameObjectInHierarchy(this);
 	}
 
 	if(ImGui::IsWindowHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
@@ -268,7 +270,6 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	}
 
 	CheckDragAndDrop(this);
-
 	if(objOpen)
 	{
 		for(auto child : childrenVector)

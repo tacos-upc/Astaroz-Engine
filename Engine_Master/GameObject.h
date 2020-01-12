@@ -59,7 +59,7 @@ public:
 private:
 	//private variables
 	std::string myName;
-	bool isSelectedInHierarchy;
+
 	//private methods
 	void CheckDragAndDrop(GameObject* go);
 };

@@ -67,9 +67,7 @@ bool ModuleScene::CleanUp()
 		delete GO;
 	}
 
-	delete selectedByHierarchy;
 	delete root;
-
 	return true;
 }
 
@@ -142,8 +140,15 @@ void ModuleScene::LoadModel(const char* path, GameObject* parent)
 void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
-	GameObject* empty = CreateGameObject(defaultName.c_str(), selectedByHierarchy == parent ? parent : root);
-	
+	GameObject* empty = nullptr;
+	if (selectedByHierarchy == parent)
+	{
+		empty = CreateGameObject(defaultName.c_str(), parent);
+	}
+	else
+	{
+		empty = CreateGameObject(defaultName.c_str(), root);
+	}
 	gameObjects.push_back(empty);
 }
 
@@ -275,7 +280,7 @@ void ModuleScene::countGameObjects()
 	}
 }
 
-void ModuleScene::SelectObjectInHierarchy(GameObject* selected)
+void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 {
 	selectedByHierarchy = selected;
 }

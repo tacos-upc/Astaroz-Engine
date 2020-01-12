@@ -46,7 +46,7 @@ public:
 	bool showHierarchy;
 	bool showInspector;
 	GameObject* mainCamera;
-	GameObject* selectedByHierarchy = nullptr;
+	GameObject* selectedByHierarchy;
 
 private:
 	//private variables

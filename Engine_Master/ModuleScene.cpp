@@ -67,6 +67,7 @@ bool ModuleScene::CleanUp()
 		delete GO;
 	}
 
+	delete selectedByHierarchy;
 	delete root;
 
 	return true;
@@ -281,7 +282,8 @@ void ModuleScene::SelectObjectInHierarchy(GameObject* selected)
 
 void ModuleScene::drawHierarchy()
 {
-	if (selectedByHierarchy == nullptr) selectedByHierarchy = root;
+	if (selectedByHierarchy == nullptr)
+		selectedByHierarchy = root;
 
 	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{

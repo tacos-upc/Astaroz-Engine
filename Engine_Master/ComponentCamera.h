@@ -46,6 +46,8 @@ public:
 	ImVec4 clearColor;
 	int selectedClearMode;
 
+	LineSegment raycast(float3);
+
 private:
 	int selectedProjectionMode;
 };

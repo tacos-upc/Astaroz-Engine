@@ -2,11 +2,16 @@
 #include "ModuleModelLoader.h"
 #include "ModuleEditor.h"
 #include "ModuleTime.h"
+#include "ModuleSpacePartition.h"
 #include "ComponentCamera.h"
 #include "Point.h"
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "Math/MathAll.h"
+#include "MathGeoLib/include/Geometry/LineSegment.h"
+#include "AABBTree.h"
+#include "AABBTreeNode.h"
 
 
 ModuleEditorCamera::ModuleEditorCamera()
@@ -56,10 +61,7 @@ update_status ModuleEditorCamera::Update()
 {
 	if (App->editor->getFocusedWindowData()->name == "Scene")
 	{
-		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
-		{
-			
-		}
+		raycast();
 	}
 	return UPDATE_CONTINUE;
 }
@@ -269,7 +271,18 @@ float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
 
 void ModuleEditorCamera::raycast()
 {
+	float3 mousePosition = getMouseToViewportPosition();
+	if (App->spacePartition->tree->root != nullptr)
+	{
+		bool hitsRoot = cam->raycast(mousePosition).Intersects(*App->spacePartition->tree->root->box);
 
+		if (hitsRoot) 
+		{
+			LOG("x: %f, y: %f", mousePosition.x, mousePosition.y);
+			LOG("He tocado el arbol"); 
+		}
+		else { LOG("NO HE TOCADO EL ARBOL"); }
+	}
 }
 
 float3 ModuleEditorCamera::getMouseToViewportPosition()
@@ -279,7 +292,7 @@ float3 ModuleEditorCamera::getMouseToViewportPosition()
 	fPoint windowSize = fPoint(App->editor->getFocusedWindowData()->width, App->editor->getFocusedWindowData()->height);
 
 	//Normalize point
-	float x = (touch.x - windowPos.x / 2 - windowSize.x / 4) / (windowSize.x / 4);
+	float x = -(touch.x - windowPos.x / 2 - windowSize.x / 4) / (windowSize.x / 4);
 	float y = -(touch.y - windowPos.y / 2 - windowSize.y / 4) / (windowSize.y / 4);
 	float z = 1.0f;
 

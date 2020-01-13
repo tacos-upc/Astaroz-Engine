@@ -8,6 +8,7 @@
 #include "GameObject.h"
 
 #include <math.h>
+#include "MathGeoLib/include/Geometry/LineSegment.h"
 #include "Geometry/Plane.h"
 #include "glew.h"
 #include "IconsFontAwesome5.h"
@@ -91,6 +92,11 @@ void ComponentCamera::roll(float direction, float dt)
 	float3x3 rotationMatrix = float3x3::RotateZ(adjustment);
 	frustum->front = rotationMatrix.Transform(frustum->front).Normalized();
 	frustum->up = rotationMatrix.Transform(frustum->up).Normalized();
+}
+
+LineSegment ComponentCamera::raycast(float3 position)
+{
+	return frustum->UnProjectLineSegment(position.x, position.y);
 }
 
 void ComponentCamera::reloadMatrices()

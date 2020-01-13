@@ -20,9 +20,9 @@ public:
 
 	bool CleanUp() override;
 	void recalculateTree(GameObject*);
+	AABBTree* tree;
 
 private:
 	void drawTree(int);
-	AABBTree* tree;
 };
 

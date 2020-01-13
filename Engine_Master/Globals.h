@@ -49,3 +49,8 @@ enum KeyState
 //Utils
 #define MAX(x,y) ((x>y) ? x:y)
 #define MIN(x,y) ((x<y) ? x:y)
+
+
+#define OPENGL_LOG_INIT(format, ...) log( __FILE__, __LINE__, format, __VA_ARGS__);
+#define OPENGL_LOG_ERROR(format, ...) log( __FILE__, __LINE__, format, __VA_ARGS__);
+void log( const char file[], const int line, const char* format, ...);

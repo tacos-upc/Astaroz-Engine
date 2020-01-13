@@ -84,7 +84,7 @@ void ModuleModelLoader::Draw(unsigned int program)
 	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		
-		meshes[i]->setUniforms();
+		//meshes[i]->setUniforms();
 		meshes[i]->Draw(program);
 	}
 	
@@ -187,7 +187,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	
-	
+	if(texturesLoaded.size()<4){}
 	Texture* texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
 	texture->type = "diffuse";
 	

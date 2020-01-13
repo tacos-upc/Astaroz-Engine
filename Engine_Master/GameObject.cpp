@@ -123,16 +123,11 @@ void GameObject::RemoveChildren(GameObject* child)
 void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
-	App->scene->RemoveGameObject(this);
 	for (auto child : childrenVector)
 	{
 		child->DeleteGameObject();
 	}
 
-	if (App->scene->selectedByHierarchy == this)
-	{
-		App->scene->selectedByHierarchy = nullptr;
-	}
 	CleanUp();
 }
 
@@ -228,7 +223,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 		}
 	}
 
-	if(ImGui::IsItemHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
+	if(ImGui::IsWindowHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
 	{
 		ImGui::OpenPopup("RightClick Popup");
 	}
@@ -237,7 +232,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 	{
 		if (ImGui::Selectable("Create Empty GameObject"))
 		{
-			App->scene->CreateEmpty(this);
+			App->scene->CreateEmpty(this);	//'this' instance maybe not the one selected in hierarchy - we will only use it when 'selected' is nullptr
 		}
 
 		// TODO:Revise this menu
@@ -274,7 +269,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 
 		if (ImGui::Selectable("Delete"))
 		{
-			DeleteGameObject();
+			App->scene->RemoveGameObject(this);
 		}
 		ImGui::EndPopup();
 	}

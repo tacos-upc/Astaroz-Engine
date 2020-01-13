@@ -150,7 +150,16 @@ void ModuleScene::LoadModel(const char* path, GameObject* parent)
 void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string tempName = "NewGameObject" + std::to_string(nGameObjects + 1);
-	GameObject* gameObject = CreateGameObject(tempName.c_str(), parent);
+	GameObject* gameObject = nullptr;
+	if (selectedByHierarchy != nullptr)	//TODO: It's never null - every frame points to ROOT if ever gets nullptr
+	{
+		gameObject = CreateGameObject(tempName.c_str(), selectedByHierarchy);
+	}
+	else
+	{
+		gameObject = CreateGameObject(tempName.c_str(), parent);	//we use the parameter as parent only when 'selected' is nullptr
+	}
+	
 	gameObjects.push_back(gameObject);
 }
 
@@ -261,15 +270,40 @@ void ModuleScene::RemoveGameObject(GameObject* go)
 {
 	if (!gameObjects.empty())
 	{
-		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), go), gameObjects.end());
+		//TODO: No permitir borrar ROOT (World) a través de su UID
+		GameObject* toBeDeleted = nullptr;
+
+		if (selectedByHierarchy != nullptr)
+		{
+			toBeDeleted = selectedByHierarchy;	//prioritize selected over param if not nullptr
+			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be nullptr from now on
+		}
+		else
+		{
+			toBeDeleted = go;
+		}
+
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), toBeDeleted), gameObjects.end());
+		toBeDeleted->DeleteGameObject();
 		countGameObjects();
 	}
 }
 
 void ModuleScene::DuplicateGameObject(GameObject* go)
 {
-	GameObject* duplicate = new GameObject(*go);
-	go->parent->childrenVector.push_back(duplicate);
+	GameObject* duplicate = nullptr;
+
+	if (selectedByHierarchy != nullptr)
+	{
+		duplicate = new GameObject(*selectedByHierarchy);
+		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
+	}
+	else
+	{
+		duplicate = new GameObject(*go);
+		go->parent->childrenVector.push_back(duplicate);
+	}
+
 	gameObjects.push_back(duplicate);
 	countGameObjects();
 }

@@ -284,7 +284,6 @@ void ModuleScene::RemoveSelectedGameObject()
 		}
 
 		toBeDeleted->DeleteGameObject();
-		countGameObjects();
 	}
 }
 
@@ -305,15 +304,6 @@ void ModuleScene::DuplicateGameObject(GameObject* go)
 	}
 
 	gameObjects.push_back(duplicate);
-	countGameObjects();
-}
-
-void ModuleScene::countGameObjects()
-{
-	if (!gameObjects.empty())
-	{
-		nGameObjects = gameObjects.size();
-	}
 }
 
 void ModuleScene::eraseGameObject(GameObject* go)

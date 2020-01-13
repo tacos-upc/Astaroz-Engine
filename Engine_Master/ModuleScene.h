@@ -40,7 +40,6 @@ public:
 	void SelectGameObjectInHierarchy(GameObject* selected);
 	void drawHierarchy();
 	void drawAllBoundingBoxes();
-	void countGameObjects();
 	void eraseGameObject(GameObject* go);
 
 	//public variables

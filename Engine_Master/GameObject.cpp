@@ -112,24 +112,27 @@ void GameObject::SetParent(GameObject* newParent)
 	}
 }
 
-void GameObject::RemoveChildren(GameObject* child)
-{
-	if(!childrenVector.empty())
-	{
-		childrenVector.erase(std::remove(childrenVector.begin(), childrenVector.end(), child), childrenVector.end());
-	}
-}
-
 void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
 	App->scene->eraseGameObject(this);
-	for (auto child : childrenVector)
-	{
-		child->DeleteGameObject();
+	//for (auto const& child : childrenVector)
+	//{
+	//	child->DeleteGameObject();
+	//}
+	for (auto child = childrenVector.begin(); child != childrenVector.end(); child++) {
+		(*child)->DeleteGameObject();
 	}
 
 	CleanUp();
+}
+
+void GameObject::RemoveChildren(GameObject* child)
+{
+	if (!childrenVector.empty())
+	{
+		childrenVector.erase(std::remove(childrenVector.begin(), childrenVector.end(), child), childrenVector.end());
+	}
 }
 
 void GameObject::CleanUp()

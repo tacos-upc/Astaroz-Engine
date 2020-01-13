@@ -266,24 +266,23 @@ void ModuleScene::CreateGameObjectShape(GameObject* parent, ShapeType shape)
 	*/
 }
 
-void ModuleScene::RemoveGameObject(GameObject* go)
+void ModuleScene::RemoveSelectedGameObject()
 {
 	if (!gameObjects.empty())
 	{
-		//TODO: No permitir borrar ROOT (World) a través de su UID
+		//TODO: Don't allow to delete ROOT (World) through its UID
 		GameObject* toBeDeleted = nullptr;
 
 		if (selectedByHierarchy != nullptr)
 		{
 			toBeDeleted = selectedByHierarchy;	//prioritize selected over param if not nullptr
-			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be nullptr from now on
+			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be unasigned (will be pointing to ROOT next frame)
 		}
 		else
 		{
-			toBeDeleted = go;
+			toBeDeleted = root;
 		}
 
-		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), toBeDeleted), gameObjects.end());
 		toBeDeleted->DeleteGameObject();
 		countGameObjects();
 	}
@@ -291,9 +290,10 @@ void ModuleScene::RemoveGameObject(GameObject* go)
 
 void ModuleScene::DuplicateGameObject(GameObject* go)
 {
+	//TODO: Don't allow to duplicate ROOT (World) through its UID
 	GameObject* duplicate = nullptr;
 
-	if (selectedByHierarchy != nullptr)
+	if (selectedByHierarchy != nullptr && selectedByHierarchy->GetName() != "World")
 	{
 		duplicate = new GameObject(*selectedByHierarchy);
 		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
@@ -313,6 +313,14 @@ void ModuleScene::countGameObjects()
 	if (!gameObjects.empty())
 	{
 		nGameObjects = gameObjects.size();
+	}
+}
+
+void ModuleScene::eraseGameObject(GameObject* go)
+{
+	if (!gameObjects.empty())
+	{
+		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), go), gameObjects.end());
 	}
 }
 

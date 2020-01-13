@@ -123,6 +123,7 @@ void GameObject::RemoveChildren(GameObject* child)
 void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
+	App->scene->eraseGameObject(this);
 	for (auto child : childrenVector)
 	{
 		child->DeleteGameObject();
@@ -269,7 +270,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 
 		if (ImGui::Selectable("Delete"))
 		{
-			App->scene->RemoveGameObject(this);
+			App->scene->RemoveSelectedGameObject();
 		}
 		ImGui::EndPopup();
 	}

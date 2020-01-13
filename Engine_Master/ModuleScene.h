@@ -35,12 +35,13 @@ public:
 	void CreateEmpty(GameObject* parent);
 	void CreateGameObjectBakerHouse(GameObject* parent);
 	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
-	void RemoveGameObject(GameObject* go);
+	void RemoveSelectedGameObject();
 	void DuplicateGameObject(GameObject* go);
 	void SelectGameObjectInHierarchy(GameObject* selected);
 	void drawHierarchy();
 	void drawAllBoundingBoxes();
 	void countGameObjects();
+	void eraseGameObject(GameObject* go);
 
 	//public variables
 	std::vector<GameObject*> gameObjects;

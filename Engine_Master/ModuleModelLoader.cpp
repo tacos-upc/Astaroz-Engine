@@ -70,6 +70,7 @@ update_status ModuleModelLoader::Update()
 		ImGui::End();
 	}
 	
+
 	return UPDATE_CONTINUE;
 }
 
@@ -80,9 +81,13 @@ bool ModuleModelLoader::CleanUp()
 
 void ModuleModelLoader::Draw(unsigned int program)
 {
-	for (unsigned int i = 0; i < meshes.size(); i++)
+	
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		
+		meshes[0]->setUniforms();
 		meshes[i]->Draw(program);
-
+	}
+	
 }
 
 void ModuleModelLoader::LoadModel(const char* path)
@@ -129,7 +134,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		Vertex vertex;
@@ -180,41 +185,40 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	}
 
 	// process materials
-	//aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	Material* material = new Material();
+	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	
-	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
-	texture.type = "diffuse";
+	
+	Texture* texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
+	texture->type = "diffuse";
 	
 	textures.push_back(texture);
-	material->textures.push_back(&texture);
 	texturesLoaded.push_back(texture);
 
-	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
-	texture2.type = "specular";
-	textures.push_back(texture2);
-	material->textures.push_back(&texture2);
-	texturesLoaded.push_back(texture2);
 
-	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
-	texture3.type = "emissive";
+	Texture* texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
+	texture2->type = "specular";
+	textures.push_back(texture2);
+	texturesLoaded.push_back(texture2);
+	
+
+	Texture* texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
+	texture3->type = "emissive";
 	textures.push_back(texture3);
-	material->textures.push_back(&texture3);
 	texturesLoaded.push_back(texture3);
 	
 
-	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
-	texture4.type = "occlusion";
+	Texture* texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
+	texture4->type = "occlusion";
 	textures.push_back(texture4);
-	material->textures.push_back(&texture4);
 	texturesLoaded.push_back(texture4);
-
 	
 	
 	
 	
-	materials.push_back(material);
-	App->modelLoader->materials[0]->textures.size();
+	Material* myMaterial = new Material(textures, texture->id, texture2->id, texture4->id,texture3->id );
+	myMaterial->program = App->programShader->myProgram;
+	materials.push_back(myMaterial);
+	
 	
 	
 
@@ -279,18 +283,15 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	//
 	//
 	//
-	textureWidth = textures[0].width;
-	textureHeight = textures[0].height;
-	textureId = textures[0].id;
-	numPolys /= 3;
+	
 
 	unsigned int aux = materials.size() - 1;
 	return Mesh(vertices, indices, textures, aux );
 }
 
-std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
+std::vector<Texture*> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
 {
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	
 	for (unsigned int i=0; i<mat->GetTextureCount(type); i++)
 	{
@@ -301,7 +302,7 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		bool skip = false;
 		for (unsigned int j=0; j<texturesLoaded.size(); j++)
 		{
-			if (std::strcmp(texturesLoaded[j].path, str.C_Str()) == 0)
+			if (std::strcmp(texturesLoaded[j]->path, str.C_Str()) == 0)
 			{
 				textures.push_back(texturesLoaded[j]);
 				skip = true; //enable this flag to not load the texture again from the file
@@ -311,8 +312,8 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		//if texture hasn't been loaded already, load it
 		if (!skip)
 		{
-			Texture texture = App->texture->LoadTexture(str.C_Str());
-			texture.type = typeName;
+			Texture* texture = App->texture->LoadTexture(str.C_Str());
+			texture->type = typeName;
 			textures.push_back(texture);
 			texturesLoaded.push_back(texture);
 		}
@@ -354,7 +355,7 @@ void ModuleModelLoader::generateBoundingBox()
 	myBoundingBox.maxPoint = max;
 }
 
-void ModuleModelLoader::addTexture(Texture texture)
+void ModuleModelLoader::addTexture(Texture* texture)
 {
 	texturesLoaded.push_back(texture);
 	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)

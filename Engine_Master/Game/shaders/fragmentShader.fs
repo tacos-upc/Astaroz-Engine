@@ -1,68 +1,62 @@
 #version 330 core
 
-#define SHOW_ALL 0
-#define SHOW_AMBIENT 1
-#define SHOW_DIFFUSE 2
-#define SHOW_SPECULAR 3
+struct Material
+{
+    sampler2D diffuse_texture;
+    vec4 diffuse_color;
 
-out vec4 FragColor;
+    sampler2D specular_texture;
+    vec4 specular_color;
+    float shininess;
+
+    sampler2D occlusion_texture;
+
+    sampler2D emissive_texture;
+    vec4 emissive_color;
+
+    float k_ambient;
+    float k_diffuse;
+    float k_specular;
+};
+
+
 in vec2 uv0;
 in vec3 normal;
 in vec3 position;
+in mat4 aView;
 
+out vec4 FragColor;
 
-uniform sampler2D texture_diffuse1;
-uniform vec4 object_color;
-uniform int use_diffuse_map;
-uniform mat4 view;
+uniform Material material;
 uniform vec3 light_pos;
-uniform float ambient;
-uniform float shininess;
-uniform float k_ambient;
-uniform float k_diffuse;
-uniform float k_specular;
+
 
 void main()
-{    
-    
-   
+{
+	vec3 norm = normalize(normal);
+	vec3 viewPos = transpose(mat3(aView))*(-aView[3].xyz);
 
-    vec3 normal      = normalize(normal);
-    vec3 light_dir   = normalize(light_pos-position);
-    float diffuse    = max(0.0, dot(normal, light_dir));
-    float specular   = 0.0;
+	vec4 diffuse_color = texture(material.diffuse_texture, uv0)*material.diffuse_color;
+	vec3 specular_color = texture(material.specular_texture, uv0).rgb*material.specular_color;
+	vec3 emissive_color = texture(material.emissive_texture, uv0).rgb*material.emissive_color;
+	vec3 occlusion_color= texture(material.occlusion_texture, uv0).rgb;
 
-    if(diffuse > 0.0 && k_specular > 0.0 && shininess > 0.0)
-    {
-        vec3 view_pos    = transpose(mat3(view))*(-view[3].xyz);
-        vec3 view_dir    = normalize(view_pos-position);
-        vec3 half_dir    = normalize(view_dir+light_dir);
-        float sp         = max(dot(normal, half_dir), 0.0);
+	
+	vec3 light_dir = normalize(light_pos-position);
+	float diffuse = max(0.0, dot(norm, light_dir));
+	vec3 viewDir = normalize(viewPos-position);
+	vec3 reflect_dir = normalize(reflect(-light_dir, norm));
+        float sp = max(dot(viewDir, reflect_dir), 0.0);
+	float specular= 0.0;
 
-        if(sp > 0.0)
+	float sp= max(dot(normal, reflect_dir), 0.0);
+	if(sp > 0.0)
         {
-            specular = pow(sp, shininess); 
+            specular = pow(sp, material.shininess); 
         }
-    }
-    
-    float intensity = (k_ambient*ambient+k_diffuse*diffuse+k_specular*specular); 
-
-    if(use_diffuse_map == 1)
-    {
-        FragColor = texture2D(texture_diffuse1, uv0);
-    }
-    else
-    {
-        FragColor = object_color;
-	FragColor = vec4(FragColor.rgb*intensity, FragColor.a);
-    }
-
-    
-
-    
-
-
-    
-   
+	vec3 color =diffuse_color.rgb * diffuse * material.k_diffuse + specular_color * specular * material.k_specular +emissive_color + diffuse_color.rgb * occlusion_color * material.k_ambient; 
+	
+	
+	FragColor = vec4(color, 1.0);
 }
 

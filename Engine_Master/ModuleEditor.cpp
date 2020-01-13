@@ -1,5 +1,4 @@
 #include "ModuleEditor.h"
-
 #include "windows.h"
 
 #include "version.h"
@@ -189,12 +188,15 @@ update_status ModuleEditor::Update()
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+
 	
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate()
 {
+
 	return UPDATE_CONTINUE;
 }
 

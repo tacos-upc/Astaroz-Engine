@@ -10,7 +10,7 @@ Mesh::Mesh()
 	
 }
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures, unsigned int material)
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material)
 {
 	this->vertices = vertices;
 	this->indices = indices;
@@ -59,10 +59,11 @@ void Mesh::setupMesh()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 
+	
 	// vertex normals
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-
+	
 	// vertex texture coords
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
@@ -85,17 +86,49 @@ void Mesh::Draw(unsigned int program) const
 	unsigned int normalNr = 1;
 	unsigned int heightNr = 1;
 
-	App->modelLoader->materials[material]->SetUniforms();
 	
-	glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, (const float*)&App->editorCamera->proj);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, (const float*)&App->editorCamera->view);
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, (const float*)&App->editorCamera->model);
+	//Assigning "ids" to textures
 
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_texture"), 0);
+
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.specular_texture"), 1);
+
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.occlusion_texture"), 2);
+
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.emissive_texture"), 3);
+
+
+
+	//applying textures to the variables deppending on its id
+
+	glActiveTexture(GL_TEXTURE0);
+
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->diffuse_texture);
+
+
+
+	glActiveTexture(GL_TEXTURE1);
+
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->specular_texture);
+
+
+
+	glActiveTexture(GL_TEXTURE2);
+
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->occlusion_texture);
+	
+
+
+	glActiveTexture(GL_TEXTURE3);
+
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->emissive_texture);
+	
+	
+	
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-	
+	glActiveTexture(GL_TEXTURE0);
 	//if (hastext) {
 	//	for (unsigned int i = 0; i < textures.size(); i++)
 	//	{
@@ -146,11 +179,18 @@ void Mesh::Draw(unsigned int program) const
 	
 }
 
-void Mesh::updateTexture(Texture texture)
+void Mesh::updateTexture(Texture* texture)
 {
 	for (auto &lastTexture : textures)
 	{
 		lastTexture = texture;
 	}
+}
+
+void Mesh::setUniforms()
+{
+
+	App->modelLoader->materials[material]->SetUniforms();
+	
 }
 

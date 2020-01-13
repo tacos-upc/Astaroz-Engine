@@ -10,7 +10,7 @@
 #include "Math/float4x4.h"
 
 //Structs
-struct Texture
+/*struct Texture
 {
 	unsigned int id;
 	char*  type;
@@ -19,7 +19,24 @@ struct Texture
 	int height;
 	unsigned char *data;
 };
+*/
+struct Texture
+{
+	unsigned char *data;
+	char*  type;
+	const char* path;
+	unsigned id = 0;
+	unsigned width = 0;
+	unsigned height = 0;
+	
+	Texture(unsigned id, unsigned width, unsigned height, const char* file) : id(id), width(width), height(height), path(file)
+	{}
 
+	Texture(const char* file) : path(file)
+	{}
+
+	~Texture();
+};
 struct Vertex
 {
 	float3 Position;
@@ -39,16 +56,17 @@ public:
 	math::float4x4  transform = math::float4x4::identity;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	
 
 	Mesh();
-	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures, unsigned int material);
+	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material);
 	~Mesh();
 
 	void Init();
 	void Draw(unsigned int program) const;
-	void updateTexture(Texture texture);
+	void updateTexture(Texture* texture);
+	void setUniforms();
 	unsigned int material;
 
 

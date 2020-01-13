@@ -29,17 +29,17 @@ public:
 	void Draw(unsigned int program);
 	void processNode(aiNode*, const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
-	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
+	std::vector<Texture*> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
 	void loadNewModel(const char* path);
 	void generateBoundingBox();
-	void addTexture(Texture texture);
+	void addTexture(Texture* texture);
 
 	bool LoadSphere(const char* name, const math::float3& pos, const math::Quat& rot, float size, unsigned slices, unsigned stacks, const math::float4& color);
 	bool LoadTorus(const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, unsigned slices, unsigned stacks, const math::float4& color);
 	void GenerateMesh(const char * name, const math::float3 & pos, const math::Quat & rot, par_shapes_mesh_s * shape);
 	
 	//Lists
-	std::vector<Texture> texturesLoaded;
+	std::vector<Texture*> texturesLoaded;
 	std::vector<Mesh*> meshes;
 
 	//For our model

@@ -12,16 +12,17 @@ class Material
 {
 public:
 	Material();
+	Material(std::vector<Texture*> textures,unsigned int diffuse_texture, unsigned int specular_texture, unsigned int occlusion_texture ,unsigned int emissive_texture);
 	Material(const Material& material);
 
 	~Material();
 	
 
-    void SetUniforms() const;
+    void SetUniforms();
 
 public:
 	std::string name;
-	unsigned program = 0;
+	unsigned int program = 0;
 	math::float4 object_color = math::float4::zero;
 	
 	std::vector<Texture*> textures;
@@ -29,11 +30,15 @@ public:
 	float4 diffuse_color = float4::one;
 	float3 specular_color = float3::one;
 	float3 emissive_color = float3::one;
-	float k_ambient = 0.3f;
-	float k_diffuse = 0.2f;
-	float k_specular = 0.1f;
-	float shininess = 32.f;
+	float k_ambient = 0.5f;
+	float k_diffuse = 0.4f;
+	float k_specular = 0.4f;
+	float shininess = 0.2f;
 
+	unsigned int diffuse_texture;
+	unsigned int specular_texture;
+	unsigned int occlusion_texture;
+	unsigned int emissive_texture;
 };
 
 #endif __Material_h__

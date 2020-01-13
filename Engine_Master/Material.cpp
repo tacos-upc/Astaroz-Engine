@@ -1,9 +1,19 @@
 #include "Material.h"
-
+#include "Application.h"
+#include "ModuleModelLoader.h"
+#include "ModuleProgramShader.h"
 
 Material::Material()
 {
+}
 
+Material::Material(std::vector<Texture*> textures, unsigned int diffuse_texture, unsigned int specular_texture, unsigned int occlusion_texture, unsigned int emissive_texture)
+{
+	this->textures = textures;
+	this->diffuse_texture = diffuse_texture;
+	this->specular_texture = specular_texture;
+	this->emissive_texture = emissive_texture;
+	this->occlusion_texture = occlusion_texture;
 }
 
 Material::Material(const Material & material)
@@ -14,61 +24,18 @@ Material::~Material()
 {
 }
 
-void Material::SetUniforms() const
+void Material::SetUniforms() 
 {
 	
-	for (unsigned int i = 0; i < textures.size(); i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
+	glUniform4f(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_color"), diffuse_color.x, diffuse_color.y, diffuse_color.z, diffuse_color.w);
+	glUniform3f(glGetUniformLocation(App->programShader->myProgram, "material.specular_color"), specular_color.x, specular_color.y, specular_color.z);
+	glUniform3f(glGetUniformLocation(App->programShader->myProgram, "material.emissive_color"), emissive_color.x, emissive_color.y, emissive_color.z);
 
-		char* textureType = nullptr;
-		float* color = (float*)&float3::zero;
-		if (textures[i]->type == "diffuse") {
-			textureType = "diffuse";
-			color = (float*)&diffuse_color;
-		}
-		else if (textures[i]->type == "specular") {
-			textureType = "specular";
-			color = (float*)&specular_color;
-		}
-		else if (textures[i]->type == "occlusion") {
-			textureType = "occlusion";
-		}
-		else if (textures[i]->type == "emissive") {
-			textureType = "emissive";
-			color = (float*)&emissive_color;
-		}
-
-		char texture[32];
-		sprintf(texture, "material.%s_texture", textureType);
-
-		char uniform[32];
-		sprintf(uniform, "material.%s_color", textureType);
+	glUniform1f(glGetUniformLocation(program,"material.k_ambient"), k_ambient);
+	glUniform1f(glGetUniformLocation(program,"material.k_diffuse"), k_diffuse);
+	glUniform1f(glGetUniformLocation(program,"material.k_specular"),k_specular);
+	glUniform1f(glGetUniformLocation(program,"material.shininess"), shininess);
+	glUniform3f(glGetUniformLocation(App->programShader->myProgram, "light_pos"), App->modelLoader->light_pos.x, App->modelLoader->light_pos.y, App->modelLoader->light_pos.z);
 
 
-		if (textures[i]->type == "diffuse")
-		{
-			glUniform4fv(glGetUniformLocation(program,
-				uniform), 1, color);
-		}
-		else if(textures[i]->type != "occlusion")
-		{
-			glUniform3fv(glGetUniformLocation(program,
-				uniform), 1, color);
-		}
-		glUniform1i(glGetUniformLocation(program, texture), i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]->id);
-
-		
-
-	}
-
-	glUniform1fv(glGetUniformLocation(program,
-		"material.k_ambient"), 1, (GLfloat*)&k_ambient);
-	glUniform1fv(glGetUniformLocation(program,
-		"material.k_diffuse"), 1, (GLfloat*)&k_diffuse);
-	glUniform1fv(glGetUniformLocation(program,
-		"material.k_specular"), 1, (GLfloat*)&k_specular);
-	glUniform1fv(glGetUniformLocation(program,
-		"material.shininess"), 1, (GLfloat*)&shininess);
 }

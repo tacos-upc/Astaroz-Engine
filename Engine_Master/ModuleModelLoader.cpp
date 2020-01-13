@@ -84,7 +84,7 @@ void ModuleModelLoader::Draw(unsigned int program)
 	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		
-		meshes[0]->setUniforms();
+		meshes[i]->setUniforms();
 		meshes[i]->Draw(program);
 	}
 	

@@ -36,6 +36,7 @@ void Material::SetUniforms()
 	glUniform1f(glGetUniformLocation(program,"material.k_specular"),k_specular);
 	glUniform1f(glGetUniformLocation(program,"material.shininess"), shininess);
 	glUniform3f(glGetUniformLocation(App->programShader->myProgram, "light_pos"), App->modelLoader->light_pos.x, App->modelLoader->light_pos.y, App->modelLoader->light_pos.z);
-
+	
+	
 
 }

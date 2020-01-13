@@ -78,6 +78,7 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	
 	//Attach window and context
 	SDL_GL_MakeCurrent(App->window->window, glcontext);
 

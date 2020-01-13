@@ -128,6 +128,7 @@ void Mesh::Draw(unsigned int program) const
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+	
 	glActiveTexture(GL_TEXTURE0);
 	//if (hastext) {
 	//	for (unsigned int i = 0; i < textures.size(); i++)

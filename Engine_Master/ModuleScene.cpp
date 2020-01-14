@@ -25,13 +25,8 @@ bool ModuleScene::Init()
 	showInspector = true;
 	selectedByHierarchy = nullptr;
 	nGameObjects = 0;
-	numberOfBakerHouse = 0;
-	numberOfSphere = 0;
-	numberOfCube = 0;
-	numberOfTorus = 0;
-	numberOfCylinder = 0;
 
-	root = new GameObject("World");
+	root = new GameObject("Root");
 	root->isRoot = true;
 
 	mainCamera = CreateGameObject("Main Camera (root)", root);
@@ -66,19 +61,16 @@ bool ModuleScene::CleanUp()
 	{
 		delete GO;
 	}
-
 	delete root;
+
 	return true;
 }
 
 GameObject* ModuleScene::CreateGameObject()
 {
-	std::string defaultName = "NewGameObject" + gameObjects.size(); //toString() ??
+	std::string defaultName = "NewGameObject" + gameObjects.size();
 	GameObject* gameObject = new GameObject(defaultName.c_str());
 	gameObject->SetParent(root);
-
-	LOG("Creating new GameObject with name: %s", defaultName);
-
 	nGameObjects++;
 
 	return gameObject;
@@ -88,8 +80,6 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent)
 {
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
-
-	LOG("Creating new GameObject with name: %s", name);
 	nGameObjects++;
 
 	return gameObject;
@@ -100,13 +90,14 @@ GameObject* ModuleScene::getRoot()
 	return root;
 }
 
-GameObject * ModuleScene::findById(std::string id)
+GameObject* ModuleScene::findById(std::string id)
 {
 	GameObject* found = nullptr;
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
 		if (gameObjects.at(i)->id == id) found = gameObjects.at(i);
 	}
+
 	return found;
 }
 
@@ -163,108 +154,23 @@ void ModuleScene::CreateEmpty(GameObject* parent)
 	gameObjects.push_back(gameObject);
 }
 
-void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
-{
-	if(parent == nullptr)
-	{
-		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
-		return; //leave
-	}
-
-	LOG("Creating a GameObject with Baker House Mesh.");
-	std::string defaultName = "BakerHouse" + std::to_string(numberOfBakerHouse + 1);
-	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
-	LoadModel("../Models/baker_house/BakerHouse.fbx", newGameObject);
-	++numberOfBakerHouse;
-
-	gameObjects.push_back(newGameObject);
-	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
-}
-
-void ModuleScene::CreateGameObjectShape(GameObject* parent, ShapeType shape)
-{
-	/*
-	if (parent == nullptr)
-	{
-		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
-		return;
-	}
-
-	std::string defaultName;
-	bool correct;
-	switch (shape)
-	{
-	case SPHERE:
-		LOG("Creating a GameObject with Sphere Mesh.");
-		defaultName = "Sphere" + std::to_string(numberOfSphere + 1);
-		correct = App->modelLoader->LoadSphere(defaultName.c_str(), math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(0.4f, 0.4f, 0.4f, 0.4f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the sphere mesh correctly.");
-			return;
-		}
-		++numberOfSphere;
-		break;
-	case CUBE:
-		LOG("Creating a GameObject with cube Mesh.");
-		defaultName = "Cube" + std::to_string(numberOfCube + 1);
-		correct = App->modelLoader->LoadCube("cube0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(0.4f, 0.4f, 0.4f, 0.4f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the cube mesh correctly.");
-			return;
-		}
-		++numberOfCube;
-		break;
-	case CYLINDER:
-		LOG("Creating a GameObject with Cylinder Mesh.");
-		defaultName = "Cylinder" + std::to_string(numberOfCylinder + 1);
-		correct = App->modelLoader->LoadCylinder(defaultName.c_str(), math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(0.4f, 0.4f, 0.4f, 0.4f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the cylinder mesh correctly.");
-			return;
-		}
-		++numberOfCylinder;
-		break;
-	case TORUS:
-		LOG("Creating a GameObject with torus Mesh.");
-		defaultName = "Torus" + std::to_string(numberOfTorus + 1);
-		correct = App->modelLoader->LoadTorus(defaultName.c_str(), math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the torus mesh correctly.");
-			return;
-		}
-		++numberOfTorus;
-		break;
-	default:
-		break;
-	}
-
-
-	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
-	
-
-	if(!App->modelLoader->meshes.size() == 1)
-	{
-		LOG("ERROR: Sphere model cannot have more than one mesh. ");
-		delete newGameObject;
-		return;
-	}
-
-
-
-	ComponentMesh* myMeshCreated = (ComponentMesh*)newGameObject->CreateComponent(MESH);
-	myMeshCreated->LoadMesh(App->modelLoader->meshes[0]);
-	newGameObject->ComputeAABB();
-	gameObjects.push_back(newGameObject);
-
-	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
-	//Deleting model loader information
-	App->modelLoader->emptyScene();
-	*/
-}
+//void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
+//{
+//	if(parent == nullptr)
+//	{
+//		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
+//		return; //leave
+//	}
+//
+//	LOG("Creating a GameObject with Baker House Mesh.");
+//	std::string defaultName = "BakerHouse" + std::to_string(numberOfBakerHouse + 1);
+//	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
+//	LoadModel("../Models/baker_house/BakerHouse.fbx", newGameObject);
+//	++numberOfBakerHouse;
+//
+//	gameObjects.push_back(newGameObject);
+//	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
+//}
 
 void ModuleScene::RemoveSelectedGameObject()
 {

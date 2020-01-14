@@ -116,7 +116,7 @@ void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
 	App->scene->eraseGameObject(this);
-	for (int i = 0; i < childrenVector.size(); i++)
+	for (unsigned int i = 0; i < childrenVector.size(); i++)
 	{
 		childrenVector[i]->DeleteGameObject();
 	}
@@ -236,31 +236,6 @@ void GameObject::DrawHierarchy(GameObject* selected)
 			App->scene->CreateEmpty(this);	//'this' instance maybe not the one selected in hierarchy - we will only use it when 'selected' is nullptr
 		}
 
-		// TODO:Revise this menu
-		if (ImGui::BeginMenu("Create 3D Object"))
-		{
-			if (ImGui::MenuItem("Cube"))
-			{
-				App->scene->CreateGameObjectShape(this, CUBE);
-			}
-			if (ImGui::MenuItem("Sphere"))
-			{
-				App->scene->CreateGameObjectShape(this, SPHERE);
-			}
-			if (ImGui::MenuItem("Cylinder"))
-			{
-				App->scene->CreateGameObjectShape(this, CYLINDER);
-			}
-			if (ImGui::MenuItem("Torus"))
-			{
-				App->scene->CreateGameObjectShape(this, TORUS);
-			}
-			if (ImGui::MenuItem("Baker House"))
-			{
-				App->scene->CreateGameObjectBakerHouse(this);
-			}
-			ImGui::EndMenu();
-		}
 		ImGui::Separator();
 
 		if (ImGui::Selectable("Duplicate"))

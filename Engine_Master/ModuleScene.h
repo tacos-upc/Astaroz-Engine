@@ -33,8 +33,7 @@ public:
 	void selectRoot();
 	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);
-	void CreateGameObjectBakerHouse(GameObject* parent);
-	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
+	//void CreateGameObjectBakerHouse(GameObject* parent);
 	void RemoveSelectedGameObject();
 	void DuplicateGameObject(GameObject* go);
 	void SelectGameObjectInHierarchy(GameObject* selected);
@@ -53,11 +52,6 @@ private:
 	//private variables
 	GameObject* root;
 	unsigned int nGameObjects;
-	unsigned int numberOfBakerHouse;
-	unsigned int numberOfSphere;
-	unsigned int numberOfCube;
-	unsigned int numberOfTorus;
-	unsigned int numberOfCylinder;
 };
 
 #endif __ModuleScene_H__

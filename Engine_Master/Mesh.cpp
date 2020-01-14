@@ -89,13 +89,13 @@ void Mesh::Draw(unsigned int program) const
 	
 	//Assigning "ids" to textures
 
-	//glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_texture"), 0);
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_texture"), 0);
 
-	//glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.specular_texture"), 1);
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.specular_texture"), 1);
 
-	//glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.occlusion_texture"), 2);
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.occlusion_texture"), 2);
 
-	//glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.emissive_texture"), 3);
+	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.emissive_texture"), 3);
 
 
 
@@ -107,21 +107,21 @@ void Mesh::Draw(unsigned int program) const
 
 	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_texture"), 0);
 
-	//glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE1);
 
-	//glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->specular_texture);
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->specular_texture);
 
 
 
-	//glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE2);
 
-	//glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->occlusion_texture);
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->occlusion_texture);
 	
 
 
-	//glActiveTexture(GL_TEXTURE3);
+	glActiveTexture(GL_TEXTURE3);
 
-	//glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->emissive_texture);
+	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->emissive_texture);
 	
 	
 	
@@ -195,3 +195,6 @@ void Mesh::setUniforms()
 	
 }
 
+Texture::~Texture()
+{
+}

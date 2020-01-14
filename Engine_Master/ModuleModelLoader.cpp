@@ -37,8 +37,8 @@ bool ModuleModelLoader::Init()
 
 	//Always start by loading the Baker house model
 
-	LoadModel(MODEL_BUNNY);
-	//LoadModel(MODEL_BAKER_PATH);
+	//LoadModel(MODEL_BUNNY);
+	LoadModel(MODEL_BAKER_PATH);
 
 	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
 	//materials.back().k_specular = 0.9f;
@@ -65,6 +65,12 @@ update_status ModuleModelLoader::Update()
 		{
 			ImGui::SliderFloat3("light position", (float*)&App->modelLoader->light_pos, -15.0f, 15.0f);
 			ImGui::SliderFloat("ambient", (float*)&App->modelLoader->ambient, 0.0f, 1.0f);
+			ImGui::SliderFloat("material.k_ambient", (float*)&App->modelLoader->materials[0]->k_ambient, 0.0f, 1.0f);
+			ImGui::SliderFloat("material.k_diffuse", (float*)&App->modelLoader->materials[0]->k_diffuse, 0.0f, 1.0f);
+			ImGui::SliderFloat("material.k_specular", (float*)&App->modelLoader->materials[0]->k_specular, 0.0f, 1.0f);
+			ImGui::SliderFloat3("material.diffuse_color", (float*)&App->modelLoader->materials[0]->diffuse_color, -15.0f, 15.0f);
+			ImGui::SliderFloat3("material.specular_color", (float*)&App->modelLoader->materials[0]->specular_color, -15.0f, 15.0f);
+			ImGui::SliderFloat3("material.emissive_color", (float*)&App->modelLoader->materials[0]->emissive_color, -15.0f, 15.0f);
 		}
 
 		ImGui::End();
@@ -84,7 +90,7 @@ void ModuleModelLoader::Draw(unsigned int program)
 	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		
-		//meshes[i]->setUniforms();
+		meshes[i]->setUniforms();
 		meshes[i]->Draw(program);
 	}
 	
@@ -188,34 +194,34 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	
 	if(texturesLoaded.size()<4){}
-	Texture* texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
-	texture->type = "diffuse";
+	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
+	texture.type = "diffuse";
 	
-	textures.push_back(texture);
-	texturesLoaded.push_back(texture);
+	textures.push_back(&texture);
+	texturesLoaded.push_back(&texture);
 
 
-	Texture* texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
-	texture2->type = "specular";
-	textures.push_back(texture2);
-	texturesLoaded.push_back(texture2);
+	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
+	texture2.type = "specular";
+	textures.push_back(&texture2);
+	texturesLoaded.push_back(&texture2);
 	
 
-	Texture* texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
-	texture3->type = "emissive";
-	textures.push_back(texture3);
-	texturesLoaded.push_back(texture3);
+	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
+	texture3.type = "emissive";
+	textures.push_back(&texture3);
+	texturesLoaded.push_back(&texture3);
 	
 
-	Texture* texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
-	texture4->type = "occlusion";
-	textures.push_back(texture4);
-	texturesLoaded.push_back(texture4);
+	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
+	texture4.type = "occlusion";
+	textures.push_back(&texture4);
+	texturesLoaded.push_back(&texture4);
 	
 	
 	
 	
-	Material* myMaterial = new Material(textures, texture->id, texture2->id, texture4->id,texture3->id );
+	Material* myMaterial = new Material(textures, texture.id, texture2.id, texture4.id,texture3.id );
 	myMaterial->program = App->programShader->myProgram;
 	materials.push_back(myMaterial);
 	
@@ -312,10 +318,10 @@ std::vector<Texture*> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, a
 		//if texture hasn't been loaded already, load it
 		if (!skip)
 		{
-			Texture* texture = App->texture->LoadTexture(str.C_Str());
-			texture->type = typeName;
-			textures.push_back(texture);
-			texturesLoaded.push_back(texture);
+			Texture texture = App->texture->LoadTexture(str.C_Str());
+			texture.type = typeName;
+			textures.push_back(&texture);
+			texturesLoaded.push_back(&texture);
 		}
 	}
 	return textures;

@@ -19,7 +19,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	Texture* ModuleTexture::LoadTexture(const char* path);
+	Texture ModuleTexture::LoadTexture(const char* path);
 
 public:
 	//ILuint myLena;	--> Lenna exercise; improved code so not needed anymore

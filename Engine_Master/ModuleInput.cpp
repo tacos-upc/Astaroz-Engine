@@ -121,7 +121,7 @@ update_status ModuleInput::PreUpdate()
 			//Texture
 			if (ext == "png" || ext == "jpg" || ext == "dds")
 			{
-				Texture* texture = App->texture->LoadTexture(file);
+				Texture texture = App->texture->LoadTexture(file);
 				//App->modelLoader->addTexture(texture);
 			}
 

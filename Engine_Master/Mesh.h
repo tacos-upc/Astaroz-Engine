@@ -29,7 +29,7 @@ struct Texture
 	unsigned width = 0;
 	unsigned height = 0;
 	
-	Texture(unsigned id, unsigned width, unsigned height, const char* file) : id(id), width(width), height(height), path(file)
+	Texture() 
 	{}
 
 	Texture(const char* file) : path(file)

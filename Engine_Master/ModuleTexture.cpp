@@ -79,13 +79,10 @@ bool ModuleTexture::CleanUp()
 	return true;
 }
 
-Texture* ModuleTexture::LoadTexture(const char* path)
+Texture ModuleTexture::LoadTexture(const char* path)
 {
-	const char* npath= nullptr;
-	ILuint image;
-	ilGenImages(1, &image);
-	ilBindImage(image);
-	
+	Texture texture;
+
 	LOG("Trying to load a texture");
 	bool loaded = false;
 
@@ -125,7 +122,7 @@ Texture* ModuleTexture::LoadTexture(const char* path)
 					{
 						//This means texture was loaded in step 3
 						LOG("Texture path correct. Loaded in step 3, using '/textures' directory\n");
-						npath = fullPath;	//textures path
+						texture.path = fullPath;	//textures path
 						loaded = true;
 					}
 				}
@@ -134,7 +131,7 @@ Texture* ModuleTexture::LoadTexture(const char* path)
 			{
 				//This means texture was loaded in step 2
 				LOG("Texture path correct. Loaded in step 2, using '/models' directory\n");
-				npath = fullPath;	//models path
+				texture.path = fullPath;	//models path
 				loaded = true;
 			}
 		}
@@ -143,13 +140,9 @@ Texture* ModuleTexture::LoadTexture(const char* path)
 	{
 		//This means texture was loaded in step 1
 		LOG("Texture path correct. Loaded in step 1, using the directory described in FBX\n");
-		npath = path;	//original path
+		texture.path = path;	//original path
 		loaded = true;
 	}
-
-	GLuint textureID = 0;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	//Store image info in our member value 'myImageInfo'
 	iluGetImageInfo(&myImageInfo);
@@ -159,32 +152,14 @@ Texture* ModuleTexture::LoadTexture(const char* path)
 		iluFlipImage(); //If not, flip the texture
 
 	//Fill all the texture information that will be returned
-	unsigned width = 0;
-	unsigned height = 0;
-	unsigned pixelDepth = 0;
-	
-	
-	width = ilGetInteger(IL_IMAGE_WIDTH);
-	height = ilGetInteger(IL_IMAGE_HEIGHT);
-	pixelDepth = ilGetInteger(IL_IMAGE_DEPTH);
-	ILubyte* data = ilGetData();
-	int format = 0;
-	format = ilGetInteger(IL_IMAGE_FORMAT);
+	texture.id = ilutGLBindTexImage();
+	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
+	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
+	texture.data = ilGetData();
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
 	//If loaded flag is false, we must asign a texture.path anyway so we will use the received as parameter in this method
-	if(!loaded)
-		npath = path;
-
-	ilDeleteImages(1, &image);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	Texture* texture = new Texture(textureID, width, height, npath);
+	if (!loaded)
+		texture.path = path;
 	
 	return texture;
 }

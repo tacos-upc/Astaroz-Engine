@@ -30,7 +30,7 @@ public:
 	void SetAspectRatio(float);
 	void SetPlaneDistances(float, float);
 	bool sideOfPlane(float3 &point, Plane &plane);
-	void DrawFrustum();
+	void DrawFrustum(float3);
 	void DrawInspector() override;
 
 	int AABBWithinFrustum(const AABB &aabb);
@@ -46,7 +46,8 @@ public:
 	ImVec4 clearColor;
 	int selectedClearMode;
 
-	LineSegment raycast(float3);
+	LineSegment raycast(float3, bool);
+	void drawRaycast(LineSegment*);
 
 private:
 	int selectedProjectionMode;

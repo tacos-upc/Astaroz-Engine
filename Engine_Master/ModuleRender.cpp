@@ -186,7 +186,7 @@ void ModuleRender::drawSceneView()
 
 	beginRenderTexture(size.x, size.y, &sceneFBO, &sceneTexture, &sceneRBO);
 
-	glViewport(0, 0, App->window->width, App->window->height);
+	glViewport(0, 0, size.x, size.y);
 	glClearColor(sceneClearColor.x, sceneClearColor.y, sceneClearColor.z, sceneClearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

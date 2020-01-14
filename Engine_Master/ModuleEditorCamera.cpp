@@ -1,5 +1,6 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleModelLoader.h"
+#include "ModuleProgramShader.h"
 #include "ModuleEditor.h"
 #include "ModuleTime.h"
 #include "ModuleSpacePartition.h"
@@ -12,7 +13,7 @@
 #include "MathGeoLib/include/Geometry/LineSegment.h"
 #include "AABBTree.h"
 #include "AABBTreeNode.h"
-
+#include "DebugDraw.h"
 
 ModuleEditorCamera::ModuleEditorCamera()
 {
@@ -51,8 +52,10 @@ update_status ModuleEditorCamera::PreUpdate()
 	updateRotation(dt);
 	updateOrbit(dt);
 	updateFocus();
-
 	cam->reloadMatrices();
+
+	cam->DrawFrustum(float3(1.f, 0.f, 0.f));
+
 
 	return UPDATE_CONTINUE;
 }
@@ -63,6 +66,7 @@ update_status ModuleEditorCamera::Update()
 	{
 		raycast();
 	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -274,11 +278,16 @@ void ModuleEditorCamera::raycast()
 	float3 mousePosition = getMouseToViewportPosition();
 	if (App->spacePartition->tree->root != nullptr)
 	{
-		bool hitsRoot = cam->raycast(mousePosition).Intersects(*App->spacePartition->tree->root->box);
+		LOG("x: %f, y: %f", mousePosition.x, mousePosition.y);
 
+		LineSegment segment = cam->raycast(mousePosition, true);
+		bool hitsRoot = segment.Intersects(*App->spacePartition->tree->root->box);
+		
+		//LOG("A = %f, %f, %f, B = %f, %f, %f", segment.a.x, segment.a.y, segment.a.z, segment.b.x, segment.b.y, segment.b.z);
+		
 		if (hitsRoot) 
 		{
-			LOG("x: %f, y: %f", mousePosition.x, mousePosition.y);
+			
 			LOG("He tocado el arbol"); 
 		}
 		else { LOG("NO HE TOCADO EL ARBOL"); }
@@ -292,7 +301,7 @@ float3 ModuleEditorCamera::getMouseToViewportPosition()
 	fPoint windowSize = fPoint(App->editor->getFocusedWindowData()->width, App->editor->getFocusedWindowData()->height);
 
 	//Normalize point
-	float x = -(touch.x - windowPos.x / 2 - windowSize.x / 4) / (windowSize.x / 4);
+	float x = (touch.x - windowPos.x / 2 - windowSize.x / 4) / (windowSize.x / 4);
 	float y = -(touch.y - windowPos.y / 2 - windowSize.y / 4) / (windowSize.y / 4);
 	float z = 1.0f;
 

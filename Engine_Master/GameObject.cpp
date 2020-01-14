@@ -312,7 +312,7 @@ void GameObject::DrawAABB()
 	glColor4f(0.6f, 0.6f, 0.6f, 1.0f);
 
 	ComponentCamera* cam = (ComponentCamera*) GetComponent(CAMERA);
-	if (cam != nullptr) cam->DrawFrustum();
+	if (cam != nullptr) cam->DrawFrustum(float3(0.f, 0.02f, 0.7f));
 
 	if (obb != nullptr)
 	{

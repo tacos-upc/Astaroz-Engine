@@ -278,8 +278,6 @@ void ModuleEditorCamera::raycast()
 	float3 mousePosition = getMouseToViewportPosition();
 	if (App->spacePartition->tree->root != nullptr)
 	{
-		LOG("x: %f, y: %f", mousePosition.x, mousePosition.y);
-
 		LineSegment segment = cam->raycast(mousePosition, true);
 		bool hitsRoot = segment.Intersects(*App->spacePartition->tree->root->box);
 		
@@ -287,10 +285,9 @@ void ModuleEditorCamera::raycast()
 		
 		if (hitsRoot) 
 		{
-			
 			LOG("He tocado el arbol"); 
 		}
-		else { LOG("NO HE TOCADO EL ARBOL"); }
+		//else { LOG("NO HE TOCADO EL ARBOL"); }
 	}
 }
 

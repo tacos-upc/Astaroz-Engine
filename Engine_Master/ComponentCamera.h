@@ -46,7 +46,7 @@ public:
 	ImVec4 clearColor;
 	int selectedClearMode;
 
-	LineSegment raycast(float3, bool);
+	LineSegment raycast(float3);
 	void drawRaycast(LineSegment*);
 
 private:

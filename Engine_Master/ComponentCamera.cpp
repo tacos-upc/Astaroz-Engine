@@ -94,12 +94,15 @@ void ComponentCamera::roll(float direction, float dt)
 	frustum->up = rotationMatrix.Transform(frustum->up).Normalized();
 }
 
-LineSegment ComponentCamera::raycast(float3 position, bool debugDraw = false)
+LineSegment ComponentCamera::raycast(float3 position)
 {
-	//My first atempt
-	Ray raycasting = frustum->UnProjectFromNearPlane(position.x, position.y);
-	LineSegment ray = LineSegment(raycasting, math::floatMax);
-	LOG("x: %f, y: %f",position.x, position.y);
+	//My first attempt
+	LineSegment ray = frustum->UnProjectLineSegment(position.x, position.y);
+
+	//My fourth atempt
+	//Ray raycasting = frustum->UnProjectFromNearPlane(position.x, position.y);
+	//LineSegment ray = LineSegment(raycasting, math::floatMax);
+	//LOG("x: %f, y: %f",position.x, position.y);
 
 	//My second attempt that failed
 	//float4 clipCoordinates = float4(position.x, position.y, -1.f, 1.f); //To clip space
@@ -151,8 +154,6 @@ LineSegment ComponentCamera::raycast(float3 position, bool debugDraw = false)
 	//	float3 point = frustum->CornerPoint(i);
 	//	LOG("Frustum corner points %d: { %f, %f, %f }", i, point.x, point.y, point.z);
 	//}
-
-	if (debugDraw) drawRaycast(&ray);
 
 	return ray;
 }

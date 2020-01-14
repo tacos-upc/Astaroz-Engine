@@ -44,6 +44,8 @@ enum KeyState
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
 #define MODEL_BAKER_PATH "models/BakerHouse.fbx"
+#define MODEL_BUNNY "models/Zombunny.fbx"
+#define MODEL_ROBOT "models/Robot.fbx"
 
 //Utils
 #define MAX(x,y) ((x>y) ? x:y)

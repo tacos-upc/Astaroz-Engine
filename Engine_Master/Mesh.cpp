@@ -79,10 +79,10 @@ void Mesh::setupMesh()
 
 void Mesh::Draw(unsigned int program) const
 {
-	unsigned int diffuseNr = 1;
-	unsigned int specularNr = 1;
-	unsigned int normalNr = 1;
-	unsigned int heightNr = 1;
+	unsigned int diffuseNr = 0;
+	unsigned int specularNr = 0;
+	unsigned int normalNr = 0;
+	unsigned int heightNr = 0;
 
 	
 	
@@ -114,7 +114,7 @@ void Mesh::Draw(unsigned int program) const
 		glActiveTexture(GL_TEXTURE0);
 	}
 	else {
-
+		/*
 		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->modelLoader->light_pos);
 		glUniform1f(glGetUniformLocation(program, "ambient"), App->modelLoader->ambient);
 		glUniform1f(glGetUniformLocation(program, "shininess"), App->modelLoader->materials[material].shininess);
@@ -128,7 +128,7 @@ void Mesh::Draw(unsigned int program) const
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
-		
+		*/
 	
 	}
 

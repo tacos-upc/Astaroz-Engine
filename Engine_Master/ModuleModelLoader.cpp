@@ -5,6 +5,7 @@
 #include "cimport.h"
 #include "Importer.hpp"
 
+
 #define PAR_SHAPES_IMPLEMENTATION
 #include "Util/par_shapes.h"
 #pragma warning(pop)
@@ -35,9 +36,10 @@ bool ModuleModelLoader::Init()
 	aiAttachLogStream(&sLog);
 
 	//Always start by loading the Baker house model
-	//LoadModel(MODEL_BAKER_PATH);
-
-	LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	LoadModel(MODEL_BAKER_PATH);
+	//LoadModel(MODEL_BUNNY);
+	
+	/*LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
 	materials.back().k_specular = 0.9f;
 	materials.back().shininess = 64.0f;
 	materials.back().k_diffuse = 0.5f;
@@ -48,7 +50,7 @@ bool ModuleModelLoader::Init()
 	materials.back().shininess = 20.0f;
 	materials.back().k_diffuse = 0.5f;
 	materials.back().k_ambient = 1.0f;
-
+	*/
 	return true;
 }
 
@@ -170,6 +172,8 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 			indices.push_back(face.mIndices[j]);
 	}
 
+
+	/*
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -199,8 +203,33 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	textureHeight = textures[0].height;
 	textureId = textures[0].id;
 	numPolys /= 3;
+	*/
+	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
+	texture.type = "texture_diffuse";
+	textures.push_back(texture);
+	texturesLoaded.push_back(texture);
+/*
+	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
+	texture2.type = "specular";
+	textures.push_back(texture2);
+	texturesLoaded.push_back(texture2);
+
+	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
+	texture3.type = "emissive";
+	textures.push_back(texture3);
+	texturesLoaded.push_back(texture3);
+
+	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
+	texture4.type = "occlusion";
+	textures.push_back(texture4);
+	texturesLoaded.push_back(texture4);
+*/
+	Material* myMaterial = new Material(textures, texture.id, 2, 3, 4);
+	myMaterial->program = App->programShader->myProgram;
+	materials.push_back(myMaterial);
 
 	return Mesh(vertices, indices, textures);
+	
 }
 
 std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
@@ -292,9 +321,9 @@ bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, co
 		meshes.back()->material = materials.size();
 		
 
-		Material mat;
-		mat.program = App->programShader->myProgram;
-		mat.object_color = color;
+		Material* mat;
+		mat->program = App->programShader->myProgram;
+		mat->object_color = color;
 
 		materials.push_back(mat);
 
@@ -319,9 +348,9 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 		
 		meshes.back()->material = materials.size();
 		
-		Material mat;
-		mat.program = App->programShader->myProgram;
-		mat.object_color = color;
+		Material* mat;
+		mat->program = App->programShader->myProgram;
+		mat->object_color = color;
 
 		materials.push_back(mat);
 

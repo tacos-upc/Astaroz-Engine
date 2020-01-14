@@ -1,9 +1,11 @@
 #include "ComponentMesh.h"
+#include "ComponentTransform.h"
 #include "ModuleModelLoader.h"
 #include "Application.h"
 #include "IconsFontAwesome5.h"
 #include "GameObject.h"
 #include <list>
+#include "Geometry/Triangle.h"
 
 ComponentMesh::ComponentMesh()
 {

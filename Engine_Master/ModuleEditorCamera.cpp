@@ -283,7 +283,10 @@ void ModuleEditorCamera::raycast()
 		
 		GameObject* touched = cam->getTouchedGameObject(App->spacePartition->tree->root, &segment);
 
-		if(touched != nullptr){}
+		if(touched != nullptr)
+		{
+			LOG("HE TOCADO UN GAMEOBJECT!! %s", touched->id.c_str());
+		}
 	}
 }
 

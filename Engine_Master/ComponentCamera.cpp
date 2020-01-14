@@ -113,7 +113,8 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 	touchedCandidates.clear();
 	findTouchedCandidates(node, segment);
 
-	float distance = math::floatMax;
+	GameObject* obj = nullptr;
+	float bestDistance = math::floatMax;
 
 	for (size_t i = 0; i < touchedCandidates.size(); i++)
 	{
@@ -124,16 +125,24 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 			mesh->myMesh->updateTriangles();
 			for (size_t j = 0; j < mesh->myMesh->triangles.size(); j++)
 			{
-				if (mesh->myMesh->triangles.at(j).Intersects(*segment))
-				{
+				float distance;
+				LineSegment transformedSegment = LineSegment(*segment);
+				transformedSegment.Transform(mesh->myGameObject->myTransform->globalModelMatrix.Inverted());
+				float3 intersectionPoint;
 
+				if (transformedSegment.Intersects(mesh->myMesh->triangles.at(j), &distance, &intersectionPoint))
+				{
+					if (distance < bestDistance)
+					{
+						bestDistance = distance;
+						obj = mesh->myGameObject;
+					}
 				}
 			}
 		}
 	}
 
-
-	return nullptr;
+	return obj;
 }
 
 void ComponentCamera::findTouchedCandidates(AABBTreeNode* node, LineSegment* segment)

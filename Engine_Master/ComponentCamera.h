@@ -8,6 +8,7 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "AABBTree.h"
 
 
 enum FrustumCollisionMode { OUTSIDE, INSIDE, BETWEEN };
@@ -49,8 +50,14 @@ public:
 	LineSegment raycast(float3);
 	void drawRaycast(LineSegment*);
 
+	GameObject* getTouchedGameObject(AABBTreeNode*, LineSegment*);
+
 private:
 	int selectedProjectionMode;
+
+	vector<GameObject*> touchedCandidates;
+	void findTouchedCandidates(AABBTreeNode*, LineSegment*);
+
 };
 
 #endif __ComponentCamera_H__

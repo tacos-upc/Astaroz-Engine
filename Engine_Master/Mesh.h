@@ -34,6 +34,7 @@ class Mesh
 public:
 	/*  Mesh Data  */
 	std::vector<Vertex> vertices;
+	std::vector<Triangle> triangles;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 	const char* name;
@@ -44,6 +45,8 @@ public:
 	void Init();
 	void Draw(unsigned int program) const;
 	void updateTexture(Texture texture);
+
+	void updateTriangles();
 
 private:
 	unsigned int VAO = 0, VBO = 0, EBO = 0;

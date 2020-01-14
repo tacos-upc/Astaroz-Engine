@@ -1,15 +1,18 @@
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
+#include "ComponentMesh.h"
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleProgramShader.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleTime.h"
+#include "ModuleScene.h"
 #include "GameObject.h"
 
 #include <math.h>
 #include "MathGeoLib/include/Geometry/LineSegment.h"
 #include "Geometry/Plane.h"
+#include "Geometry/Triangle.h"
 #include "glew.h"
 #include "IconsFontAwesome5.h"
 #include "DebugDraw.h"
@@ -96,71 +99,60 @@ void ComponentCamera::roll(float direction, float dt)
 
 LineSegment ComponentCamera::raycast(float3 position)
 {
-	//My first attempt
 	LineSegment ray = frustum->UnProjectLineSegment(position.x, position.y);
-
-	//My fourth atempt
-	//Ray raycasting = frustum->UnProjectFromNearPlane(position.x, position.y);
-	//LineSegment ray = LineSegment(raycasting, math::floatMax);
-	//LOG("x: %f, y: %f",position.x, position.y);
-
-	//My second attempt that failed
-	//float4 clipCoordinates = float4(position.x, position.y, -1.f, 1.f); //To clip space
-	//float4 eyeCoordinates = projectionMatrix.Inverted() * clipCoordinates; //To Eye Space
-	//float4 worldCoordinates = viewMatrix.Inverted() * eyeCoordinates; //To world space
-	//
-	//float3 rayPoint = float3(worldCoordinates.x, worldCoordinates.y, worldCoordinates.z).Normalized();
-	//
-	//LOG("Ray: x: %f, y: %f, z: %f", rayPoint.x, rayPoint.y, rayPoint.z);
-	//
-	//Ray ray = Ray(frustum->pos, rayPoint);
-	//LineSegment segment = LineSegment(ray, frustum->farPlaneDistance);
-	//
-	//if(debugDraw) drawRaycast(&segment);
-
-	//return segment;
-
-	//My third attempt which failed
-	//float3 nearBottomLeft = frustum->CornerPoint(0);
-	//float3 nearBottomRight = frustum->CornerPoint(4);
-	//float3 nearTopLeft = frustum->CornerPoint(2);
-	//
-	//float3 farBottomLeft = frustum->CornerPoint(1);
-	//float3 farBottomright = frustum->CornerPoint(5);
-	//float3 farTopLeft = frustum->CornerPoint(3);
-	//
-	//LineSegment segment = LineSegment(float3(nearBottomLeft.x, 1.f, 0.f), float3(nearBottomRight.x, -1.f, 0.f));
-	//float nearX = segment.GetPoint(position.x).x;
-	//
-	//segment = LineSegment(float3(nearBottomLeft.y, -1.f, 0.f), float3(nearTopLeft.y, 1.f, 0.f));
-	//float nearY = segment.GetPoint(position.y).x;
-	//float nearZ = nearBottomLeft.z;
-	//
-	//segment = LineSegment(float3(farBottomLeft.x, 1.f, 0.f), float3(farBottomright.x, -1.f, 0.f));
-	//float farX = segment.GetPoint(position.x).x;
-	//
-	//segment = LineSegment(float3(farBottomLeft.y, -1.f, 0.f), float3(farTopLeft.y, 1.f, 0.f));
-	//float farY = segment.GetPoint(position.y).x;
-	//float farZ = farTopLeft.z;
-	//
-	//float3 nearPoint = float3(nearX, nearY, nearZ);
-	//float3 farPoint = float3(farX, farY, farZ);
-
-	//LineSegment ray = LineSegment(farPoint, frustum->pos);
-	//LOG("Frustum pos: {%f, %f, %f}", frustum->pos.x, frustum->pos.y, frustum->pos.z);
-
-	//for (size_t i = 0; i < 8; i++)
-	//{
-	//	float3 point = frustum->CornerPoint(i);
-	//	LOG("Frustum corner points %d: { %f, %f, %f }", i, point.x, point.y, point.z);
-	//}
-
 	return ray;
 }
 
 void ComponentCamera::drawRaycast(LineSegment* segment)
 {
 	dd::line((*segment).a, (*segment).b, float3(0.f, 1.f, 0.f));
+}
+
+GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegment* segment)
+{
+	touchedCandidates.clear();
+	findTouchedCandidates(node, segment);
+
+	float distance = math::floatMax;
+
+	for (size_t i = 0; i < touchedCandidates.size(); i++)
+	{
+		ComponentMesh* mesh = (ComponentMesh*)touchedCandidates.at(i)->GetComponent(MESH);
+
+		if (mesh != nullptr)
+		{
+			mesh->myMesh->updateTriangles();
+			for (size_t j = 0; j < mesh->myMesh->triangles.size(); j++)
+			{
+				if (mesh->myMesh->triangles.at(j).Intersects(*segment))
+				{
+
+				}
+			}
+		}
+	}
+
+
+	return nullptr;
+}
+
+void ComponentCamera::findTouchedCandidates(AABBTreeNode* node, LineSegment* segment)
+{
+	if (node == nullptr) return;
+
+	if (segment->Intersects(*node->box))
+	{
+		//There's a gameobject here
+		if (node->gameObjectID != "")
+		{
+			touchedCandidates.push_back(App->scene->findById(node->gameObjectID));
+		}
+		else //Search on children
+		{
+			getTouchedGameObject(node->leftChild, segment);
+			getTouchedGameObject(node->rightChild, segment);
+		}
+	}
 }
 
 void ComponentCamera::reloadMatrices()

@@ -116,12 +116,9 @@ void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
 	App->scene->eraseGameObject(this);
-	//for (auto const& child : childrenVector)
-	//{
-	//	child->DeleteGameObject();
-	//}
-	for (auto child = childrenVector.begin(); child != childrenVector.end(); child++) {
-		(*child)->DeleteGameObject();
+	for (int i = 0; i < childrenVector.size(); i++)
+	{
+		childrenVector[i]->DeleteGameObject();
 	}
 
 	CleanUp();

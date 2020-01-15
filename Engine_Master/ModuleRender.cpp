@@ -189,7 +189,7 @@ void ModuleRender::drawGizmos(float posX, float posY, float width, float height)
 	ImGuizmo::SetRect(posX, posY, width, height);
 	ImGuizmo::SetDrawlist();
 
-	if (App->scene->selectedByHierarchy != nullptr)
+	if (App->scene->selectedByHierarchy != nullptr && App->scene->selectedByHierarchy != App->scene->getRoot())
 	{
 		App->scene->selectedByHierarchy->drawGizmo();
 	}

@@ -145,14 +145,14 @@ void ModuleEditorCamera::updateNavModes()
 {
 	isFastMode = App->input->isKeyDown(SDL_SCANCODE_LSHIFT);
 
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+	if (App->input->GetMouseButtonDownOrHold(SDL_BUTTON_RIGHT))
 	{
 		navigationMode = MovementMode::FREE;
 		return;
 	}
 	else navigationMode = MovementMode::MOVEMENT_MODE_NONE ;
 	
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = MovementMode::ORBIT;
+	if (App->input->GetMouseButtonDownOrHold(SDL_BUTTON_LEFT)) navigationMode = MovementMode::ORBIT;
 	else navigationMode = MovementMode::MOVEMENT_MODE_NONE;
 	
 }

@@ -27,7 +27,17 @@ public:
 
 	bool GetMouseButtonDown(int id) const
 	{
-		return mouseButtons[id - 1] == KEY_DOWN || mouseButtons[id - 1] == KEY_REPEAT;
+		return mouseButtons[id - 1] == KEY_DOWN;
+	}
+
+	bool GetMouseButtonHold(int id) const
+	{
+		return mouseButtons[id - 1] == KEY_REPEAT;
+	}
+
+	bool GetMouseButtonDownOrHold(int id) const
+	{
+		return GetMouseButtonDown(id) || GetMouseButtonHold(id);
 	}
 
 	bool GetMouseButtonUp(int id) const

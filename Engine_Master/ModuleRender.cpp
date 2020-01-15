@@ -189,7 +189,7 @@ void ModuleRender::drawGizmos(float posX, float posY, float width, float height)
 	ImGuizmo::SetRect(posX, posY, width, height);
 	ImGuizmo::SetDrawlist();
 
-	if (App->scene->selectedByHierarchy != nullptr && App->scene->selectedByHierarchy != App->scene->getRoot())
+	if (App->scene->selectedByHierarchy != nullptr)
 	{
 		App->scene->selectedByHierarchy->drawGizmo();
 	}
@@ -269,7 +269,7 @@ void ModuleRender::drawGameObjects(GLuint program)
 		if (((ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA))->AABBWithinFrustum(App->modelLoader->myBoundingBox) != OUTSIDE)
 		{
 			ComponentTransform * transform = (ComponentTransform*)App->scene->gameObjects.at(i)->myTransform;
-			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->getGlobalMatrix()[0][0]);
 
 			App->scene->gameObjects.at(i)->Draw(program);
 		}
@@ -291,7 +291,7 @@ void ModuleRender::drawTreeNodeByFrustumCulling(GLuint program, ComponentCamera*
 		{
 			ComponentTransform* transform = App->scene->findById(node->gameObjectID)->myTransform;
 
-			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->getGlobalMatrix()[0][0]);
 			transform->myGameObject->Draw(program);
 		}
 		else

@@ -36,7 +36,6 @@ public:
 	void DrawHierarchy(GameObject* selected);
 
 	//Update
-	void UpdateTransform();
 	void DrawInspector();
 	void createAABBs();
 	void findOBBPointsForRender();

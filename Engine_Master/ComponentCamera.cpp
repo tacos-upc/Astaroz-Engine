@@ -124,10 +124,10 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 			float nearDistance;
 			float farDistance;
 			LineSegment transformedSegment = LineSegment(*segment);
-			transformedSegment.Transform(mesh->myGameObject->myTransform->globalModelMatrix.Inverted());
+			transformedSegment.Transform(mesh->myGameObject->myTransform->getGlobalMatrix().Inverted());
 
 			OBB candidateOBB = OBB(*mesh->myGameObject->obb);
-			candidateOBB.Transform(mesh->myGameObject->myTransform->globalModelMatrix.Inverted());
+			candidateOBB.Transform(mesh->myGameObject->myTransform->getGlobalMatrix().Inverted());
 
 			if (candidateOBB.Intersects(transformedSegment, nearDistance, farDistance))
 			{

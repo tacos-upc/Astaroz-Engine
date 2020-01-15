@@ -43,6 +43,11 @@ void GameObject::Update()
 		if (component->myType != TRANSFORM)
 			component->Update();
 	}
+
+	if (boundingBox != nullptr)
+	{
+		createAABBs();
+	}
 }
 
 void GameObject::SetParent(GameObject* newParent)
@@ -244,22 +249,6 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	ImGui::PopID();
 }
 
-void GameObject::UpdateTransform()
-{
-	if(myTransform != nullptr)
-	{
-		if(parent != nullptr && parent->myTransform != nullptr)
-		{
-			myTransform->SetGlobalMatrix(parent->myTransform->globalModelMatrix);
-		}
-		myTransform->UpdateMatrices();
-
-		if(boundingBox != nullptr)
-		{
-			createAABBs();
-		}
-	}
-}
 
 void GameObject::SetName(const std::string &newName)
 {
@@ -289,8 +278,8 @@ void GameObject::createAABBs()
 
 	findOBBPoints();
 	boundingBox->Enclose(obbPoints, 8);
-	boundingBox->TransformAsAABB(myTransform->globalModelMatrix);
-	obb->Transform(myTransform->globalModelMatrix);
+	boundingBox->TransformAsAABB(myTransform->getGlobalMatrix());
+	obb->Transform(myTransform->getGlobalMatrix());
 
 	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox) || isfatBoxTooFat())
 	{
@@ -355,9 +344,6 @@ void GameObject::DrawInspector()
 	{
 		components[i]->DrawInspector();
 	}
-
-	//Change EulerRotation to Quat
-	myTransform->EulerToQuat();
 }
 
 void GameObject::CheckDragAndDrop(GameObject* go)
@@ -373,7 +359,7 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 			GameObject* newChild = *reinterpret_cast<GameObject**>(payload->Data);
 			newChild->SetParent(go);
 			if(newChild->parent->myTransform != nullptr)
-				newChild->myTransform->SetLocalMatrix(newChild->parent->myTransform->globalModelMatrix);
+				newChild->myTransform->setLocalMatrix(newChild->parent->myTransform->getGlobalMatrix());
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -390,16 +376,22 @@ bool GameObject::isfatBoxTooFat()
 
 void GameObject::drawGizmo()
 {
-	if (App->scene->selectedByHierarchy == this && this != App->scene->getRoot())
+	if (App->scene->selectedByHierarchy == this && this != App->scene->getRoot() && isEnabled)
 	{
 		ImGuizmo::Enable(true);
 
-		float4x4 modelMatrixTransposed = myTransform->globalModelMatrix.Transposed();
+		float4x4 modelMatrixTransposed = myTransform->getGlobalMatrix().Transposed();
+		
+		float3 position, eulerRotation, scale;
+		ImGuizmo::DecomposeMatrixToComponents(modelMatrixTransposed.ptr(), position.ptr(), eulerRotation.ptr(), scale.ptr());
+		
 		ImGuizmo::Manipulate(&App->editorCamera->cam->viewMatrix.Transposed()[0][0], &App->editorCamera->cam->projectionMatrix.Transposed()[0][0], ImGuizmo::TRANSLATE, ImGuizmo::WORLD, &modelMatrixTransposed[0][0]);
-
+		
 		if (ImGuizmo::IsUsing())
 		{
-			myTransform->globalModelMatrix = modelMatrixTransposed.Transposed();
+			LOG("Position: %f, %f, %f", position.x, position.y, position.z);
+		
+			myTransform->setGlobalMatrix(modelMatrixTransposed.Transposed());
 			App->scene->SelectObjectInHierarchy(this);
 		}
 	}

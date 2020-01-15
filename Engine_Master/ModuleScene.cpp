@@ -51,12 +51,9 @@ update_status ModuleScene::Update()
 {
 	for(auto gameObject : gameObjects)
 	{
-		gameObject->UpdateTransform();
 		gameObject->Update();
 	}
 	
-	//drawHierarchy(); --> This is being done in ModuleEditor
-
 	return UPDATE_CONTINUE;
 }
 

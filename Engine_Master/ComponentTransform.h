@@ -26,16 +26,17 @@ public:
 	void onTransformChanged();
 
 	float3 position = float3(0.0f, 0.0f, 0.0f);
-	float3 deltaEulerRotation = float3(0.f, 0.f, 0.f);
+	float3 eulerRotationInDeg = float3(0.f, 0.f, 0.f);
+	float3 eulerRotationInRad = float3(0.f, 0.f, 0.f);
 
 private:
 	Quat rotation = Quat::identity;
-	float3 eulerRotation = float3(0.f, 0.f, 0.f);
 	float3 scale = float3(1.0f, 1.0f, 1.0f);
 	float4x4 localModelMatrix = float4x4::identity;
 	float4x4 globalModelMatrix = float4x4::identity;
 
 	void generateGlobalMatrix();
+	void setupEulerRotation(bool, float3);
 };
 
 #endif __ComponentTransform_H__

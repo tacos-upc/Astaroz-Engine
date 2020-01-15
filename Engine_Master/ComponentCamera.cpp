@@ -48,12 +48,7 @@ ComponentCamera::~ComponentCamera()
 
 void ComponentCamera::Update()
 {
-	frustum->pos = myGameObject->myTransform->position;
-	pitch(myGameObject->myTransform->deltaEulerRotation.x, App->time->getDeltaTime());
-	yaw(myGameObject->myTransform->deltaEulerRotation.y, App->time->getDeltaTime());
-	roll(myGameObject->myTransform->deltaEulerRotation.z, App->time->getDeltaTime());
-	
-	reloadMatrices();
+	transformFrustum();
 }
 
 void ComponentCamera::SetFOV(float fov)
@@ -106,6 +101,19 @@ LineSegment ComponentCamera::raycast(float3 position)
 void ComponentCamera::drawRaycast(LineSegment* segment)
 {
 	dd::line((*segment).a, (*segment).b, float3(0.f, 1.f, 0.f));
+}
+
+void ComponentCamera::transformFrustum()
+{
+	frustum->pos = myGameObject->myTransform->position;
+	pitch(myGameObject->myTransform->eulerRotationInDeg.x, App->time->getDeltaTime());
+	yaw(myGameObject->myTransform->eulerRotationInDeg.y, App->time->getDeltaTime());
+	roll(myGameObject->myTransform->eulerRotationInDeg.z, App->time->getDeltaTime());
+
+	reloadMatrices();
+
+	myGameObject->myTransform->eulerRotationInDeg = float3::zero;
+	myGameObject->myTransform->eulerRotationInRad = float3::zero;
 }
 
 GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegment* segment)

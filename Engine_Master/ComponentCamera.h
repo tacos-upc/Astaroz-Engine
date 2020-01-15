@@ -49,6 +49,7 @@ public:
 
 	LineSegment raycast(float3);
 	void drawRaycast(LineSegment*);
+	void transformFrustum();
 
 	GameObject* getTouchedGameObject(AABBTreeNode*, LineSegment*);
 

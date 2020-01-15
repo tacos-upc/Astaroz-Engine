@@ -1,6 +1,6 @@
 #include "ComponentTransform.h"
 #include "GameObject.h"
-
+#include "ComponentCamera.h"
 #include "IconsFontAwesome5.h"
 #include "Math/MathFunc.h"
 
@@ -39,7 +39,7 @@ void ComponentTransform::setGlobalMatrix(float4x4& global)
 
 	position = newPosition;
 	rotation = newRotation.ToQuat();
-	eulerRotation = rotation.ToEulerXYZ();
+	setupEulerRotation(false, rotation.ToEulerXYZ());
 	scale = newScale;
 
 	onTransformChanged();
@@ -52,18 +52,16 @@ void ComponentTransform::setLocalMatrix(float4x4& local)
 }
 
 void ComponentTransform::DrawInspector()
-{
-	float3 lastEulerRotation = float3(eulerRotation.x, eulerRotation.y, eulerRotation.z);
-	
+{	
 	if (ImGui::CollapsingHeader(ICON_FA_HAND_SCISSORS " Transform"))
 	{
 		if (ImGui::DragFloat3("Position", &position.x)) 
 		{
 			onTransformChanged();
 		}
-		if (ImGui::DragFloat3("Rotation", &eulerRotation.x, 0.1f, -180.f, 180.f)) 
+		if (ImGui::DragFloat3("Rotation", &eulerRotationInDeg.x, 0.1f, -180.f, 180.f)) 
 		{
-			deltaEulerRotation = lastEulerRotation - eulerRotation;
+			setupEulerRotation(true, eulerRotationInDeg);
 			onTransformChanged();
 		}
 		if (ImGui::DragFloat3("Scale", &scale.x)) 
@@ -89,4 +87,18 @@ void ComponentTransform::onTransformChanged()
 void ComponentTransform::generateGlobalMatrix()
 {
 	globalModelMatrix = myGameObject->parent == nullptr ? localModelMatrix : localModelMatrix * myGameObject->parent->myTransform->getGlobalMatrix();
+}
+
+void ComponentTransform::setupEulerRotation(bool isDeg, float3 rot)
+{
+	if (isDeg)
+	{
+		eulerRotationInDeg = rot;
+		eulerRotationInRad = float3(math::DegToRad(rot.x), math::DegToRad(rot.y), math::DegToRad(rot.z));
+	}
+	else
+	{
+		eulerRotationInRad = rot;
+		eulerRotationInDeg = float3(math::RadToDeg(rot.x), math::RadToDeg(rot.y), math::RadToDeg(rot.z));
+	}
 }

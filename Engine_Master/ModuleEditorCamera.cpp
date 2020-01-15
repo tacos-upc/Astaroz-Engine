@@ -272,7 +272,7 @@ float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
 
 void ModuleEditorCamera::raycast()
 {
-	if (App->editor->isFocusedAndHovered("Scene") && App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+	if (App->editor->isFocusedAndHovered("Scene") && App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && !ImGuizmo::IsOver())
 	{
 		float3 mousePosition = getMouseToViewportPosition();
 		if (App->spacePartition->tree->root != nullptr)

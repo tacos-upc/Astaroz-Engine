@@ -44,6 +44,7 @@ public:
 	void drawGameView();
 	void drawSceneRenderSettings();
 	void drawGameObjects(GLuint);
+	void drawGameObjectsByFrustumCulling(GLuint, ComponentCamera*);
 
 private:
 
@@ -71,6 +72,7 @@ private:
 	bool endRenderTexture();
 	void drawAllBoundingBoxes();
 	void drawGizmos(float, float, float, float);
+	void drawTreeNodeByFrustumCulling(GLuint, ComponentCamera*, AABBTreeNode*);
 };
 
 #endif __ModuleRender_H__

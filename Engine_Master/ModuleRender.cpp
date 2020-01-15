@@ -212,7 +212,7 @@ void ModuleRender::drawSceneView()
 	//Todo: Update this thing with mesh gameobjects
 	//App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
-	drawGameObjects(App->programShader->defaultProgram);
+	drawGameObjectsByFrustumCulling(App->programShader->defaultProgram, App->editorCamera->cam);
 
 	drawAllBoundingBoxes();
 	renderGrid(App->editorCamera->cam);
@@ -238,7 +238,7 @@ void ModuleRender::drawGameView()
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &cam->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &cam->projectionMatrix[0][0]);
 
-	drawGameObjects(App->programShader->defaultProgram);
+	drawGameObjectsByFrustumCulling(App->programShader->defaultProgram, cam);
 
 	if(cam->selectedClearMode == SKYBOX) skybox->draw(cam);
 
@@ -272,6 +272,32 @@ void ModuleRender::drawGameObjects(GLuint program)
 			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
 
 			App->scene->gameObjects.at(i)->Draw(program);
+		}
+	}
+}
+
+void ModuleRender::drawGameObjectsByFrustumCulling(GLuint program, ComponentCamera* cam)
+{
+	drawTreeNodeByFrustumCulling(program, cam, App->spacePartition->tree->root);
+}
+
+void ModuleRender::drawTreeNodeByFrustumCulling(GLuint program, ComponentCamera* cam, AABBTreeNode* node)
+{
+	if (node == nullptr) return;
+
+	if (cam->AABBWithinFrustum(*node->box) != OUTSIDE)
+	{
+		if (node->gameObjectID != "")
+		{
+			ComponentTransform * transform = App->scene->findById(node->gameObjectID)->myTransform;
+			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
+
+			App->scene->findById(node->gameObjectID)->Draw(program);
+		}
+		else
+		{
+			drawTreeNodeByFrustumCulling(program, cam, node->leftChild);
+			drawTreeNodeByFrustumCulling(program, cam, node->rightChild);
 		}
 	}
 }

@@ -119,7 +119,6 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 	for (size_t i = 0; i < touchedCandidates.size(); i++)
 	{
 		ComponentMesh* mesh = (ComponentMesh*)touchedCandidates.at(i)->GetComponent(MESH);
-
 		if (mesh != nullptr)
 		{
 			mesh->myMesh->updateTriangles();
@@ -141,7 +140,7 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 			}
 		}
 	}
-
+	
 	return obj;
 }
 

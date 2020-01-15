@@ -3,6 +3,7 @@
 #include "ModuleModelLoader.h"
 #include "ModuleScene.h"
 #include "ModuleInput.h"
+#include "ModuleEditor.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
@@ -385,6 +386,29 @@ bool GameObject::isfatBoxTooFat()
 		fatBoundingBox->Size().y > boundingBox->Size().y *1.5f ||
 		fatBoundingBox->Size().z > boundingBox->Size().z * 1.5f
 		);
+}
+
+void GameObject::drawGizmo()
+{
+	if (App->scene->selectedByHierarchy == this)
+	{
+		ImGuizmo::Enable(true);
+
+		float4x4 modelMatrixTransposed = myTransform->globalModelMatrix.Transposed();
+
+		ImGuizmo::Manipulate(
+			App->editorCamera->cam->viewMatrix.Transposed().ptr(),
+			App->editorCamera->cam->projectionMatrix.Transposed().ptr(),
+			ImGuizmo::TRANSLATE,
+			ImGuizmo::WORLD,
+			modelMatrixTransposed.ptr()
+		);
+
+		if (ImGuizmo::IsUsing())
+		{
+			myTransform->globalModelMatrix = modelMatrixTransposed.Transposed();
+		}
+	}
 }
 
 void GameObject::findOBBPointsForRender()

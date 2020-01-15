@@ -269,7 +269,14 @@ void ModuleScene::RemoveGameObject(GameObject * go)
 
 void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 {
-	selectedByHierarchy = selected;
+	if (selected != nullptr)
+	{
+		selectedByHierarchy = selected;
+	}
+	else
+	{
+		selectedByHierarchy = root;
+	}
 }
 
 void ModuleScene::drawHierarchy()

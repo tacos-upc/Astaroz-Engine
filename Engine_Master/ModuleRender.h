@@ -68,6 +68,7 @@ private:
 	bool beginRenderTexture(int, int, GLuint*, GLuint*, GLuint*);
 	bool endRenderTexture();
 	void drawAllBoundingBoxes();
+	void drawGizmos(float, float, float, float);
 };
 
 #endif __ModuleRender_H__

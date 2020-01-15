@@ -9,6 +9,7 @@
 #include "glew.h"
 #include "ModuleDebugDraw.h"
 #include "debugdraw.h"
+#include "GameObject.h"
 #include "ComponentTransform.h"
 
 ModuleRender::ModuleRender()
@@ -180,9 +181,22 @@ void ModuleRender::drawAllBoundingBoxes()
 	glUseProgram(0);
 }
 
+void ModuleRender::drawGizmos(float posX, float posY, float width, float height)
+{
+	//Gizmos
+	ImGuizmo::SetRect(posX, posY, width, height);
+	ImGuizmo::SetDrawlist();
+
+	if (App->scene->selectedByHierarchy != nullptr)
+	{
+		App->scene->selectedByHierarchy->drawGizmo();
+	}
+}
+
 void ModuleRender::drawSceneView()
 {
 	ImVec2 size = ImGui::GetWindowSize();
+	ImVec2 pos = ImGui::GetWindowPos();
 
 	beginRenderTexture(size.x, size.y, &sceneFBO, &sceneTexture, &sceneRBO);
 
@@ -201,6 +215,8 @@ void ModuleRender::drawSceneView()
 	drawAllBoundingBoxes();
 	renderGrid(App->editorCamera->cam);
 	ImGui::Image((void*)sceneTexture, ImVec2(size.x, size.y - 40), ImVec2(0, 1), ImVec2(1, 0));
+
+	drawGizmos(pos.x, pos.y, size.x, size.y);
 
 	App->debugDraw->Draw(App->editorCamera->cam, sceneFBO, App->window->width, App->window->height);
 	endRenderTexture();

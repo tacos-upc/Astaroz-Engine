@@ -2,6 +2,7 @@
 #include "ModuleModelLoader.h"
 #include "ModuleProgramShader.h"
 #include "ModuleEditor.h"
+#include "ModuleScene.h"
 #include "ModuleTime.h"
 #include "ModuleSpacePartition.h"
 #include "ComponentCamera.h"
@@ -52,20 +53,16 @@ update_status ModuleEditorCamera::PreUpdate()
 	updateRotation(dt);
 	updateOrbit(dt);
 	updateFocus();
+
 	cam->reloadMatrices();
-
-	cam->DrawFrustum(float3(1.f, 0.f, 0.f));
-
+	//cam->DrawFrustum(float3(1.f, 0.f, 0.f));
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditorCamera::Update()
 {
-	if (App->editor->getFocusedWindowData()->name == "Scene")
-	{
-		raycast();
-	}
+	raycast();
 
 	return UPDATE_CONTINUE;
 }
@@ -275,17 +272,25 @@ float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
 
 void ModuleEditorCamera::raycast()
 {
-	float3 mousePosition = getMouseToViewportPosition();
-	if (App->spacePartition->tree->root != nullptr)
+	if (App->editor->getFocusedWindowData()->name == "Scene" && App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
 	{
-		LineSegment segment = cam->raycast(mousePosition);
-		bool hitsRoot = segment.Intersects(*App->spacePartition->tree->root->box);
-		
-		GameObject* touched = cam->getTouchedGameObject(App->spacePartition->tree->root, &segment);
-
-		if(touched != nullptr)
+		float3 mousePosition = getMouseToViewportPosition();
+		if (App->spacePartition->tree->root != nullptr)
 		{
-			LOG("HE TOCADO UN GAMEOBJECT!! %s", touched->id.c_str());
+			LineSegment segment = cam->raycast(mousePosition);
+			bool hitsRoot = segment.Intersects(*App->spacePartition->tree->root->box);
+
+			GameObject* touched = cam->getTouchedGameObject(App->spacePartition->tree->root, &segment);
+
+			if (touched != nullptr)
+			{
+				App->scene->SelectObjectInHierarchy(touched);
+			}
+			else	
+			{
+				App->scene->SelectObjectInHierarchy(nullptr);
+			}
+
 		}
 	}
 }

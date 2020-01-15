@@ -12,9 +12,10 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "ImGUI/ImGuizmo.h"
 
 
-struct FocusedWindowData
+struct WindowData
 {
 	const char* name;
 	float posX;
@@ -41,7 +42,7 @@ public:
 	bool scrollToBottom, show_about_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
-	FocusedWindowData* getFocusedWindowData();
+	WindowData* getFocusedWindowData();
 
 private:
 	void loadIcons();
@@ -54,7 +55,7 @@ private:
 	void updateFocusedWindowData(const char*);
 
 	bool openComponentsMenu;
-	FocusedWindowData* focusedWindowData;
+	WindowData* focusedWindowData;
 };
 
 #endif __ModuleEditor_H__

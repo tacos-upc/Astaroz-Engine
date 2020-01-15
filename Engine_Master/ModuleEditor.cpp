@@ -25,7 +25,7 @@ bool ModuleEditor::Init()
 	show_about_window = false;
 	show_configuration_window = false;
 	openComponentsMenu = false;
-	focusedWindowData = new FocusedWindowData();
+	focusedWindowData = new WindowData();
 	return true;
 }
 
@@ -70,6 +70,7 @@ update_status ModuleEditor::PreUpdate()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	return UPDATE_CONTINUE;
 }
@@ -111,7 +112,7 @@ void ModuleEditor::processEvent(SDL_Event event)
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 
-FocusedWindowData* ModuleEditor::getFocusedWindowData()
+WindowData* ModuleEditor::getFocusedWindowData()
 {
 	return focusedWindowData;
 }

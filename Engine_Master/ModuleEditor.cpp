@@ -423,7 +423,7 @@ void ModuleEditor::drawGizmoControls()
 		if (ImGui::Button(ICON_FA_FAN, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::ROTATE;
 
 		ImGui::SameLine();
-		if (ImGui::Button(ICON_FA_EXPAND, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::SCALE;
+		if (ImGui::Button(ICON_FA_EXPAND_ARROWS_ALT, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::SCALE;
 	}
 	ImGui::End();
 }

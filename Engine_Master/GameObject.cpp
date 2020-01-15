@@ -390,7 +390,7 @@ bool GameObject::isfatBoxTooFat()
 
 void GameObject::drawGizmo()
 {
-	if (App->scene->selectedByHierarchy == this)
+	if (App->scene->selectedByHierarchy == this && this != App->scene->getRoot())
 	{
 		ImGuizmo::Enable(true);
 

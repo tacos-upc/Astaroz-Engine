@@ -42,7 +42,11 @@ public:
 	bool scrollToBottom, show_about_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
+	bool isFocused(const char*);
+	bool isHovered(const char*);
+	bool isFocusedAndHovered(const char*);
 	WindowData* getFocusedWindowData();
+	WindowData* getHoveredWindowData();
 
 private:
 	void loadIcons();
@@ -52,10 +56,13 @@ private:
 	void drawInspectorPanel();
 	void drawComponentsMenu(float);
 	void drawLogPanel();
+	void updateWindowData(const char*);
 	void updateFocusedWindowData(const char*);
+	void updateHoveredWindowData(const char*);
 
 	bool openComponentsMenu;
 	WindowData* focusedWindowData;
+	WindowData* hoveredWindowData;
 };
 
 #endif __ModuleEditor_H__

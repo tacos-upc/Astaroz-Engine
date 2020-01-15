@@ -26,6 +26,7 @@ bool ModuleEditor::Init()
 	show_configuration_window = false;
 	openComponentsMenu = false;
 	focusedWindowData = new WindowData();
+	hoveredWindowData = new WindowData();
 	return true;
 }
 
@@ -102,6 +103,7 @@ bool ModuleEditor::CleanUp()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+	delete hoveredWindowData;
 	delete focusedWindowData;
 
 	return true;
@@ -112,9 +114,29 @@ void ModuleEditor::processEvent(SDL_Event event)
 	ImGui_ImplSDL2_ProcessEvent(&event);
 }
 
+bool ModuleEditor::isFocused(const char* name)
+{
+	return focusedWindowData->name == name;
+}
+
+bool ModuleEditor::isHovered(const char* name)
+{
+	return hoveredWindowData->name == name;
+}
+
+bool ModuleEditor::isFocusedAndHovered(const char* name)
+{
+	return isFocused(name) && isHovered(name);
+}
+
 WindowData* ModuleEditor::getFocusedWindowData()
 {
 	return focusedWindowData;
+}
+
+WindowData * ModuleEditor::getHoveredWindowData()
+{
+	return hoveredWindowData;
 }
 
 void ModuleEditor::loadIcons()
@@ -160,7 +182,7 @@ void ModuleEditor::drawMainMenu()
 	{
 		if (ImGui::Begin("About...", &show_about_window))
 		{
-			updateFocusedWindowData("About");
+			updateWindowData("About");
 			
 			ImGui::BulletText("Engine name: Astaroz engine");
 			ImGui::Text("This engine was performed in UPC master - game programming");
@@ -184,7 +206,7 @@ void ModuleEditor::drawMainMenu()
 	{
 		if (ImGui::Begin("Configuration", &show_configuration_window))
 		{
-			updateFocusedWindowData("Configuration");
+			updateWindowData("Configuration");
 
 			//FPS
 			fps_log.push_back(ImGui::GetIO().Framerate);
@@ -254,7 +276,7 @@ void ModuleEditor::drawHierarchyPanel()
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
 	if (ImGui::Begin("Left panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
-		updateFocusedWindowData("Left Panel");
+		updateWindowData("Left Panel");
 
 		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
 		{
@@ -292,7 +314,7 @@ void ModuleEditor::drawCameraPanel()
 	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
 	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
-		updateFocusedWindowData("Scene");
+		updateWindowData("Scene");
 
 		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
 		{
@@ -323,7 +345,7 @@ void ModuleEditor::drawInspectorPanel()
 	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 50.0f));
 	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 	{
-		updateFocusedWindowData("Inspector");
+		updateWindowData("Inspector");
 
 		GameObject* obj = App->scene->selectedByHierarchy;
 		if (obj != nullptr && obj != App->scene->getRoot())
@@ -354,7 +376,7 @@ void ModuleEditor::drawComponentsMenu(float y)
 		ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, 200.f));
 		if (ImGui::Begin("Components", &openComponentsMenu, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 		{
-			updateFocusedWindowData("Components");
+			updateWindowData("Components");
 
 			for (size_t i = 0; i < ComponentType::COMPONENT_TYPE_COUNT; i++)
 			{
@@ -378,7 +400,7 @@ void ModuleEditor::drawLogPanel()
 
 	if (ImGui::Begin(ICON_FA_TAPE " Logs", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 	{
-		updateFocusedWindowData("Log");
+		updateWindowData("Log");
 
 		ImGui::TextUnformatted(myBuffer.begin());
 		if (scrollToBottom)
@@ -386,6 +408,12 @@ void ModuleEditor::drawLogPanel()
 		scrollToBottom = false;
 		ImGui::End();
 	}
+}
+
+void ModuleEditor::updateWindowData(const char* name)
+{
+	updateFocusedWindowData(name);
+	updateHoveredWindowData(name);
 }
 
 void ModuleEditor::updateFocusedWindowData(const char * name)
@@ -397,5 +425,17 @@ void ModuleEditor::updateFocusedWindowData(const char * name)
 		focusedWindowData->posY = ImGui::GetWindowPos().y;
 		focusedWindowData->width = ImGui::GetWindowWidth();
 		focusedWindowData->height = ImGui::GetWindowHeight();
+	}
+}
+
+void ModuleEditor::updateHoveredWindowData(const char* name)
+{
+	if (ImGui::IsWindowHovered())
+	{
+		hoveredWindowData->name = name;
+		hoveredWindowData->posX = ImGui::GetWindowPos().x;
+		hoveredWindowData->posY = ImGui::GetWindowPos().y;
+		hoveredWindowData->width = ImGui::GetWindowWidth();
+		hoveredWindowData->height = ImGui::GetWindowHeight();
 	}
 }

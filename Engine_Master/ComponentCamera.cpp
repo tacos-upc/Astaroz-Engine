@@ -123,9 +123,15 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 		{
 			float nearDistance;
 			float farDistance;
+			LineSegment transformedSegment = LineSegment(*segment);
+			transformedSegment.Transform(mesh->myGameObject->myTransform->globalModelMatrix.Inverted());
 
-			if (segment->Intersects(*mesh->myGameObject->obb, nearDistance, farDistance))
+			OBB candidateOBB = OBB(*mesh->myGameObject->obb);
+			candidateOBB.Transform(mesh->myGameObject->myTransform->globalModelMatrix.Inverted());
+
+			if (candidateOBB.Intersects(transformedSegment, nearDistance, farDistance))
 			{
+				LOG("The ray intersects: n: %f, f: %f, b: %f", nearDistance, farDistance, bestDistance);
 				if (nearDistance < bestDistance)
 				{
 					bestDistance = nearDistance;

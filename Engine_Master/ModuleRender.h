@@ -61,6 +61,8 @@ private:
 	ImVec4 sceneClearColor;
 	bool usesGrid = true;
 	ImVec4 gridColor;
+	bool renderAABBTree = false;
+	ImVec4 AABBColor;
 	bool drawAll;
 	bool drawSpacePartition;
 

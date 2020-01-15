@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleModelLoader.h"
 #include "ModuleProgramShader.h"
+#include "ModuleSpacePartition.h"
 #include "ModuleScene.h"
 #include "Skybox.h"
 #include "glew.h"
@@ -61,6 +62,7 @@ bool ModuleRender::Init()
 	
 	sceneClearColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	gridColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	AABBColor = ImVec4(1.f, 1.f, 1.f, 1.0f);
 
 	return true;
 }
@@ -177,6 +179,7 @@ void ModuleRender::drawAllBoundingBoxes()
 	glUseProgram(gridProgram);
 
 	App->scene->drawAllBoundingBoxes();
+	if (renderAABBTree) App->spacePartition->drawTree(AABBColor);
 
 	glUseProgram(0);
 }
@@ -251,6 +254,11 @@ void ModuleRender::drawSceneRenderSettings()
 
 	ImGui::Checkbox("Uses grid?", &usesGrid);
 	if (usesGrid) ImGui::ColorEdit3("Grid Color", &gridColor.x);
+
+	ImGui::Separator();
+
+	ImGui::Checkbox("Show AABB Tree?", &renderAABBTree);
+	if (renderAABBTree) ImGui::ColorEdit3("AABB Tree Color", &AABBColor.x);
 }
 
 //TODO: Update this method with proper gameobjects

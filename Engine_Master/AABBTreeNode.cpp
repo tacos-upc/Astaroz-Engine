@@ -56,7 +56,7 @@ AABB * AABBTreeNode::Union(AABBTreeNode* B)
 {
 	AABB* C = nullptr;
 
-	if (B == nullptr || B->box == nullptr || B->box == (AABB*)0xdddddddd)
+	if (B == nullptr || B->box == nullptr || B->box == (AABB*)0xdddddddd)//This pointer is probablyy not needed
 	{
 		C = new AABB(*box);
 	}

@@ -2,6 +2,7 @@
 #include "Math/MathAll.h"
 #include "Geometry/AABB.h"
 #include "ModuleScene.h"
+#include "ModuleRender.h"
 #include "Globals.h"
 #include "Application.h"
 #include "AABBTree.h"
@@ -38,20 +39,7 @@ update_status ModuleSpacePartition::PreUpdate()
 
 update_status ModuleSpacePartition::Update()
 {
-	for (size_t i = 0; i < tree->count(); i++)
-	{
-		AABBTreeNode* node = tree->getNode(i);
-		if (node != nullptr && node->box != nullptr)
-		{
-			dd::aabb(node->box->minPoint, node->box->maxPoint, float3(0.9f, 0.9f, 0.9f));
-		}
-	}
 
-	//if(ImGui::Begin("Tree Debug", NULL, ImGuiWindowFlags_NoCollapse))
-	//{
-	//	drawTree(0);
-	//	ImGui::End();
-	//}
 
 	return UPDATE_CONTINUE;
 }
@@ -72,29 +60,14 @@ void ModuleSpacePartition::recalculateTree(GameObject* obj)
 	tree->insertLeaf(obj->id);
 }
 
-void ModuleSpacePartition::drawTree(int index)
+void ModuleSpacePartition::drawTree(ImVec4 color)
 {
-	if (tree->count() <= 0 || tree->getNode(index) == nullptr) return;
-
-	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
-	ImGui::PushID(tree->getNode(index));
-	if (tree->getNode(index)->rightChild == nullptr && tree->getNode(index)->leftChild == nullptr)
+	for (size_t i = 0; i < tree->count(); i++)
 	{
-		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-	}
-
-	bool objOpen = ImGui::TreeNodeEx(tree->getNode(index), flags, tree->getNode(index)->gameObjectID.c_str());
-
-	if (objOpen)
-	{
-		if (tree->getNode(index)->leftChild != nullptr) drawTree(tree->getNode(index)->leftChild->index);
-		if (tree->getNode(index)->rightChild != nullptr) drawTree(tree->getNode(index)->rightChild->index);
-		
-		if (!(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+		AABBTreeNode* node = tree->getNode(i);
+		if (node != nullptr && node->box != nullptr)
 		{
-			ImGui::TreePop();
+			dd::aabb(node->box->minPoint, node->box->maxPoint, float3(color.x, color.y, color.z));
 		}
 	}
-	ImGui::PopID();
 }

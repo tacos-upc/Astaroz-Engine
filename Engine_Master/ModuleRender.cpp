@@ -183,7 +183,6 @@ void ModuleRender::drawAllBoundingBoxes()
 
 void ModuleRender::drawGizmos(float posX, float posY, float width, float height)
 {
-	//Gizmos
 	ImGuizmo::SetRect(posX, posY, width, height);
 	ImGuizmo::SetDrawlist();
 

@@ -395,19 +395,12 @@ void GameObject::drawGizmo()
 		ImGuizmo::Enable(true);
 
 		float4x4 modelMatrixTransposed = myTransform->globalModelMatrix.Transposed();
-
-		ImGuizmo::Manipulate(
-			App->editorCamera->cam->viewMatrix.Transposed().ptr(),
-			App->editorCamera->cam->projectionMatrix.Transposed().ptr(),
-			ImGuizmo::TRANSLATE,
-			ImGuizmo::WORLD,
-			modelMatrixTransposed.ptr()
-		);
-
-		if (ImGuizmo::IsUsing())
-		{
-			myTransform->globalModelMatrix = modelMatrixTransposed.Transposed();
-		}
+		ImGuizmo::Manipulate(&App->editorCamera->cam->viewMatrix.Transposed()[0][0], &App->editorCamera->cam->projectionMatrix.Transposed()[0][0], ImGuizmo::TRANSLATE, ImGuizmo::WORLD, &modelMatrixTransposed[0][0]);
+		if (ImGuizmo::IsUsing()) myTransform->globalModelMatrix = modelMatrixTransposed.Transposed();
+	}
+	else
+	{
+		ImGuizmo::Enable(false);
 	}
 }
 

@@ -56,6 +56,7 @@ private:
 	void drawInspectorPanel();
 	void drawComponentsMenu(float);
 	void drawLogPanel();
+	void drawGizmoControls();
 	void updateWindowData(const char*);
 	void updateFocusedWindowData(const char*);
 	void updateHoveredWindowData(const char*);

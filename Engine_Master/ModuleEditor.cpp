@@ -79,6 +79,7 @@ update_status ModuleEditor::PreUpdate()
 update_status ModuleEditor::Update()
 {
 	drawMainMenu();
+	drawGizmoControls();
 	drawHierarchyPanel();
 	drawCameraPanel();
 	drawInspectorPanel(); 
@@ -273,7 +274,7 @@ void ModuleEditor::drawMainMenu()
 void ModuleEditor::drawHierarchyPanel()
 {
 	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height * 0.65f));
-	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 85.0f));
 	if (ImGui::Begin("Left panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
 		updateWindowData("Left Panel");
@@ -311,7 +312,7 @@ void ModuleEditor::drawHierarchyPanel()
 void ModuleEditor::drawCameraPanel()
 {
 	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.6f, App->window->height * 0.65f));
-	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 85.f));
 	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
 		updateWindowData("Scene");
@@ -342,7 +343,7 @@ void ModuleEditor::drawInspectorPanel()
 	float componentsMenuY = 0;
 
 	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height));
-	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 50.0f));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 85.0f));
 	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
 	{
 		updateWindowData("Inspector");
@@ -408,6 +409,23 @@ void ModuleEditor::drawLogPanel()
 		scrollToBottom = false;
 		ImGui::End();
 	}
+}
+
+void ModuleEditor::drawGizmoControls()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width, 8.0f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
+	if (ImGui::Begin("Gizmo Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+	{
+		if (ImGui::Button(ICON_FA_ARROWS_ALT, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::TRANSLATE;
+
+		ImGui::SameLine();
+		if (ImGui::Button(ICON_FA_FAN, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::ROTATE;
+
+		ImGui::SameLine();
+		if (ImGui::Button(ICON_FA_EXPAND, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::SCALE;
+	}
+	ImGui::End();
 }
 
 void ModuleEditor::updateWindowData(const char* name)

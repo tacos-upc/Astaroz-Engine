@@ -61,7 +61,7 @@ void ComponentTransform::DrawInspector()
 		{
 			onTransformChanged();
 		}
-		if (ImGui::DragFloat3("Rotation", &eulerRotation.x)) 
+		if (ImGui::DragFloat3("Rotation", &eulerRotation.x, 0.1f, -180.f, 180.f)) 
 		{
 			deltaEulerRotation = lastEulerRotation - eulerRotation;
 			onTransformChanged();

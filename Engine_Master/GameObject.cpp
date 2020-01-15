@@ -380,17 +380,11 @@ void GameObject::drawGizmo()
 	{
 		ImGuizmo::Enable(true);
 
-		float4x4 modelMatrixTransposed = myTransform->getGlobalMatrix().Transposed();
-		
-		float3 position, eulerRotation, scale;
-		ImGuizmo::DecomposeMatrixToComponents(modelMatrixTransposed.ptr(), position.ptr(), eulerRotation.ptr(), scale.ptr());
-		
-		ImGuizmo::Manipulate(&App->editorCamera->cam->viewMatrix.Transposed()[0][0], &App->editorCamera->cam->projectionMatrix.Transposed()[0][0], ImGuizmo::TRANSLATE, ImGuizmo::WORLD, &modelMatrixTransposed[0][0]);
+		float4x4 modelMatrixTransposed = myTransform->getGlobalMatrix().Transposed();		
+		ImGuizmo::Manipulate(&App->editorCamera->cam->viewMatrix.Transposed()[0][0], &App->editorCamera->cam->projectionMatrix.Transposed()[0][0], App->scene->preferedOperation, ImGuizmo::WORLD, &modelMatrixTransposed[0][0]);
 		
 		if (ImGuizmo::IsUsing())
-		{
-			LOG("Position: %f, %f, %f", position.x, position.y, position.z);
-		
+		{		
 			myTransform->setGlobalMatrix(modelMatrixTransposed.Transposed());
 			App->scene->SelectObjectInHierarchy(this);
 		}

@@ -39,6 +39,8 @@ bool ModuleScene::Init()
 
 	gameObjects.push_back(mainCamera);
 
+	preferedOperation = ImGuizmo::TRANSLATE;
+
 	return true;
 }
 

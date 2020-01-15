@@ -176,40 +176,32 @@ void ModuleScene::RemoveSelectedGameObject()
 {
 	if (!gameObjects.empty())
 	{
-		//TODO: Don't allow to delete ROOT (World) through its UID
-		GameObject* toBeDeleted = nullptr;
-
-		if (selectedByHierarchy != nullptr)
+		if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id)
 		{
-			toBeDeleted = selectedByHierarchy;	//prioritize selected over param if not nullptr
+			selectedByHierarchy->DeleteGameObject();
 			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be unasigned (will be pointing to ROOT next frame)
 		}
 		else
 		{
-			toBeDeleted = root;
+			LOG("You are trying to delete ROOT GameObject and it is not allowed! Please select another object in the hierarchy to delete.");
 		}
-
-		toBeDeleted->DeleteGameObject();
 	}
 }
 
-void ModuleScene::DuplicateGameObject(GameObject* go)
+void ModuleScene::DuplicateSelectedGameObject()
 {
-	//TODO: Don't allow to duplicate ROOT (World) through its UID
-	GameObject* duplicate = nullptr;
-
-	if (selectedByHierarchy != nullptr && selectedByHierarchy->GetName() != "World")
+	if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id)
 	{
-		duplicate = new GameObject(*selectedByHierarchy);
+		GameObject* duplicate = new GameObject(*selectedByHierarchy);
 		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
+		gameObjects.push_back(duplicate);
+		LOG(selectedByHierarchy->id.c_str());
+		LOG(duplicate->id.c_str());
 	}
 	else
 	{
-		duplicate = new GameObject(*go);
-		go->parent->childrenVector.push_back(duplicate);
+		LOG("You are trying to duplicate ROOT GameObject and it is not allowed! Please select another object in the hierarchy to duplicate.");
 	}
-
-	gameObjects.push_back(duplicate);
 }
 
 void ModuleScene::eraseGameObject(GameObject* go)

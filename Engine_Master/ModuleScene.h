@@ -35,7 +35,7 @@ public:
 	void CreateEmpty(GameObject* parent);
 	//void CreateGameObjectBakerHouse(GameObject* parent);
 	void RemoveSelectedGameObject();
-	void DuplicateGameObject(GameObject* go);
+	void DuplicateSelectedGameObject();
 	void SelectGameObjectInHierarchy(GameObject* selected);
 	void drawHierarchy();
 	void drawAllBoundingBoxes();

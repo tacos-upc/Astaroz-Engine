@@ -240,7 +240,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 
 		if (ImGui::Selectable("Duplicate"))
 		{
-			App->scene->DuplicateGameObject(this);
+			App->scene->DuplicateSelectedGameObject();
 		}
 
 		if (ImGui::Selectable("Delete"))

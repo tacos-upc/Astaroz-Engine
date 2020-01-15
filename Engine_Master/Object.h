@@ -1,7 +1,7 @@
-#pragma once
-#include <string>
+#ifndef __Object_H__
+#define __Object_H__
 
-using namespace std;
+#include <string>
 
 class Object
 {
@@ -12,7 +12,6 @@ public:
 	std::string id;
 
 protected:
-
 	void generateNewID();
 };
-
+#endif __Object_H__

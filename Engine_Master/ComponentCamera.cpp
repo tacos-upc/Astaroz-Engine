@@ -165,8 +165,6 @@ void ComponentCamera::reloadMatrices()
 
 int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 {
-	FrustumCollisionMode result;
-
 	float3 corners[8];
 	aabb.GetCornerPoints(corners);
 
@@ -184,14 +182,12 @@ int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 				--insideBuffer;
 			}
 		}
-		if (insideBuffer == 0) result = OUTSIDE;
+		if (insideBuffer == 0) return OUTSIDE;
 		totalWithin += pointsWithin;
 	}
 
-	if (totalWithin == 6) result = INSIDE;
-	else result = BETWEEN;
-
-	return result;
+	if (totalWithin == 6) return INSIDE;
+	return BETWEEN;
 }
 
 //True means the point is in front, otherwise it's at the back

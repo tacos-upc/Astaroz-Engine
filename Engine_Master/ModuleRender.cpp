@@ -291,11 +291,12 @@ void ModuleRender::drawTreeNodeByFrustumCulling(GLuint program, ComponentCamera*
 		{
 			ComponentTransform* transform = App->scene->findById(node->gameObjectID)->myTransform;
 
-			if (cam->AABBWithinFrustum(*transform->myGameObject->boundingBox))
-			{
+			//if (cam->AABBWithinFrustum(*transform->myGameObject->boundingBox) != OUTSIDE)
+			//{
+				LOG("Dibujo este gameobject: %s", node->gameObjectID.c_str());
 				glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
 				transform->myGameObject->Draw(program);
-			}
+			//}
 		}
 		else
 		{

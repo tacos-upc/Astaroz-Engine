@@ -179,21 +179,21 @@ void ModuleScene::RemoveSelectedGameObject()
 {
 	if (!gameObjects.empty())
 	{
-		if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id)
+		if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id && selectedByHierarchy->id != mainCamera->id)
 		{
 			selectedByHierarchy->DeleteGameObject();
 			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be unasigned (will be pointing to ROOT next frame)
 		}
 		else
 		{
-			LOG("You are trying to delete ROOT GameObject and it is not allowed! Please select another object in the hierarchy to delete.");
+			LOG("You are trying to delete ROOT GameObject or MainCamera and it is not allowed! Please select another object in the hierarchy to delete.");
 		}
 	}
 }
 
 void ModuleScene::DuplicateSelectedGameObject()
 {
-	if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id)
+	if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id && selectedByHierarchy->id != mainCamera->id)
 	{
 		GameObject* duplicate = new GameObject(*selectedByHierarchy);
 		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
@@ -201,7 +201,7 @@ void ModuleScene::DuplicateSelectedGameObject()
 	}
 	else
 	{
-		LOG("You are trying to duplicate ROOT GameObject and it is not allowed! Please select another object in the hierarchy to duplicate.");
+		LOG("You are trying to duplicate ROOT GameObject or MainCamera and it is not allowed! Please select another object in the hierarchy to duplicate.");
 	}
 }
 

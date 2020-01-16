@@ -147,9 +147,9 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 		float3 vector;
 
 		// positions
-		vector.x = mesh->mVertices[i].x*0.05;
-		vector.y = mesh->mVertices[i].y*0.05;
-		vector.z = mesh->mVertices[i].z*0.05;
+		vector.x = mesh->mVertices[i].x*0.005;
+		vector.y = mesh->mVertices[i].y*0.005;
+		vector.z = mesh->mVertices[i].z*0.005;
 		vertex.Position = vector;
 		numPolys = (vertices.size()) / 3;
 		// normals

@@ -12,6 +12,9 @@ public:
 	ComponentMaterial(GameObject* gameObject, ComponentMaterial* componentMaterial);
 	~ComponentMaterial();
 
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
 	//public variables
 	std::vector<Texture*> myTextures;
 };

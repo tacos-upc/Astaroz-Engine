@@ -41,6 +41,10 @@ public:
 	void yaw(float, float);
 	void roll(float, float);
 
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
+
 	Frustum* frustum;
 	float4x4 projectionMatrix = float4x4::zero;
 	float4x4 viewMatrix = float4x4::zero;

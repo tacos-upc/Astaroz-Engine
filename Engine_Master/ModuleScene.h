@@ -40,6 +40,8 @@ public:
 	void drawHierarchy();
 	void drawAllBoundingBoxes();
 	void eraseGameObject(GameObject* go);
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
 
 	//public variables
 	std::vector<GameObject*> gameObjects;

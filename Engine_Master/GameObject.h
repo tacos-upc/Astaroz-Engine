@@ -47,6 +47,10 @@ public:
 	void SetName(const std::string &newName);
 	std::string GetName() const;
 
+	//Serialization
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
 	//public variables
 	ComponentTransform* myTransform = nullptr;
 	ComponentMesh* myMesh = nullptr;

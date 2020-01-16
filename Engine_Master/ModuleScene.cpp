@@ -10,6 +10,9 @@
 #include "Math/float4.h"
 #include "IconsFontAwesome5.h"
 
+#include "Config.h"
+#include <stack>
+
 
 ModuleScene::ModuleScene()
 {}
@@ -29,7 +32,7 @@ bool ModuleScene::Init()
 	root = new GameObject("Root");
 	root->isRoot = true;
 
-	mainCamera = CreateGameObject("Main Camera (root)", root);
+	mainCamera = CreateGameObject("Main Camera", root);
 	mainCamera->CreateComponent(CAMERA);
 
 	gameObjects.push_back(mainCamera);
@@ -142,15 +145,15 @@ void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string tempName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* gameObject = nullptr;
-	if (selectedByHierarchy != nullptr)	//TODO: It's never null - every frame points to ROOT if ever gets nullptr
+	if (selectedByHierarchy != nullptr)
 	{
 		gameObject = CreateGameObject(tempName.c_str(), selectedByHierarchy);
 	}
 	else
 	{
-		gameObject = CreateGameObject(tempName.c_str(), parent);	//we use the parameter as parent only when 'selected' is nullptr
+		gameObject = CreateGameObject(tempName.c_str(), parent);	//only when 'selected' is nullptr, we use the parameter as parent
 	}
-	
+
 	gameObjects.push_back(gameObject);
 }
 
@@ -195,8 +198,6 @@ void ModuleScene::DuplicateSelectedGameObject()
 		GameObject* duplicate = new GameObject(*selectedByHierarchy);
 		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
 		gameObjects.push_back(duplicate);
-		LOG(selectedByHierarchy->id.c_str());
-		LOG(duplicate->id.c_str());
 	}
 	else
 	{
@@ -215,6 +216,16 @@ void ModuleScene::eraseGameObject(GameObject* go)
 void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 {
 	selectedByHierarchy = selected;
+}
+
+void ModuleScene::OnSave(Serialization& serial)
+{
+
+}
+
+void ModuleScene::OnLoad(const Serialization& serial)
+{
+
 }
 
 void ModuleScene::drawHierarchy()

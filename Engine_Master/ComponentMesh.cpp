@@ -56,3 +56,13 @@ void ComponentMesh::DrawInspector()
 		ImGui::Separator();
 	}
 }
+
+void ComponentMesh::OnSave(Serialization& serial)
+{
+
+}
+
+void ComponentMesh::OnLoad(const Serialization& serial)
+{
+
+}

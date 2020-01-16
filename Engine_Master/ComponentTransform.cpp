@@ -69,3 +69,13 @@ void ComponentTransform::DrawInspector()
 
 	deltaEulerRotation = float3(eulerRotation.x - lastEulerRotation.x, eulerRotation.y - lastEulerRotation.y, eulerRotation.z - lastEulerRotation.z);
 }
+
+void ComponentTransform::OnSave(Serialization& serial)
+{
+
+}
+
+void ComponentTransform::OnLoad(const Serialization& serial)
+{
+
+}

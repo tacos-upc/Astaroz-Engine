@@ -2,6 +2,8 @@
 #define __Component_H__
 
 #include "Globals.h"
+#include "Serialization.h"
+
 #include <string>
 
 enum ComponentType
@@ -23,7 +25,6 @@ class Component
 {
 public:
 	Component(){};
-
 	Component(const char* componentName)
 	{
 		myName = componentName;
@@ -34,8 +35,11 @@ public:
 	virtual void Update(){}
 	virtual void DrawInspector(){}
 	static const char* typeToString(int);
+
+	//pure virtual functions to force implementations to those who inherits from Component
+	virtual void OnSave(Serialization& serial) = 0;
+	virtual void OnLoad(const Serialization& serial) = 0;
 	
-	//GameObject myParent;
 	GameObject* myGameObject = nullptr;
 	ComponentType myType = TRANSFORM;
 	bool isActive = true;

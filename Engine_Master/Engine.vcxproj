@@ -47,7 +47,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>.\glew-2.1.0\include\GL;.\SDL\include;.\MathGeoLib\include;.\DevIL Windows SDK\include;.\Assimp\include\assimp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\glew-2.1.0\include\GL;.\SDL\include;.\MathGeoLib\include;.\DevIL Windows SDK\include;.\Assimp\include\assimp;.\RapidJSON\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
@@ -66,7 +66,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>.\glew-2.1.0\include\GL;.\SDL\include;.\MathGeoLib\include;.\DevIL Windows SDK\include;.\Assimp\include\assimp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\glew-2.1.0\include\GL;.\SDL\include;.\MathGeoLib\include;.\DevIL Windows SDK\include;.\Assimp\include\assimp;.\RapidJSON\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -87,6 +87,7 @@
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="Serialization.h" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="GameObject.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
+    <ClCompile Include="Serialization.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGUI\imgui.cpp" />
     <ClCompile Include="ImGUI\imgui_demo.cpp" />

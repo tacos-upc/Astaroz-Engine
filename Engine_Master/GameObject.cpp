@@ -402,6 +402,16 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 	}
 }
 
+void GameObject::OnSave(Serialization& serial)
+{
+
+}
+
+void GameObject::OnLoad(const Serialization& serial)
+{
+
+}
+
 bool GameObject::isfatBoxTooFat()
 {
 	return (

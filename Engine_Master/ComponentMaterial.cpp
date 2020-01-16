@@ -15,3 +15,13 @@ ComponentMaterial::ComponentMaterial(GameObject* gameObject, ComponentMaterial* 
 
 ComponentMaterial::~ComponentMaterial()
 {}
+
+void ComponentMaterial::OnSave(Serialization& serial)
+{
+
+}
+
+void ComponentMaterial::OnLoad(const Serialization& serial)
+{
+	
+}

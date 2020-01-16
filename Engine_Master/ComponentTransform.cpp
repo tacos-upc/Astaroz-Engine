@@ -20,7 +20,6 @@ ComponentTransform::ComponentTransform(GameObject* gameObject, ComponentTransfor
 	position = componentTransform->position;
 	rotation = componentTransform->rotation;
 	scale = componentTransform->scale;
-	UpdateMatrices();
 }
 
 ComponentTransform::~ComponentTransform()
@@ -41,7 +40,8 @@ void ComponentTransform::setGlobalMatrix(float4x4& global)
 {
 	localModelMatrix = myGameObject->parent == nullptr ? global : myGameObject->parent->myTransform->globalModelMatrix.Inverted() * global;
 
-	float3 newPosition, newScale;
+	float3 newPosition;
+	float3 newScale;
 	float3x3 newRotation;
 
 	localModelMatrix.Decompose(newPosition, newRotation, newScale);
@@ -95,7 +95,7 @@ void ComponentTransform::onTransformChanged()
 
 void ComponentTransform::generateGlobalMatrix()
 {
-	globalModelMatrix = myGameObject->parent == nullptr ? localModelMatrix : localModelMatrix * myGameObject->parent->myTransform->getGlobalMatrix();
+	globalModelMatrix = myGameObject->parent == nullptr ? localModelMatrix : myGameObject->parent->myTransform->getGlobalMatrix() * localModelMatrix;
 }
 
 void ComponentTransform::setupEulerRotation(bool isDeg, float3 rot)

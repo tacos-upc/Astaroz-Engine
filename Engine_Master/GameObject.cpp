@@ -434,7 +434,7 @@ void GameObject::drawGizmo()
 		if (ImGuizmo::IsUsing())
 		{		
 			myTransform->setGlobalMatrix(modelMatrixTransposed.Transposed());
-			App->scene->SelectObjectInHierarchy(this);
+			App->scene->SelectGameObjectInHierarchy(this);
 		}
 	}
 	else

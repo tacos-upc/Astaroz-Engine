@@ -368,11 +368,11 @@ void ModuleEditorCamera::raycast()
 
 			if (touched != nullptr)
 			{
-				App->scene->SelectObjectInHierarchy(touched);
+				App->scene->SelectGameObjectInHierarchy(touched);
 			}
 			else	
 			{
-				App->scene->SelectObjectInHierarchy(nullptr);
+				App->scene->SelectGameObjectInHierarchy(nullptr);
 			}
 
 		}

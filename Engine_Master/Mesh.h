@@ -70,6 +70,7 @@ public:
 	void Draw(unsigned int program) const;
 	void updateTexture(Texture* texture);
 	void setUniforms();
+	void updateTriangles();
 	unsigned int material;
 
 

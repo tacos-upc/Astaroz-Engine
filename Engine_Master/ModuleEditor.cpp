@@ -1,9 +1,13 @@
 #include "ModuleEditor.h"
 #include "windows.h"
-
 #include "version.h"
 #include "IL/il.h"
-
+#include "IconsFontAwesome5.h"
+#include "IconsFontAwesome5Brands.h"
+#include "IconsFontAwesome5.h"
+#include "ModuleTime.h"
+#include "ModuleScene.h"
+#include "ModuleEditorCamera.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -17,17 +21,26 @@ ModuleEditor::~ModuleEditor()
 
 bool ModuleEditor::Init()
 {
+	//flags to show windows
+	show_about_window = false;
+	show_configuration_window = false;
+	openComponentsMenu = false;
+	return true;
+}
+
+bool ModuleEditor::Start()
+{
 	// Initialize OpenGL loader
-	#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 	bool err = gl3wInit() != 0;
-	#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 	bool err = glewInit() != GLEW_OK;
-	#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 	bool err = gladLoadGL() == 0;
-	#else
+#else
 	bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
-	#endif
-	if (err){
+#endif
+	if (err) {
 		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
 		return 1;
 	}
@@ -40,17 +53,13 @@ bool ModuleEditor::Init()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
+	//ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glcontext);
 	ImGui_ImplOpenGL3_Init();
 
-	//flags to show windows
-	show_demo_window = false;
-	show_log_window = false;
-	show_about_window = false;
-	show_configuration_window = false;
+	loadIcons();
 
 	return true;
 }
@@ -66,13 +75,67 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
+	drawMainMenu();
+	drawHierarchyPanel();
+	drawCameraPanel();
+	drawInspectorPanel(); 
+	drawLogPanel();
+
+	return UPDATE_CONTINUE;
+}
+
+update_status ModuleEditor::PostUpdate()
+{
+	//Draw
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	return UPDATE_CONTINUE;
+}
+
+// Called before quitting
+bool ModuleEditor::CleanUp()
+{
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
+	return true;
+}
+
+void ModuleEditor::processEvent(SDL_Event event)
+{
+	ImGui_ImplSDL2_ProcessEvent(&event);
+}
+
+void ModuleEditor::loadIcons()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	static const ImWchar icons[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+	ImFontConfig config;
+	config.MergeMode = true;
+	config.PixelSnapH = true;
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAS, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAR, 12.f, &config, icons);
+
+	io.Fonts->AddFontDefault();
+	static const ImWchar fabIcons[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
+	io.Fonts->AddFontFromFileTTF("./fonts/" FONT_ICON_FILE_NAME_FAB, 12.f, &config, fabIcons);
+}
+
+void ModuleEditor::drawMainMenu()
+{
 	//Menu
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("Tools"))
 		{
-			ImGui::MenuItem("Demo window", NULL, &show_demo_window);
-			ImGui::MenuItem("Logger console", NULL, &show_log_window);
 			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);
 			ImGui::EndMenu();
 		};
@@ -83,23 +146,8 @@ update_status ModuleEditor::Update()
 		};
 		ImGui::EndMainMenuBar();
 	}
-	//Demo flag
-	if (show_demo_window) 
-	{
-		ImGui::ShowDemoWindow();
-	}
-	//Log flag
-	if (show_log_window) 
-	{
-		ImGui::Begin("Logger Console", &show_log_window);
-		ImGui::TextUnformatted(myBuffer.begin());
-		if (scrollToBottom)
-			ImGui::SetScrollHere(1.0f);
-		scrollToBottom = false;
-		ImGui::End();
-	}
 	//About flag
-	if (show_about_window) 
+	if (show_about_window)
 	{
 		ImGui::Begin("About...", &show_about_window);
 		ImGui::BulletText("Engine name: Astaroz engine");
@@ -122,7 +170,7 @@ update_status ModuleEditor::Update()
 	if (show_configuration_window)
 	{
 		ImGui::Begin("Configuration", &show_configuration_window);
-		
+
 		//FPS
 		fps_log.push_back(ImGui::GetIO().Framerate);
 		if (fps_log.size() > 25) //Divides graph by sections like in PDF image
@@ -155,7 +203,6 @@ update_status ModuleEditor::Update()
 		//Hardware detection
 		if (ImGui::TreeNode("Hardware detection"))
 		{
-
 			ImGui::Text("CPU cores: %d", SDL_GetCPUCount());
 			ImGui::Text("CPU cache line size : %d B", SDL_GetCPUCacheLineSize());
 			ImGui::Separator();
@@ -183,36 +230,134 @@ update_status ModuleEditor::Update()
 		}
 		ImGui::End();
 	}
-
-	//Draw
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-	
-
-	return UPDATE_CONTINUE;
 }
 
-update_status ModuleEditor::PostUpdate()
+void ModuleEditor::drawHierarchyPanel()
 {
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height * 0.65f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
+	if (ImGui::Begin("Left panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+	{
+		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
+		{
+			//Hierarchy tab
+			if (ImGui::BeginTabItem(ICON_FA_SITEMAP " Hierarchy"))
+			{
+				App->scene->drawHierarchy();
 
-	return UPDATE_CONTINUE;
+				ImGui::EndTabItem();
+			}
+			//Settings tab
+			if (ImGui::BeginTabItem(ICON_FA_COG " Engine Settings"))
+			{
+				if (ImGui::CollapsingHeader(ICON_FA_CLOCK " Time"))
+				{
+					App->time->drawTimeData();
+					ImGui::Separator();
+				}
+				if (ImGui::CollapsingHeader(ICON_FA_CAMERA_RETRO " Scene"))
+				{
+					App->renderer->drawSceneRenderSettings();
+					ImGui::Separator();
+				}
+				ImGui::EndTabItem();
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+	}
 }
 
-// Called before quitting
-bool ModuleEditor::CleanUp()
+void ModuleEditor::drawCameraPanel()
 {
-	// Cleanup
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.6f, App->window->height * 0.65f));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
+	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+	{
+		if (ImGui::BeginTabBar("", ImGuiTabBarFlags_FittingPolicyScroll))
+		{
+			//Settings tab
+			if (ImGui::BeginTabItem(ICON_FA_FEATHER_ALT " Scene"))
+			{
+				App->renderer->drawSceneView();
+				ImGui::EndTabItem();
+			}
 
-	return true;
+			//HIierarchy tab
+			if (ImGui::BeginTabItem(ICON_FA_GAMEPAD " Game"))
+			{
+				App->renderer->drawGameView();
+				ImGui::EndTabItem();
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+	}
 }
 
-void ModuleEditor::processEvent(SDL_Event event)
+void ModuleEditor::drawInspectorPanel()
 {
-	ImGui_ImplSDL2_ProcessEvent(&event);
+	float componentsMenuY = 0;
+
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, 50.0f));
+	if (ImGui::Begin(ICON_FA_GLASSES " Inspector", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+	{
+		GameObject* obj = App->scene->selectedByHierarchy;
+		if (obj != nullptr && obj != App->scene->getRoot())
+		{
+			obj->DrawInspector();
+
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
+			ImGui::Separator();
+			ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.2f);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10.0f);
+			if (ImGui::Button("Add Component", ImVec2(ImGui::GetWindowSize().x * 0.6f, 25.0f)))
+			{
+				openComponentsMenu = true;
+			}
+			componentsMenuY = ImGui::GetCursorPosY() + 40.f;
+		}
+		ImGui::End();
+		drawComponentsMenu(componentsMenuY);
+
+	}
 }
 
+void ModuleEditor::drawComponentsMenu(float y)
+{
+	if (openComponentsMenu)
+	{
+		ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.8f, y));
+		ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, 200.f));
+		if (ImGui::Begin("Components", &openComponentsMenu, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+		{
+			for (size_t i = 0; i < ComponentType::COMPONENT_TYPE_COUNT; i++)
+			{
+				ImGui::SetNextItemWidth(App->window->width * 0.2f - 5.f);
+				if (ImGui::Button(Component::typeToString(i)))
+				{
+					App->scene->selectedByHierarchy->CreateComponent((ComponentType)i);
+					openComponentsMenu = false;
+				}
+			}
+			if (!ImGui::IsWindowFocused()) openComponentsMenu = false;
+			ImGui::End();
+		}
+	}
+}
+
+void ModuleEditor::drawLogPanel()
+{
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.8f, App->window->height * 0.3f));
+	ImGui::SetNextWindowPos(ImVec2(0, 50.0f + App->window->height * 0.65f));
+
+	if (ImGui::Begin(ICON_FA_TAPE " Logs", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+	{
+		ImGui::TextUnformatted(myBuffer.begin());
+		if (scrollToBottom)
+			ImGui::SetScrollHere(1.0f);
+		scrollToBottom = false;
+		ImGui::End();
+	}
+}

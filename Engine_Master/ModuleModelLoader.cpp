@@ -35,9 +35,14 @@ bool ModuleModelLoader::Init()
 	sLog.callback = addLog;
 	aiAttachLogStream(&sLog);
 
+	return true;
+}
+
+bool ModuleModelLoader::Start()
+{
 	//Always start by loading the Baker house model
 
-	LoadModel(MODEL_BUNNY);
+	//LoadModel(MODEL_BUNNY);
 	//LoadModel(MODEL_BAKER_PATH);
 
 	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -51,6 +56,12 @@ bool ModuleModelLoader::Init()
 	//materials.back().shininess = 20.0f;
 	//materials.back().k_diffuse = 0.5f;
 	//materials.back().k_ambient = 1.0f;
+
+	//Init variables
+	numMeshes = 0;
+	numVertices = 0;
+	numTextures = 0;
+	numPolys = NULL;
 
 	return true;
 }
@@ -85,7 +96,7 @@ bool ModuleModelLoader::CleanUp()
 	return true;
 }
 
-void ModuleModelLoader::Draw(unsigned int program)
+void ModuleModelLoader::DrawAll(unsigned int program)
 {
 	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
@@ -110,33 +121,41 @@ void ModuleModelLoader::LoadModel(const char* path)
 	}
 	
 	
-	//Next step
-	processNode(scene->mRootNode, scene);
-	
+	//Next step	
 	scene->mNumMeshes;
+	processNode(scene->mRootNode, scene, path);
+
 	//Fill AABB member value
 	generateBoundingBox();
 
 	//Center camera to new model
-	App->editorCamera->focusModel();
+	//App->editorCamera->focusModel();
+
+	//Take the model's name from path
+	modelName = path; //TODO --> extract name from path and not the full route
 }
 
-void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
+void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene, const char* path)
 {
+	
+	LOG("Before Meshes: %d", meshes.size());
+	LOG("------------------------------------------")
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(new Mesh(processMesh(mesh, scene)));
+		meshes.push_back(new Mesh(processMesh(mesh, scene, path)));
 		meshes.back()->material = materials.size()-1;
+		LOG("After Meshes: %d", meshes.size());
+		LOG("------------------------------------------");
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(node->mChildren[i], scene);
+		processNode(node->mChildren[i], scene, path);
 	}
 }
 
-Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -222,7 +241,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 	
 	
 	Material* myMaterial = new Material(textures, texture.id, texture2.id, texture4.id,texture3.id );
-	myMaterial->program = App->programShader->myProgram;
+	myMaterial->program = App->programShader->defaultProgram;
 	materials.push_back(myMaterial);
 	
 	
@@ -329,10 +348,6 @@ std::vector<Texture*> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, a
 
 void ModuleModelLoader::loadNewModel(const char* path)
 {
-	//Clear lists from member variables
-	texturesLoaded.clear();
-	meshes.clear();
-
 	//Load model
 	LoadModel(path);
 }
@@ -386,7 +401,7 @@ bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, co
 		
 
 		Material mat;
-		mat.program = App->programShader->myProgram;
+		mat.program = App->programShader->defaultProgram;
 		mat.object_color = color;
 
 		materials.push_back(&mat);
@@ -413,7 +428,7 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 		meshes.back()->material = materials.size();
 		
 		Material mat;
-		mat.program = App->programShader->myProgram;
+		mat.program = App->programShader->defaultProgram;
 		mat.object_color = color;
 
 		materials.push_back(&mat);
@@ -531,3 +546,8 @@ void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, 
 	bsphere.radius = (max_v - min_v).Length()*0.5f;
 }
 
+void ModuleModelLoader::emptyScene()
+{
+	meshes.clear();
+	numTextures = 0;
+}

@@ -22,17 +22,21 @@ public:
 	~ModuleModelLoader();
 
 	bool Init();
+	bool Start();
 	update_status Update();
 	bool CleanUp();
 
 	void LoadModel(const char*);
-	void Draw(unsigned int program);
-	void processNode(aiNode*, const aiScene*);
-	Mesh processMesh(aiMesh*, const aiScene*);
+
+
 	std::vector<Texture*> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
+	void addTexture(Texture* texture);
+	void DrawAll(unsigned int program);
+	void processNode(aiNode*, const aiScene*, const char* path);
+	Mesh processMesh(aiMesh*, const aiScene*, const char* path);
 	void loadNewModel(const char* path);
 	void generateBoundingBox();
-	void addTexture(Texture* texture);
+	void emptyScene();
 
 	bool LoadSphere(const char* name, const math::float3& pos, const math::Quat& rot, float size, unsigned slices, unsigned stacks, const math::float4& color);
 	bool LoadTorus(const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, unsigned slices, unsigned stacks, const math::float4& color);
@@ -44,9 +48,9 @@ public:
 
 	//For our model
 	AABB myBoundingBox;
-	unsigned int numMeshes = 0;
-	int numPolys = NULL;
-	unsigned int numVertices = 0;
+	unsigned int numMeshes;
+	int numPolys;
+	unsigned int numVertices;
 
 	//For textures in our model
 	int textureWidth;
@@ -67,6 +71,10 @@ public:
 	math::float3 light_pos = math::float3(1.0f, 1.0f, 1.0f);
 	float ambient = 0.3f;
 	Sphere bsphere;
+
+	//General
+	std::string modelName;
+	int numTextures;
 };
 
 #endif __ModuleModelLoader_H__

@@ -1,8 +1,5 @@
 #include "ModuleTexture.h"
-
 #include "glew.h"
-
-
 
 ModuleTexture::ModuleTexture()
 {
@@ -28,30 +25,6 @@ bool ModuleTexture::Init()
 	//ilGenImages(1, &myTextureId);
 	//ilBindImage(myTextureId);
 
-	/* THIS PART WAS FOR THE FIRST EXERCISE WITH 'LENNA' IMAGE
-	
-	//Image
-	ilGenImages(1, &myLena);
-	ilBindImage(myLena);
-
-	//Load image
-	if (!ilLoadImage("textures/lenna.png"))
-	{
-		//Errors
-		ILenum err = ilGetError();
-		LOG("Failed loading image");
-	}
-
-	//Il renderer
-	ilutRenderer(ILUT_OPENGL);
-
-	//Assign member variables
-	myData = ilGetData();
-	myTexture = ilutGLBindTexImage();
-
-	//Once assigned, we can 'unbind' the image
-	ilDeleteImages(1, &myLena);
-	*/
 	return true;
 }
 
@@ -162,4 +135,31 @@ Texture ModuleTexture::LoadTexture(const char* path)
 		texture.path = path;
 	
 	return texture;
+}
+
+void ModuleTexture::loadSkybox(const char* path, int index)
+{
+	ILuint img;
+	ilGenImages(1, &img);
+	ilBindImage(img);
+
+	ilLoadImage(path);
+	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+
+	ILinfo ImageInfo;
+	iluGetImageInfo(&ImageInfo);
+	if (!ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT) iluFlipImage();
+
+	ILubyte* data = ilGetData();
+
+	int width = ilGetInteger(IL_IMAGE_WIDTH);
+	int heigth = ilGetInteger(IL_IMAGE_HEIGHT);
+
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, 0, GL_RGB, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		ilDeleteImages(1, &img);
+	}
+
+	return;
 }

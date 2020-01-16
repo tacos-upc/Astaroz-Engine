@@ -9,7 +9,10 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleTexture.h"
 #include "ModuleModelLoader.h"
+#include "ModuleTime.h"
+#include "ModuleScene.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleSpacePartition.h"
 #include "MsTimer.h"
 
 using namespace std;
@@ -18,15 +21,17 @@ Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
+	modules.push_back(editor = new ModuleEditor());
+	modules.push_back(time = new ModuleTime());
 	modules.push_back(texture = new ModuleTexture());
-	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
-	//modules.push_back(triangle = new ModuleTriangle());
 	modules.push_back(programShader = new ModuleProgramShader());
+	modules.push_back(scene = new ModuleScene());
 	modules.push_back(editorCamera = new ModuleEditorCamera());
 	modules.push_back(modelLoader = new ModuleModelLoader());
-	modules.push_back(editor = new ModuleEditor());
-	modules.push_back(debug_draw = new ModuleDebugDraw());
+	modules.push_back(spacePartition = new ModuleSpacePartition());
+	modules.push_back(debugDraw = new ModuleDebugDraw());
+	modules.push_back(renderer = new ModuleRender());
 }
 
 Application::~Application()
@@ -47,6 +52,9 @@ bool Application::Init()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
 
+	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+		ret = (*it)->Start();
+
 	timer.stop();
 	LOG("init total time: %d ms", timer.read());
 
@@ -57,6 +65,8 @@ update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;
 
+	time->frameStart();
+
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PreUpdate();
 
@@ -66,6 +76,8 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
+	time->frameEnd();
+	
 	return ret;
 }
 

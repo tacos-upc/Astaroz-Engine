@@ -15,7 +15,10 @@ class ModuleTexture;
 class ModuleEditor;
 class ModuleEditorCamera;
 class ModuleModelLoader;
+class ModuleTime;
+class ModuleScene;
 class ModuleDebugDraw;
+class ModuleSpacePartition;
 
 class Application
 {
@@ -38,7 +41,11 @@ public:
 	ModuleEditor* editor = nullptr;
 	ModuleEditorCamera* editorCamera = nullptr;
 	ModuleModelLoader* modelLoader = nullptr;
-	ModuleDebugDraw* debug_draw = nullptr;
+	ModuleScene* scene = nullptr;
+	ModuleTime* time = nullptr;
+	ModuleDebugDraw* debugDraw = nullptr;
+	ModuleSpacePartition* spacePartition = nullptr;
+
 private:
 	std::list<Module*> modules;
 };

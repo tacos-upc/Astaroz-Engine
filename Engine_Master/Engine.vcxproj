@@ -51,6 +51,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <AdditionalIncludeDirectories>.\glew-2.1.0\include\GL;.\SDL\include;.\MathGeoLib\include;.\DevIL Windows SDK\include;.\Assimp\include\assimp</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -80,8 +81,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AABBTree.h" />
+    <ClInclude Include="AABBTreeNode.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentCamera.h" />
+    <ClInclude Include="ComponentMaterial.h" />
+    <ClInclude Include="ComponentMesh.h" />
+    <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="Dummy.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="IconsFontAwesome5.h" />
+    <ClInclude Include="IconsFontAwesome5Brands.h" />
     <ClInclude Include="ImGUI\imconfig.h" />
     <ClInclude Include="ImGUI\imgui.h" />
     <ClInclude Include="ImGUI\imgui_impl_opengl3.h" />
@@ -162,13 +175,33 @@
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="ModuleProgramShader.h" />
     <ClInclude Include="ModuleRender.h" />
+    <ClInclude Include="ModuleScene.h" />
+    <ClInclude Include="ModuleSpacePartition.h" />
     <ClInclude Include="ModuleTexture.h" />
+    <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleTriangle.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MsTimer.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Util\debug_draw.hpp" />
+    <ClInclude Include="Util\par_shapes.h" />
+    <ClInclude Include="Util\uuid\export.h" />
+    <ClInclude Include="Util\uuid\uuid-io.h" />
+    <ClInclude Include="Util\uuid\uuid.h" />
+    <ClInclude Include="Util\uuid\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABBTree.cpp" />
+    <ClCompile Include="AABBTreeNode.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ComponentCamera.cpp" />
+    <ClCompile Include="ComponentMaterial.cpp" />
+    <ClCompile Include="ComponentMesh.cpp" />
+    <ClCompile Include="ComponentTransform.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ImGUI\imgui.cpp" />
     <ClCompile Include="ImGUI\imgui_demo.cpp" />
     <ClCompile Include="ImGUI\imgui_draw.cpp" />
@@ -220,10 +253,18 @@
     <ClCompile Include="ModuleModelLoader.cpp" />
     <ClCompile Include="ModuleProgramShader.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
+    <ClCompile Include="ModuleScene.cpp" />
+    <ClCompile Include="ModuleSpacePartition.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
+    <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleTriangle.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MsTimer.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Util\uuid\uuid-io.cpp" />
+    <ClCompile Include="Util\uuid\uuid-windows.cpp" />
+    <ClCompile Include="Util\uuid\uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl" />
@@ -232,6 +273,7 @@
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+    <None Include="Util\uuid\uuid.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

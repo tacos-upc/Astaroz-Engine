@@ -1,273 +1,350 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleModelLoader.h"
+#include "ModuleTime.h"
+#include "ComponentCamera.h"
+#include "Point.h"
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
 
 
 ModuleEditorCamera::ModuleEditorCamera()
-{}
 
+{
+
+}
 
 ModuleEditorCamera::~ModuleEditorCamera()
-{}
-
-bool ModuleEditorCamera::Init() 
 {
-	//Init variables
-	multiplierMovSpeed = 1.f;
-	rotSpeed = 200.f;
-	zoomSpeed = 1.5f;
-	pitch = 0.f;
-	yaw = -90.f;
-	radius = 0.f;
-	orbitX = 0.f;
-	orbitY = 0.f;
-	allowMovement = false;
 
-	//Frustum
-	myFrustum.type = FrustumType::PerspectiveFrustum;
-	myFrustum.pos = float3::zero;
-	myFrustum.front = -float3::unitZ;
-	myFrustum.up = float3::unitY;
-	myFrustum.nearPlaneDistance = 0.1f;
-	myFrustum.farPlaneDistance = 100.0f;
-	myFrustum.verticalFov = math::pi / 4.0f;
-	myFrustum.horizontalFov = 2.f * atanf(tanf(myFrustum.verticalFov * 0.5f) * calculateAspectRatio());
+}
 
-	//Matrices
-	proj = myFrustum.ProjectionMatrix();
-	model = float4x4::FromTRS(float3(0.0f, 0.0f, -4.0f), float3x3::RotateY(math::pi / 4.0f), float3(1.0f, 1.0f, 1.0f));
-	//view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up); --> Done in PostUpdate, not needed to do it here
+bool ModuleEditorCamera::Init()
+{
+	cam = new ComponentCamera();
+	cam->frustum->type = FrustumType::PerspectiveFrustum;
+	setDefaultPosition();
+	cam->SetPlaneDistances(0.1f, 2000.0f);
+	cam->SetFOV(math::pi / 4.0f);
+	cam->reloadMatrices();
 
+	return true;
+
+}
+
+
+
+bool ModuleEditorCamera::Start()
+{
 	return true;
 }
 
-update_status ModuleEditorCamera::PreUpdate() 
+
+
+update_status ModuleEditorCamera::PreUpdate()
+
 {
+
+	float dt = App->time->getDeltaTime();
+	updateNavModes();
+	updatePosition(dt);
+	updateRotation(dt);
+	updateOrbit(dt);
+	updateFocus();
+	cam->reloadMatrices();
+
+
+
 	return UPDATE_CONTINUE;
+
 }
+
+
 
 update_status ModuleEditorCamera::Update()
 {
-	//Grid
-	glLineWidth(1.0f);
-	float d = 200.0f;
-	glBegin(GL_LINES);
-	for (float i = -d; i <= d; i += 1.0f)
-	{
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
-	glEnd();
-	
-	//Axis
-	glLineWidth(1.0f);
-	glBegin(GL_LINES);
-	// red X
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-	// green Y
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-	// blue Z
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-	glEnd();
-	glLineWidth(1.0f);
-
-	//Speed
-	if (App->input->isKeyDown(SDL_SCANCODE_LSHIFT))
-		multiplierMovSpeed = 2.0f;
-	else
-		multiplierMovSpeed = 1.0f;
-
-	//Focus model
-	if (App->input->isKeyDown(SDL_SCANCODE_F))
-		focusModel();
-	
-	//Movement
-	if (allowMovement)
-	{
-		if (App->input->isKeyDown(SDL_SCANCODE_A))
-			changePositionX(-0.06f);
-		if (App->input->isKeyDown(SDL_SCANCODE_D))
-			changePositionX(0.06f);
-		if (App->input->isKeyDown(SDL_SCANCODE_W))
-			changePositionZ(0.06f);
-		if (App->input->isKeyDown(SDL_SCANCODE_S))
-			changePositionZ(-0.06f);
-		if (App->input->isKeyDown(SDL_SCANCODE_Q))
-			changePositionY(-0.06f);
-		if (App->input->isKeyDown(SDL_SCANCODE_E))
-			changePositionY(0.06f);
-	}
-
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleEditorCamera::PostUpdate() 
+
+
+update_status ModuleEditorCamera::PostUpdate()
 {
-	//proj = myFrustum.ProjectionMatrix();
-
-	//Update view matrix in order to update camera position
-	view = LookAt(myFrustum.pos, myFrustum.pos + myFrustum.front, myFrustum.up);
-	//view = myFrustum.ViewMatrix();
-
 	return UPDATE_CONTINUE;
 }
 
-// Called before quitting
-bool ModuleEditorCamera::CleanUp() 
+
+
+bool ModuleEditorCamera::CleanUp()
 {
+
 	return true;
 }
 
-float4x4 ModuleEditorCamera::LookAt(float3 eye, float3 target, float3 up) 
-{
-	float4x4 matrix;
-	math::float3 f(target - eye);
-	f.Normalize();
-	math::float3 s(f.Cross(up));
-	s.Normalize();
-	math::float3 u(s.Cross(f));
-	matrix[0][0] = s.x;
-	matrix[0][1] = s.y;
-	matrix[0][2] = s.z;
-	matrix[1][0] = u.x;
-	matrix[1][1] = u.y;
-	matrix[1][2] = u.z;
-	matrix[2][0] = -f.x;
-	matrix[2][1] = -f.y;
-	matrix[2][2] = -f.z;
-	matrix[0][3] = -s.Dot(eye);
-	matrix[1][3] = -u.Dot(eye);
-	matrix[2][3] = f.Dot(eye);
-	matrix[3][0] = 0.0f;
-	matrix[3][1] = 0.0f;
-	matrix[3][2] = 0.0f;
-	matrix[3][3] = 1.0f;
 
-	return matrix;
+
+void ModuleEditorCamera::SetPosition(float x, float y, float z)
+
+{
+	cam->frustum->pos = float3(x, y, z);
 }
 
-void ModuleEditorCamera::changeFOV(float fov)
-{
-	//Change FOV
-	myFrustum.verticalFov = fov;
-	myFrustum.horizontalFov = 2.f * atanf(tanf(myFrustum.verticalFov * 0.5f) * calculateAspectRatio());
 
-	//Reasign projection matrix
-	proj = myFrustum.ProjectionMatrix();
+
+void ModuleEditorCamera::updatePosition(float dt)
+
+{
+
+	if (App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
+	if (App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
+	if (!navigationMode == FREE) return;
+	if (App->input->isKeyDown(SDL_SCANCODE_E)) moveUp(dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_Q)) moveDown(dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_A)) moveLeft(dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_D)) moveRight(dt);
+	if (App->input->isKeyDown(SDL_SCANCODE_W) || App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
+	if (App->input->isKeyDown(SDL_SCANCODE_S) || App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
+
 }
 
-float ModuleEditorCamera::calculateAspectRatio()
+
+
+void ModuleEditorCamera::updateRotation(float dt)
+
 {
-	return (float) App->window->width / App->window->height;
+
+	if (navigationMode != MovementMode::FREE) return;
+	fPoint mouseMotion = App->input->GetMouseMotion();
+
+	if (math::Abs(mouseMotion.x) > 10.0f) cam->yaw(mouseMotion.x, dt);
+	if (math::Abs(mouseMotion.y) > 5.0f) cam->pitch(mouseMotion.y, dt);
+
 }
 
-void ModuleEditorCamera::setAspectFrustum()
+
+
+void ModuleEditorCamera::updateOrbit(float dt)
 {
-	myFrustum.horizontalFov = 2.0f * atanf(tanf(myFrustum.verticalFov * 0.5f) * calculateAspectRatio());
-	proj = myFrustum.ProjectionMatrix();
-}
 
-void ModuleEditorCamera::focusModel()
-{
-	//Get the info from the model BoundingBox
-	float3 halfSize = App->modelLoader->myBoundingBox.HalfSize();
-	float distX = halfSize.x / tanf(myFrustum.horizontalFov * 0.5f);
-	float distY = halfSize.y / tanf(myFrustum.verticalFov * 0.5f);
-	float camDist = MAX(distX, distY) + halfSize.z;
-	float3 center = App->modelLoader->myBoundingBox.FaceCenterPoint(5);
+	if (navigationMode != MovementMode::ORBIT) return;
 
-	//Change camera position depending on the model
-	myFrustum.pos = center + float3(0, 0, camDist);
-	myFrustum.front = float3(0, 0, -1);
-
-	//Reset rotation
-	pitch = 0;
-	yaw = -90;
-}
-
-void ModuleEditorCamera::zoom(const float wheelY)
-{
-	if (wheelY > 0)
+	fPoint mouseMotion = App->input->GetMouseMotion();
+	if (math::Abs(mouseMotion.x) > 2.0f && App->input->isKeyDown(SDL_SCANCODE_LALT))
 	{
-		myFrustum.pos += myFrustum.front * zoomSpeed;	//Zoom in
+		orbitAngleX += mouseMotion.x;
+		orbitX(orbitAngleX, float3(0, 0, 0));
 	}
-	else if (wheelY < 0)
+
+
+
+	//I don't think we're doing anyone any favor by orbitting in Y
+	//if (math::Abs(mouseMotion.y) > 2.0f)
+	//{
+	//	orbitAngleY += mouseMotion.y;
+	//	orbitY(orbitAngleY, float3(0, 0, 0));
+	//}
+}
+
+
+
+void ModuleEditorCamera::updateFocus()
+{
+
+	if (App->input->isKeyDown(SDL_SCANCODE_F))
 	{
-		myFrustum.pos -= myFrustum.front * zoomSpeed;	//Zoom out
+		setDefaultPosition();
+		LookAt(float3::zero);
 	}
+
 }
 
-void ModuleEditorCamera::changePositionX(const float position)
+
+
+void ModuleEditorCamera::updateNavModes()
+
 {
-	myFrustum.pos += position * multiplierMovSpeed * myFrustum.WorldRight();
+
+	isFastMode = App->input->isKeyDown(SDL_SCANCODE_LSHIFT);
+
+
+
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+
+	{
+
+		navigationMode = MovementMode::FREE;
+		return;
+
+	}
+
+	else navigationMode = MovementMode::MOVEMENT_MODE_NONE;
+
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = MovementMode::ORBIT;
+	else navigationMode = MovementMode::MOVEMENT_MODE_NONE;
 }
 
-void ModuleEditorCamera::changePositionY(const float position)
+
+
+void ModuleEditorCamera::LookAt(float3 target)
 {
-	myFrustum.pos += position * multiplierMovSpeed * myFrustum.up;
+	float3 dir = (target - cam->frustum->pos).Normalized();
+	float3x3 rot = float3x3::LookAt(cam->frustum->front, dir, cam->frustum->up, float3::unitY);
+	cam->frustum->front = rot.Transform(cam->frustum->front).Normalized();
+	cam->frustum->up = rot.Transform(cam->frustum->up).Normalized();
+
 }
 
-void ModuleEditorCamera::changePositionZ(const float position)
+
+
+float ModuleEditorCamera::getCamSpeed()
 {
-	myFrustum.pos -= position * multiplierMovSpeed * myFrustum.WorldRight().Cross(float3(0,1,0));
+	return isFastMode ? CAM_SPEED * 2.0f : CAM_SPEED;
 }
 
-void ModuleEditorCamera::rotate(const float mouseMotionX, const float mouseMotionY)
+
+
+void ModuleEditorCamera::moveUp(float dt)
 {
-	//Pitch
-	float timePitch = mouseMotionY * rotSpeed;
-	if (timePitch < 0)
-		pitch = MAX(-89, pitch - timePitch);	//Limit rotation angles for pitch so we avoid square angles and upside down rotation
-	else
-		pitch = MIN(89, pitch - timePitch);
+	float3 newPosition = cam->frustum->pos;
+	newPosition.y = newPosition.y + (dt * getCamSpeed());
+	cam->frustum->pos = newPosition;
 
-	//Yaw
-	yaw += mouseMotionX * rotSpeed;
-
-	//Apply rotation values to frustum
-	myFrustum.front.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
-	myFrustum.front.y = sin(DegToRad(pitch));
-	myFrustum.front.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
-	myFrustum.front.Normalize();
-
-	//Update projection and view matrix from our updated frustum
-	proj = myFrustum.ProjectionMatrix();
-	view = myFrustum.ViewMatrix();
 }
 
-void ModuleEditorCamera::orbit(const float mouseMotionX, const float mouseMotionY)
+
+
+void ModuleEditorCamera::moveDown(float dt)
 {
-	//Update orbit values on X and Y axis
-	orbitX += mouseMotionX * rotSpeed;
-	orbitY = MIN(89, orbitY + mouseMotionY * rotSpeed);
+	float3 newPosition = cam->frustum->pos;
+	newPosition.y = newPosition.y - (dt * getCamSpeed());
+	cam->frustum->pos = newPosition;
 
-	//Update radius needed to apply orbit values to frustum
-	radius = App->modelLoader->myBoundingBox.CenterPoint().Distance(myFrustum.pos);
+}
 
-	//Apply orbit values to frustum
-	myFrustum.pos.x = cos(math::DegToRad(orbitX)) * cos(math::DegToRad(orbitY)) * radius;
-	myFrustum.pos.y = sin(math::DegToRad(orbitY)) * radius;
-	myFrustum.pos.z = sin(math::DegToRad(orbitX)) * cos(math::DegToRad(orbitY)) * radius;
-	myFrustum.pos += App->modelLoader->myBoundingBox.CenterPoint();
-	myFrustum.front = (App->modelLoader->myBoundingBox.CenterPoint() - myFrustum.pos).Normalized();
 
-	//Update Yaw and Pitch (also used on rotation)
-	yaw = math::RadToDeg(atan2(myFrustum.front.z, myFrustum.front.x));
-	pitch = math::RadToDeg(asin(myFrustum.front.y));
 
-	//Update projection and view matrix from our updated frustum
-	proj = myFrustum.ProjectionMatrix();
-	view = myFrustum.ViewMatrix();
+void ModuleEditorCamera::moveLeft(float dt)
+{
+	cam->frustum->pos -= cam->frustum->WorldRight().ScaledToLength(dt * getCamSpeed());
+}
+
+void ModuleEditorCamera::moveRight(float dt)
+{
+	cam->frustum->pos += cam->frustum->WorldRight().ScaledToLength(dt * getCamSpeed());
+}
+
+void ModuleEditorCamera::moveForward(float dt, float extraSpeed)
+
+{
+	cam->frustum->pos += cam->frustum->front.ScaledToLength(dt * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
+}
+
+
+
+void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
+
+{
+	cam->frustum->pos -= cam->frustum->front.ScaledToLength(dt * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
+}
+
+void ModuleEditorCamera::orbitX(float angle, float3 target)
+
+{
+
+	float2 polar = cartesianToPolar(float2(cam->frustum->pos.x, cam->frustum->pos.z), float2(target.x, target.z));
+
+	if (polar.y >= 360.0f) polar.y = 0.0f;
+
+	else if (polar.y <= 0.0f) polar.y = 360.0f;
+
+	polar.y += angle;
+	polar.y = math::DegToRad(polar.y);
+
+
+
+	float2 newPos = polarToCartesian(polar);
+
+	cam->frustum->pos.x = newPos.x;
+	cam->frustum->pos.z = newPos.y;
+
+
+
+	LookAt(target);
+
+
+
+}
+
+
+
+void ModuleEditorCamera::orbitY(float angle, float3 target)
+
+{
+
+	float2 polar = cartesianToPolar(float2(cam->frustum->pos.z, cam->frustum->pos.y), float2(target.z, target.y));
+
+	if (polar.y >= 360.0f) polar.y = 0.0f;
+	else if (polar.y <= 0.0f) polar.y = 360.0f;
+	polar.y += angle;
+	polar.y = math::DegToRad(polar.y);
+
+
+
+	float2 newPos = polarToCartesian(polar);
+	cam->frustum->pos.z = newPos.x;
+	cam->frustum->pos.y = newPos.y;
+
+
+
+	LookAt(target);
+
+}
+
+
+
+void ModuleEditorCamera::setDefaultPosition()
+
+{
+
+	cam->frustum->pos = float3(0, 5.0f, 10.0f);
+	cam->frustum->front = -float3::unitZ;
+	cam->frustum->up = float3::unitY;
+
+}
+
+
+
+//x = distance, y = angle
+
+float2 ModuleEditorCamera::polarToCartesian(float2 polar)
+
+{
+
+	float y = polar.x * math::Cos(polar.y);
+	float x = polar.x * math::Sin(polar.y);
+	return float2(x, y);
+
+}
+
+
+
+float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
+
+{
+
+	float dX = cartesian.x - target.x;
+	float dY = cartesian.y - target.y;
+	float r = math::SqrtFast(math::Pow(dX, 2) + math::Pow(dY, 2));
+	float theta = 0.0f;
+
+	if (dX == 0.0f && dY == 0.0f) theta = 0.0f;
+
+	else if (dX == 0.0f && dY > 0.0f) theta = 0.0f;
+	else if (dX > 0.0f && dY == 0.0f) theta = 90.0f;
+	else if (dX < 0.0f && dY == 0.0f) theta = 180.0f;
+	else if (dX == 0.0f && dY < 0.0f) theta = 270.0f;
+	else theta = math::Atan(dY / dX);
+
+	return float2(r, theta);
+
 }

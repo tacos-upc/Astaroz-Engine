@@ -3,10 +3,9 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleEditorCamera.h"
-
+#include "ComponentCamera.h"
 #define DEBUG_DRAW_IMPLEMENTATION
-#include "debugdraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
-
+#include "DebugDraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
 #include "glew.h"
 #include <assert.h>
 
@@ -594,6 +593,11 @@ ModuleDebugDraw::~ModuleDebugDraw()
 
 bool ModuleDebugDraw::Init()
 {
+	return true;
+}
+
+bool ModuleDebugDraw::Start()
+{
     implementation = new DDRenderInterfaceCoreGL;
     dd::initialize(implementation);
     return true;
@@ -615,10 +619,10 @@ update_status  ModuleDebugDraw::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModuleDebugDraw::Draw(ModuleEditorCamera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
+void ModuleDebugDraw::Draw(ComponentCamera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
 {
-	math::float4x4 view = camera->view;
-	math::float4x4 proj = camera->proj;
+	math::float4x4 view = camera->viewMatrix;
+	math::float4x4 proj = camera->projectionMatrix;
 
     implementation->width     = fb_width;
     implementation->height    = fb_height;

@@ -10,12 +10,24 @@ Mesh::Mesh()
 	
 }
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material)
-{
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material){
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;
 	this->material = material;
+	
+
+	setupMesh();
+
+
+
+}
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, const char* name)
+{
+	this->vertices = vertices;
+	this->indices = indices;
+	this->textures = textures;
+	this->name = name;
 
 	setupMesh();
 }
@@ -89,13 +101,13 @@ void Mesh::Draw(unsigned int program) const
 	
 	//Assigning "ids" to textures
 
-	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_texture"), 0);
+	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.diffuse_texture"), 0);
 
-	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.specular_texture"), 1);
+	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.specular_texture"), 1);
 
-	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.occlusion_texture"), 2);
+	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.occlusion_texture"), 2);
 
-	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.emissive_texture"), 3);
+	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.emissive_texture"), 3);
 
 
 
@@ -105,7 +117,7 @@ void Mesh::Draw(unsigned int program) const
 
 	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->diffuse_texture);
 
-	glUniform1i(glGetUniformLocation(App->programShader->myProgram, "material.diffuse_texture"), 0);
+	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.diffuse_texture"), 0);
 
 	glActiveTexture(GL_TEXTURE1);
 

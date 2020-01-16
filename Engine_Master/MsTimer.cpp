@@ -21,10 +21,7 @@ void MsTimer::start()
 
 Uint32 MsTimer::read()
 {
-	if (running)
-	{
-		myCurrentTime = SDL_GetTicks() - myStartTime;
-	}
+	if (running) setupCurrentTime();
 	return myCurrentTime;
 }
 
@@ -33,6 +30,11 @@ void MsTimer::stop()
 	if (running)
 	{
 		running = false;
-		myCurrentTime = SDL_GetTicks() - myStartTime;
+		setupCurrentTime();
 	}
+}
+
+void MsTimer::setupCurrentTime()
+{
+	myCurrentTime = SDL_GetTicks() - myStartTime;
 }

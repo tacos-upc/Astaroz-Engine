@@ -83,24 +83,20 @@ update_status ModuleInput::PreUpdate()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			App->editorCamera->zoom(event.wheel.y);
+			mouseWheel = event.wheel.y;
 			break;
 
 		case SDL_MOUSEMOTION:
-			if (event.motion.state & SDL_BUTTON_RMASK) {
-				App->editorCamera->rotate((float)event.motion.xrel / (float)App->window->width, (float)event.motion.yrel / (float)App->window->height);
-			}
-			else if ((event.motion.state & SDL_BUTTON_LMASK) && isKeyDown(SDL_SCANCODE_LALT)) {
-				App->editorCamera->orbit((float)event.motion.xrel / (float)App->window->width, (float)event.motion.yrel / (float)App->window->height);
-			}
+			mouseMotion.x = event.motion.xrel;
+			mouseMotion.y = event.motion.yrel;
+			mouse.x = event.motion.x / SCREEN_SIZE;
+			mouse.y = event.motion.y / SCREEN_SIZE;
 			break;
 		case SDL_MOUSEBUTTONUP:
-			if (event.button.button == SDL_BUTTON_RIGHT)
-				App->editorCamera->allowMovement = false;
+			mouseButtons[event.button.button - 1] = KEY_UP;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			if (event.button.button == SDL_BUTTON_RIGHT)
-				App->editorCamera->allowMovement = true;
+			mouseButtons[event.button.button - 1] = KEY_DOWN;
 			break;
 
 		case SDL_DROPFILE:
@@ -164,4 +160,14 @@ KeyState ModuleInput::getKey(int id) const
 bool ModuleInput::isKeyDown(int id) const
 {
 	return keys[id] == KEY_DOWN || keys[id] == KEY_REPEAT;
+}
+
+const iPoint& ModuleInput::GetMousePosition() const
+{
+	return mouse;
+}
+
+const fPoint& ModuleInput::GetMouseMotion() const
+{
+	return mouseMotion;
 }

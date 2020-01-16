@@ -78,9 +78,15 @@ bool ModuleWindow::CleanUp()
 }
 
 //Resize window correctly by setting Aspect ratio in Camera module
+
 void ModuleWindow::ResizeWindow(const unsigned int width, const unsigned int height)
 {
 	this->width = width;
 	this->height = height;
-	App->editorCamera->setAspectFrustum();
+}
+
+
+float ModuleWindow::getAspectRatio()
+{
+	return width / height;
 }

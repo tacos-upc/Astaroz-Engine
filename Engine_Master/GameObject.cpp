@@ -7,7 +7,6 @@
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentCamera.h"
-
 #include "debugdraw.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"

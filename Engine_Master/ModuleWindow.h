@@ -24,6 +24,8 @@ public:
 
 	void ModuleWindow::ResizeWindow(const unsigned int width, const unsigned int height);
 
+	float getAspectRatio();
+
 public:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;

@@ -39,12 +39,14 @@ enum KeyState
 #define VSYNC true
 #define TITLE "Super Awesome Engine"
 #define MAX_KEYS 300
+#define SCREEN_SIZE 2
+
 
 //Paths
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
-#define MODEL_BAKER_PATH "models/Firetruck.fbx"
-#define MODEL_BUNNY "models/Drawers.fbx"
+#define MODEL_BAKER_PATH "models/BakerHouse.fbx"
+#define MODEL_BUNNY "models/Zombunny.fbx"
 
 //Utils
 #define MAX(x,y) ((x>y) ? x:y)

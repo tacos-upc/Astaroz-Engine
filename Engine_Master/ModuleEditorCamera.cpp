@@ -61,7 +61,7 @@ update_status ModuleEditorCamera::Update()
 	glEnd();
 	
 	//Axis
-	glLineWidth(2.0f);
+	glLineWidth(1.0f);
 	glBegin(GL_LINES);
 	// red X
 	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);

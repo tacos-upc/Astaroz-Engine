@@ -37,8 +37,8 @@ bool ModuleModelLoader::Init()
 
 	//Always start by loading the Baker house model
 
-	//LoadModel(MODEL_BUNNY);
-	LoadModel(MODEL_BAKER_PATH);
+	LoadModel(MODEL_BUNNY);
+	//LoadModel(MODEL_BAKER_PATH);
 
 	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
 	//materials.back().k_specular = 0.9f;
@@ -147,9 +147,9 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 		float3 vector;
 
 		// positions
-		vector.x = mesh->mVertices[i].x;
-		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z;
+		vector.x = mesh->mVertices[i].x*0.05;
+		vector.y = mesh->mVertices[i].y*0.05;
+		vector.z = mesh->mVertices[i].z*0.05;
 		vertex.Position = vector;
 		numPolys = (vertices.size()) / 3;
 		// normals

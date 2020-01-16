@@ -398,7 +398,6 @@
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
-    <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="ModuleSpacePartition.h" />

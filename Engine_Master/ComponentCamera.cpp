@@ -8,7 +8,6 @@
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
-
 #include <math.h>
 #include "MathGeoLib/include/Geometry/LineSegment.h"
 #include "Geometry/Plane.h"
@@ -116,7 +115,7 @@ void ComponentCamera::transformFrustum()
 	myGameObject->myTransform->eulerRotationInRad = float3::zero;
 }
 
-GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegment* segment)
+GameObject* ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegment* segment)
 {
 	touchedCandidates.clear();
 	findTouchedCandidates(node, segment);
@@ -139,7 +138,6 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 
 			if (candidateOBB.Intersects(transformedSegment, nearDistance, farDistance))
 			{
-				LOG("The ray intersects: n: %f, f: %f, b: %f", nearDistance, farDistance, bestDistance);
 				if (nearDistance < bestDistance)
 				{
 					bestDistance = nearDistance;
@@ -148,7 +146,6 @@ GameObject * ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegme
 			}
 		}
 	}
-	
 	return obj;
 }
 
@@ -165,8 +162,8 @@ void ComponentCamera::findTouchedCandidates(AABBTreeNode* node, LineSegment* seg
 		}
 		else //Search on children
 		{
-			getTouchedGameObject(node->leftChild, segment);
-			getTouchedGameObject(node->rightChild, segment);
+			findTouchedCandidates(node->leftChild, segment);
+			findTouchedCandidates(node->rightChild, segment);
 		}
 	}
 }

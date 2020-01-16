@@ -14,6 +14,13 @@ ComponentMesh::ComponentMesh()
 	isLoaded = false;
 }
 
+ComponentMesh::ComponentMesh(GameObject* gameObject, ComponentMesh* componentMesh)
+{
+	myType = MESH;
+	myGameObject = gameObject;
+	myMesh = componentMesh->myMesh;
+}
+
 ComponentMesh::~ComponentMesh()
 {
 	delete myMesh;

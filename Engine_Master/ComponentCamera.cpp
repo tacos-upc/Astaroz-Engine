@@ -39,6 +39,17 @@ ComponentCamera::ComponentCamera()
 	clearColor = ImVec4(0.1f, 0.f, 0.02f, 1.f);
 }
 
+ComponentCamera::ComponentCamera(GameObject* gameObject, ComponentCamera* componentCamera)
+{
+	myType = CAMERA;
+	myGameObject = gameObject;
+
+	//copy frustum matrices
+	frustum = new Frustum(*componentCamera->frustum);
+	viewMatrix = frustum->ViewMatrix();
+	projectionMatrix = frustum->ProjectionMatrix();
+}
+
 
 ComponentCamera::~ComponentCamera()
 {

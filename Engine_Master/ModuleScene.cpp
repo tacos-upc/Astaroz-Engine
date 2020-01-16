@@ -34,7 +34,7 @@ bool ModuleScene::Init()
 	root = new GameObject("World");
 	root->isRoot = true;
 
-	mainCamera = CreateGameObject("Main Camera", root);
+	mainCamera = CreateGameObject("Main Camera (root)", root);
 	mainCamera->CreateComponent(CAMERA);
 
 	gameObjects.push_back(mainCamera);
@@ -67,7 +67,6 @@ bool ModuleScene::CleanUp()
 	}
 
 	delete root;
-
 	return true;
 }
 
@@ -84,7 +83,7 @@ GameObject* ModuleScene::CreateGameObject()
 	return gameObject;
 }
 
-GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent)
+GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent)
 {
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
@@ -95,7 +94,7 @@ GameObject* ModuleScene::CreateGameObject(const char * name, GameObject * parent
 	return gameObject;
 }
 
-GameObject * ModuleScene::getRoot()
+GameObject* ModuleScene::getRoot()
 {
 	return root;
 }
@@ -115,7 +114,7 @@ void ModuleScene::selectRoot()
 	selectedByHierarchy = root;
 }
 
-void ModuleScene::LoadModel(const char * path, GameObject* parent)
+void ModuleScene::LoadModel(const char* path, GameObject* parent)
 {
 	LOG("Trying to load model in path : %s", path);
 	//App->modelLoader->loadModel(path);
@@ -149,13 +148,21 @@ void ModuleScene::LoadModel(const char * path, GameObject* parent)
 
 void ModuleScene::CreateEmpty(GameObject* parent)
 {
-	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
-	GameObject* empty = CreateGameObject(defaultName.c_str(), selectedByHierarchy == parent ? parent : root);
+	std::string tempName = "NewGameObject" + std::to_string(nGameObjects + 1);
+	GameObject* gameObject = nullptr;
+	if (selectedByHierarchy != nullptr)	//TODO: It's never null - every frame points to ROOT if ever gets nullptr
+	{
+		gameObject = CreateGameObject(tempName.c_str(), selectedByHierarchy);
+	}
+	else
+	{
+		gameObject = CreateGameObject(tempName.c_str(), parent);	//we use the parameter as parent only when 'selected' is nullptr
+	}
 	
-	gameObjects.push_back(empty);
+	gameObjects.push_back(gameObject);
 }
 
-void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
+void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
 {
 	if(parent == nullptr)
 	{
@@ -173,7 +180,7 @@ void ModuleScene::CreateGameObjectBakerHouse(GameObject * parent)
 	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
 }
 
-void ModuleScene::CreateGameObjectShape(GameObject * parent, ShapeType shape)
+void ModuleScene::CreateGameObjectShape(GameObject* parent, ShapeType shape)
 {
 	/*
 	if (parent == nullptr)
@@ -258,7 +265,47 @@ void ModuleScene::CreateGameObjectShape(GameObject * parent, ShapeType shape)
 	*/
 }
 
-void ModuleScene::RemoveGameObject(GameObject * go)
+void ModuleScene::RemoveSelectedGameObject()
+{
+	if (!gameObjects.empty())
+	{
+		//TODO: Don't allow to delete ROOT (World) through its UID
+		GameObject* toBeDeleted = nullptr;
+
+		if (selectedByHierarchy != nullptr)
+		{
+			toBeDeleted = selectedByHierarchy;	//prioritize selected over param if not nullptr
+			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be unasigned (will be pointing to ROOT next frame)
+		}
+		else
+		{
+			toBeDeleted = root;
+		}
+
+		toBeDeleted->DeleteGameObject();
+	}
+}
+
+void ModuleScene::DuplicateGameObject(GameObject* go)
+{
+	//TODO: Don't allow to duplicate ROOT (World) through its UID
+	GameObject* duplicate = nullptr;
+
+	if (selectedByHierarchy != nullptr && selectedByHierarchy->GetName() != "World")
+	{
+		duplicate = new GameObject(*selectedByHierarchy);
+		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
+	}
+	else
+	{
+		duplicate = new GameObject(*go);
+		go->parent->childrenVector.push_back(duplicate);
+	}
+
+	gameObjects.push_back(duplicate);
+}
+
+void ModuleScene::eraseGameObject(GameObject* go)
 {
 	if (!gameObjects.empty())
 	{
@@ -266,7 +313,7 @@ void ModuleScene::RemoveGameObject(GameObject * go)
 	}
 }
 
-void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
+void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 {
 	if (selected != nullptr)
 	{
@@ -280,12 +327,15 @@ void ModuleScene::SelectObjectInHierarchy(GameObject * selected)
 
 void ModuleScene::drawHierarchy()
 {
+	if (selectedByHierarchy == nullptr)
+	{
+		selectedByHierarchy = root;
+	}
+
 	for (unsigned int i = 0; i < root->childrenVector.size(); i++)
 	{
 		root->childrenVector[i]->DrawHierarchy(root->childrenVector[i]);
 	}
-
-	if (selectedByHierarchy == nullptr) selectedByHierarchy = root;
 }
 
 void ModuleScene::drawAllBoundingBoxes()

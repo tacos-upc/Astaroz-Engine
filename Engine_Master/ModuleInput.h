@@ -18,7 +18,6 @@ public:
 	bool Init();
 	update_status PreUpdate();
 	update_status Update();
-	update_status PostUpdate();
 	bool CleanUp();
 
 	bool getWindowEvent(EventWindow code) const;
@@ -59,11 +58,10 @@ private:
 	const Uint8 *keyboard = NULL;
 	bool windowEvents[WE_COUNT];
 	KeyState* keys = NULL;
-
 	KeyState mouseButtons[NUM_MOUSE_BUTTONS];
-
 	fPoint mouseMotion;
 	iPoint mouse;
+
 	float mouseWheel = 0.0f;
 };
 

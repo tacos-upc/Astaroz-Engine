@@ -61,6 +61,9 @@ update_status ModuleInput::PreUpdate()
 		}
 	}
 
+	mouseWheel = 0.0f;
+
+
 	while (SDL_PollEvent(&event))
 	{
 		switch (event.type)

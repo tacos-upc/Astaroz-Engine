@@ -20,7 +20,7 @@ class Model {
 
 public:
 
-	Model(const char *path);
+	Model(const char *path, float3 scale);
 	~Model();
 
 	//For our model

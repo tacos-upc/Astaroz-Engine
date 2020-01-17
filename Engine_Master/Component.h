@@ -10,7 +10,6 @@ enum ComponentType
 	//Don't add anything above here
 	TRANSFORM = 0,
 	MESH,
-	MATERIAL,
 	CAMERA,
 
 	//Don't add anything below here

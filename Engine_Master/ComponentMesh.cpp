@@ -58,25 +58,21 @@ void ComponentMesh::DrawInspector()
 			myGameObject->createAABBs();
 		}
 
-		ImGui::Separator();
 		editMat();
+		ImGui::Separator();
+		
 	}
 }
 
 void ComponentMesh::editMat()
 {
-	if (ImGui::Begin("Parameters"))
-	{
-		if (ImGui::CollapsingHeader("Light"))
-		{
-			ImGui::SliderFloat3("light position", (float*)&App->modelLoader->light_pos, -15.0f, 15.0f);
-			ImGui::SliderFloat("material.k_ambient", (float*)&App->modelLoader->materials[myMesh->material]->k_ambient, 0.0f, 1.0f);
-			ImGui::SliderFloat("material.k_diffuse", (float*)&App->modelLoader->materials[myMesh->material]->k_diffuse, 0.0f, 1.0f);
-			ImGui::SliderFloat("material.k_specular", (float*)&App->modelLoader->materials[myMesh->material]->k_specular, 0.0f, 1.0f);
-			ImGui::SliderFloat3("material.diffuse_color", (float*)&App->modelLoader->materials[myMesh->material]->diffuse_color, -15.0f, 15.0f);
-			ImGui::SliderFloat3("material.specular_color", (float*)&App->modelLoader->materials[myMesh->material]->specular_color, -15.0f, 15.0f);
-			ImGui::SliderFloat3("material.emissive_color", (float*)&App->modelLoader->materials[myMesh->material]->emissive_color, -15.0f, 15.0f);
-		}
-		ImGui::End();
-	}
+	
+	ImGui::SliderFloat3("light position", (float*)&App->modelLoader->light_pos, -15.0f, 15.0f);
+	ImGui::SliderFloat("ambient", (float*)&App->modelLoader->materials[myMesh->material]->k_ambient, 0.0f, 1.0f);
+	ImGui::SliderFloat("diffuse", (float*)&App->modelLoader->materials[myMesh->material]->k_diffuse, 0.0f, 1.0f);
+	ImGui::SliderFloat("specular", (float*)&App->modelLoader->materials[myMesh->material]->k_specular, 0.0f, 1.0f);
+	ImGui::SliderFloat3("diffuse_color", (float*)&App->modelLoader->materials[myMesh->material]->diffuse_color, -1.0f, 1.0f);
+	ImGui::SliderFloat3("specular_color", (float*)&App->modelLoader->materials[myMesh->material]->specular_color, -1.0f, 1.0f);
+	ImGui::SliderFloat3("emissive_color", (float*)&App->modelLoader->materials[myMesh->material]->emissive_color, -1.0f, 1.0f);
+		
 }

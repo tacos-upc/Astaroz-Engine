@@ -60,7 +60,7 @@ public:
 	
 
 	Mesh();
-	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material);
+	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material, const char* name);
 
 	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, const char* name);
 	~Mesh();
@@ -70,7 +70,7 @@ public:
 	void updateTexture(Texture* texture);
 	void setUniforms();
 	unsigned int material;
-
+	float3 scale;
 
 	unsigned int VAO = 0, VBO = 0, EBO = 0;
 	unsigned normals_offset = 0;

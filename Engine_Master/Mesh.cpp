@@ -10,7 +10,8 @@ Mesh::Mesh()
 	
 }
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material){
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material, const char* name){
+	this->name = name;
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;

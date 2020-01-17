@@ -3,8 +3,9 @@
 #include "ModuleProgramShader.h"
 #include "ModuleModelLoader.h"
 
-Model::Model(const char * path)
+Model::Model(const char * path, float3 scale)
 {
+	this->scale = scale;
 	LoadModel(path);
 }
 
@@ -14,9 +15,14 @@ Model::~Model()
 
 void Model::LoadModel(const char* path)
 {
+	
 	Assimp::Importer importer;
-
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	std::string fullPath = path;
+	fullPath += FBX;
+	fullPath = MODELS_PATH + fullPath;
+	const char *fbxPath = fullPath.c_str();
+	
+	const aiScene* scene = importer.ReadFile(fbxPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		LOG("ERROR::ASSIMP:: %s\n", importer.GetErrorString());
 		return;
@@ -116,26 +122,39 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
+	std::string diffusePath = path;
+	diffusePath += DIFFUSE;
+	diffusePath += PNG;
+	const char *dPath = diffusePath.c_str();
+	Texture texture = App->texture->LoadTexture(dPath);
 	texture.type = "diffuse";
 
 	textures.push_back(&texture);
 	texturesLoaded.push_back(&texture);
 
-
-	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
+	std::string specularPath = path;
+	specularPath += SPECULAR;
+	specularPath += TIF;
+	const char *sPath = specularPath.c_str();
+	Texture texture2 = App->texture->LoadTexture(sPath);
 	texture2.type = "specular";
 	textures.push_back(&texture2);
 	texturesLoaded.push_back(&texture2);
 
-
-	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
+	std::string emissivePath = path;
+	emissivePath += EMISSIVE;
+	emissivePath += PNG;
+	const char *ePath = emissivePath.c_str();
+	Texture texture3 = App->texture->LoadTexture(ePath);
 	texture3.type = "emissive";
 	textures.push_back(&texture3);
 	texturesLoaded.push_back(&texture3);
 
-
-	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
+	std::string occlusionPath = path;
+	occlusionPath += OCCLUSION;
+	occlusionPath += PNG;
+	const char *oPath = occlusionPath.c_str();
+	Texture texture4 = App->texture->LoadTexture(oPath);
 	texture4.type = "occlusion";
 	textures.push_back(&texture4);
 	texturesLoaded.push_back(&texture4);
@@ -207,9 +226,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 	//
 	//
 
-
+	const char *meshName = path;
 	unsigned int aux = App->modelLoader->materials.size() - 1;
-	return Mesh(vertices, indices, textures, aux);
+	return Mesh(vertices, indices, textures, aux, meshName);
 }
 
 std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)

@@ -36,7 +36,7 @@ public:
 	
 	//models
 	std::vector<Model*> models;
-	void AddModel(const char *path);
+	void AddModel(const char *path, math::float3 scale);
 
 	//Lists
 	std::vector<Texture*> texturesLoaded;

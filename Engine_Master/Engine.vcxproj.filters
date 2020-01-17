@@ -131,12 +131,10 @@
     <ClCompile Include="ModuleModelLoader.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="LoadModels.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
-    <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="Skybox.cpp" />
@@ -378,7 +376,6 @@
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="LoadModels.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="IconsFontAwesome5.h" />
     <ClInclude Include="IconsFontAwesome5Brands.h" />
@@ -386,7 +383,6 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="ComponentCamera.h" />
-    <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="ModuleDebugDraw.h" />

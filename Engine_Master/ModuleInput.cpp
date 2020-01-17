@@ -114,7 +114,7 @@ update_status ModuleInput::PreUpdate()
 			//Model
 			if (ext == "fbx" || ext == "FBX")
 			{
-				App->modelLoader->AddModel(file);
+				App->modelLoader->AddModel(file, float3(0.05f, 0.05f, 0.05f));
 			}
 
 			//Texture

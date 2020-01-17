@@ -45,17 +45,17 @@ bool ModuleModelLoader::Start()
 
 	//Assigment models
 
-	AddModel(MODEL_BUNNY);
-	AddModel(MODEL_CLOCK);
-	AddModel(MODEL_DOLLHOUSE);
-	AddModel(MODEL_DRAWERS);
-	AddModel(MODEL_FIRETRUCK);
-	AddModel(MODEL_FLOOR);
-	AddModel(MODEL_HEARSE);
-	AddModel(MODEL_PLAYER);
-	AddModel(MODEL_ROBOT);
-	AddModel(MODEL_WALL);
-	AddModel(MODEL_SPINNINGTOP);
+	AddModel(MODEL_BUNNY, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_CLOCK, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_DOLLHOUSE, float3(0.005f, 0.005f, 0.005));
+	AddModel(MODEL_DRAWERS, float3(0.005f, 0.005f, 0.005));
+	AddModel(MODEL_FIRETRUCK, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_FLOOR, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_HEARSE, float3(0.01f, 0.01f, 0.01));
+	AddModel(MODEL_PLAYER, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_ROBOT, float3(0.01f, 0.01f, 0.01f));
+	AddModel(MODEL_WALL, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_SPINNINGTOP, float3(0.05f, 0.05f, 0.05));
 
 	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
 	//materials.back().k_specular = 0.9f;
@@ -166,10 +166,11 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 	return false;
 }
 
-void ModuleModelLoader::AddModel(const char * path)
+void ModuleModelLoader::AddModel(const char * path, math::float3 scale)
 {
-	Model* myNewModel = new Model(path);
+	Model* myNewModel = new Model(path, scale);
 	for (int i = 0; i < myNewModel->meshes.size(); i++) {
+		myNewModel->meshes.at(i)->scale = scale;
 		meshes.push_back(myNewModel->meshes.at(i));
 	}
 	models.push_back(myNewModel);

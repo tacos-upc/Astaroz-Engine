@@ -45,22 +45,28 @@ enum KeyState
 //Paths
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
-#define MODEL_BAKER_PATH "models/BakerHouse.fbx"
-#define MODEL_BUNNY "models/ZomBunny.fbx"
-#define MODEL_CLOCK "models/Clock.fbx"
-#define MODEL_DOLLHOUSE "models/Dollhouse.fbx"
-#define MODEL_DRAWERS "models/Drawers.fbx"
-#define MODEL_FIRETRUCK "models/Firetruck.fbx"
-#define MODEL_FLOOR "models/Floor.fbx"
-#define MODEL_HEARSE "models/Hearse.fbx"
-#define MODEL_PLAYER "models/Player.fbx"
-#define MODEL_ROBOT "models/Robot.fbx"
-#define MODEL_WALL "models/Wall.fbx"
-#define MODEL_SPINNINGTOP "models/SpinningTop.fbx"
+#define MODEL_BAKER_PATH "BakerHouse"
+#define MODEL_BUNNY "ZomBunny"
+#define MODEL_CLOCK "Clock"
+#define MODEL_DOLLHOUSE "Dollhouse"
+#define MODEL_DRAWERS "Drawers"
+#define MODEL_FIRETRUCK "Firetruck"
+#define MODEL_FLOOR "Floor"
+#define MODEL_HEARSE "Hearse"
+#define MODEL_PLAYER "Player"
+#define MODEL_ROBOT "Robot"
+#define MODEL_WALL "Wall"
+#define MODEL_SPINNINGTOP "SpinningTop"
 
 //help for texture paths
-#define DIFFUSE
-#define 
+#define DIFFUSE "Diffuse"
+#define SPECULAR "Specular"
+#define OCCLUSION "Occlusion"
+#define EMISSIVE "Emissive"
+
+#define PNG ".png"
+#define TIF ".tif"
+#define FBX ".fbx"
 
 //Utils
 #define MAX(x,y) ((x>y) ? x:y)

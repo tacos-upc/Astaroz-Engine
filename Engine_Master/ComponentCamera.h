@@ -9,6 +9,7 @@
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
 #include "AABBTree.h"
+#include <vector>
 
 
 enum FrustumCollisionMode { OUTSIDE, INSIDE, BETWEEN };
@@ -61,7 +62,7 @@ public:
 private:
 	int selectedProjectionMode;
 
-	vector<GameObject*> touchedCandidates;
+	std::vector<GameObject*> touchedCandidates;
 	void findTouchedCandidates(AABBTreeNode*, LineSegment*);
 
 };

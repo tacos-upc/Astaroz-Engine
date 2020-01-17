@@ -1,7 +1,15 @@
 #include "ModuleModelLoader.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleProgramShader.h"
+#include "Mesh.h"
 #include "cimport.h"
 #include "Importer.hpp"
+
+#define PAR_SHAPES_IMPLEMENTATION
+#include "Util/par_shapes.h"
+#pragma warning(pop)
+
+
 
 //Used on the assimp log debugger
 void addLog(const char* str, char* userData)
@@ -21,6 +29,7 @@ ModuleModelLoader::~ModuleModelLoader()
 
 bool ModuleModelLoader::Init()
 {
+	
 	//LOG loading process from ASSIMP
 	aiLogStream sLog = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, NULL);
 	sLog.callback = addLog;
@@ -32,7 +41,21 @@ bool ModuleModelLoader::Init()
 bool ModuleModelLoader::Start()
 {
 	//Always start by loading the Baker house model
-	LoadModel(MODEL_BAKER_PATH);
+
+	//LoadModel(MODEL_BUNNY);
+	//LoadModel(MODEL_BAKER_PATH);
+
+	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	//materials.back().k_specular = 0.9f;
+	//materials.back().shininess = 64.0f;
+	//materials.back().k_diffuse = 0.5f;
+	//materials.back().k_ambient = 1.0f;
+	//
+	//LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
+	//materials.back().k_specular = 0.9f;
+	//materials.back().shininess = 20.0f;
+	//materials.back().k_diffuse = 0.5f;
+	//materials.back().k_ambient = 1.0f;
 
 	//Init variables
 	numMeshes = 0;
@@ -45,6 +68,26 @@ bool ModuleModelLoader::Start()
 
 update_status ModuleModelLoader::Update()
 {
+	if (ImGui::Begin("Parameters"))
+	{
+
+
+		if (ImGui::CollapsingHeader("Light"))
+		{
+			ImGui::SliderFloat3("light position", (float*)&App->modelLoader->light_pos, -15.0f, 15.0f);
+			ImGui::SliderFloat("ambient", (float*)&App->modelLoader->ambient, 0.0f, 1.0f);
+			ImGui::SliderFloat("material.k_ambient", (float*)&App->modelLoader->materials[0]->k_ambient, 0.0f, 1.0f);
+			ImGui::SliderFloat("material.k_diffuse", (float*)&App->modelLoader->materials[0]->k_diffuse, 0.0f, 1.0f);
+			ImGui::SliderFloat("material.k_specular", (float*)&App->modelLoader->materials[0]->k_specular, 0.0f, 1.0f);
+			ImGui::SliderFloat3("material.diffuse_color", (float*)&App->modelLoader->materials[0]->diffuse_color, -15.0f, 15.0f);
+			ImGui::SliderFloat3("material.specular_color", (float*)&App->modelLoader->materials[0]->specular_color, -15.0f, 15.0f);
+			ImGui::SliderFloat3("material.emissive_color", (float*)&App->modelLoader->materials[0]->emissive_color, -15.0f, 15.0f);
+		}
+
+		ImGui::End();
+	}
+	
+
 	return UPDATE_CONTINUE;
 }
 
@@ -55,14 +98,20 @@ bool ModuleModelLoader::CleanUp()
 
 void ModuleModelLoader::DrawAll(unsigned int program)
 {
-	for (unsigned int i = 0; i < meshes.size(); i++)
+	
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		
+		meshes[i]->setUniforms();
 		meshes[i]->Draw(program);
+	}
+	
 }
 
 void ModuleModelLoader::LoadModel(const char* path)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate| aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		LOG("ERROR::ASSIMP:: %s\n", importer.GetErrorString());
 		return;
@@ -70,47 +119,56 @@ void ModuleModelLoader::LoadModel(const char* path)
 	else {
 		LOG("Path of the geometry correct.\n");
 	}
-	//Next step
-	processNode(scene->mRootNode, scene);
+	
+	
+	//Next step	
+	scene->mNumMeshes;
+	processNode(scene->mRootNode, scene, path);
 
 	//Fill AABB member value
 	generateBoundingBox();
 
 	//Center camera to new model
-	//App->editorCamera->focusModel(); TODO --> Center model
+	//App->editorCamera->focusModel();
 
 	//Take the model's name from path
 	modelName = path; //TODO --> extract name from path and not the full route
 }
 
-void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene)
+void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene, const char* path)
 {
+	
+	LOG("Before Meshes: %d", meshes.size());
+	LOG("------------------------------------------")
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(new Mesh(processMesh(mesh, scene)));
+		meshes.push_back(new Mesh(processMesh(mesh, scene, path)));
+		meshes.back()->material = materials.size()-1;
+		LOG("After Meshes: %d", meshes.size());
+		LOG("------------------------------------------");
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(node->mChildren[i], scene);
+		processNode(node->mChildren[i], scene, path);
 	}
 }
 
-Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		Vertex vertex;
 		float3 vector;
 
 		// positions
-		vector.x = mesh->mVertices[i].x;
-		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z;
+		vector.x = mesh->mVertices[i].x*0.005;
+		vector.y = mesh->mVertices[i].y*0.005;
+		vector.z = mesh->mVertices[i].z*0.005;
 		vertex.Position = vector;
 		numPolys = (vertices.size()) / 3;
 		// normals
@@ -153,41 +211,113 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	
+	if(texturesLoaded.size()<4){}
+	Texture texture = App->texture->LoadTexture("ZomBunnyDiffuse.png");
+	texture.type = "diffuse";
+	
+	textures.push_back(&texture);
+	texturesLoaded.push_back(&texture);
 
-	// 1. diffuse maps
-	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	if (textures[0].type == "texture_diffuse") {
-		textureType = textures[0].type;
-	}
-	// 2. specular maps
-	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	if (textures[0].type == "texture_specular") {
-		textureType = textures[0].type;
-	}
-	// 3. normal maps
-	std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-	if (textures[0].type == "texture_normal") {
-		textureType = textures[0].type;
-	}
-	// 4. height maps
-	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	textureWidth = textures[0].width;
-	textureHeight = textures[0].height;
-	textureId = textures[0].id;
-	numPolys /= 3;
-	numTextures += textures.size();
+	Texture texture2 = App->texture->LoadTexture("ZomBunnySpecular.tif");
+	texture2.type = "specular";
+	textures.push_back(&texture2);
+	texturesLoaded.push_back(&texture2);
+	
 
-	return Mesh(vertices, indices, textures);
+	Texture texture3 = App->texture->LoadTexture("ZomBunnyEmissive.png");
+	texture3.type = "emissive";
+	textures.push_back(&texture3);
+	texturesLoaded.push_back(&texture3);
+	
+
+	Texture texture4 = App->texture->LoadTexture("ZomBunnyOcclusion.png");
+	texture4.type = "occlusion";
+	textures.push_back(&texture4);
+	texturesLoaded.push_back(&texture4);
+	
+	
+	
+	
+	Material* myMaterial = new Material(textures, texture.id, texture2.id, texture4.id,texture3.id );
+	myMaterial->program = App->programShader->defaultProgram;
+	materials.push_back(myMaterial);
+	
+	
+	
+
+	//// 1. diffuse maps
+	//std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+	//textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	//if (textures[0].type == "texture_diffuse") {
+	//	textureType = textures[0].type;
+	//}
+	//if (diffuseMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	//}
+	////difuse color
+	//
+	//aiColor4D diffuse;
+	//aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
+	//finmaterial->diffuse_color[0] = diffuse.r;
+	//finmaterial->diffuse_color[1] = diffuse.g;
+	//finmaterial->diffuse_color[2] = diffuse.b;
+	//finmaterial->diffuse_color[3] = diffuse.a;
+	//// 2. specular maps
+	//std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+	//textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	//if (textures[0].type == "texture_specular") {
+	//	textureType = textures[0].type;
+	//}
+	//if (specularMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), specularMaps.begin(), specularMaps.end());
+	//}
+	////specular color
+	//aiColor4D specular;
+	//aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
+	//finmaterial->specular_color[0] = specular.r;
+	//finmaterial->specular_color[1] = specular.g;
+	//finmaterial->specular_color[2] = specular.b;
+	//
+	//
+	//// 3. normal maps
+	//std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+	//textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+	//if (textures[0].type == "texture_normal") {
+	//	textureType = textures[0].type;
+	//}
+	//if (normalMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), normalMaps.begin(), normalMaps.end());
+	//}
+	//// 4. height maps
+	//std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+	//textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+	//if (heightMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), heightMaps.begin(), heightMaps.end());
+	//}
+	//
+	//std::vector<Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive");
+	//textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+	//if (textures[0].type == "texture_normal") {
+	//	textureType = textures[0].type;
+	//}
+	//if (emissiveMaps.size() > 0) {
+	//	finmaterial->textures.insert(finmaterial->textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+	//}
+	//
+	//
+	//
+	
+
+	unsigned int aux = materials.size() - 1;
+	return Mesh(vertices, indices, textures, aux );
 }
 
-std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
+std::vector<Texture*> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName)
 {
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
+	
 	for (unsigned int i=0; i<mat->GetTextureCount(type); i++)
 	{
 		aiString str;
@@ -197,7 +327,7 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		bool skip = false;
 		for (unsigned int j=0; j<texturesLoaded.size(); j++)
 		{
-			if (std::strcmp(texturesLoaded[j].path, str.C_Str()) == 0)
+			if (std::strcmp(texturesLoaded[j]->path, str.C_Str()) == 0)
 			{
 				textures.push_back(texturesLoaded[j]);
 				skip = true; //enable this flag to not load the texture again from the file
@@ -209,8 +339,8 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		{
 			Texture texture = App->texture->LoadTexture(str.C_Str());
 			texture.type = typeName;
-			textures.push_back(texture);
-			texturesLoaded.push_back(texture);
+			textures.push_back(&texture);
+			texturesLoaded.push_back(&texture);
 		}
 	}
 	return textures;
@@ -218,10 +348,6 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 
 void ModuleModelLoader::loadNewModel(const char* path)
 {
-	//Clear lists from member variables
-	texturesLoaded.clear();
-	meshes.clear();
-
 	//Load model
 	LoadModel(path);
 }
@@ -250,13 +376,174 @@ void ModuleModelLoader::generateBoundingBox()
 	myBoundingBox.maxPoint = max;
 }
 
-void ModuleModelLoader::addTexture(Texture texture)
+void ModuleModelLoader::addTexture(Texture* texture)
 {
 	texturesLoaded.push_back(texture);
 	for (std::vector<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 	{
 		(*it)->updateTexture(texture);
 	}
+}
+
+bool ModuleModelLoader::LoadSphere(const char* name, const math::float3& pos, const math::Quat& rot, float size,
+	unsigned slices, unsigned stacks, const math::float4& color)
+{
+	par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(int(slices), int(stacks));
+
+	if (mesh)
+	{
+		par_shapes_scale(mesh, size, size, size);
+
+		GenerateMesh(name, pos, rot, mesh);
+		par_shapes_free_mesh(mesh);
+
+		meshes.back()->material = materials.size();
+		
+
+		Material mat;
+		mat.program = App->programShader->defaultProgram;
+		mat.object_color = color;
+
+		materials.push_back(&mat);
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r,
+	unsigned slices, unsigned stacks, const math::float4& color)
+{
+	par_shapes_mesh* mesh = par_shapes_create_torus(int(slices), int(stacks), inner_r);
+
+	if (mesh)
+	{
+		par_shapes_scale(mesh, outer_r, outer_r, outer_r);
+		GenerateMesh(name, pos, rot, mesh);
+		par_shapes_free_mesh(mesh);
+
+		
+		meshes.back()->material = materials.size();
+		
+		Material mat;
+		mat.program = App->programShader->defaultProgram;
+		mat.object_color = color;
+
+		materials.push_back(&mat);
+
+		return true;
+	}
+
+	return false;
+}
+
+
+void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, const math::Quat& rot, par_shapes_mesh* shape)
+{
+	Mesh* dst_mesh= new Mesh();
+
+	dst_mesh->name = name;
+	dst_mesh->transform = math::float4x4(rot, pos);
+
+	glGenBuffers(1, &dst_mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, dst_mesh->VBO);
+
+	// Positions
+
+	for (unsigned i = 0; i< unsigned(shape->npoints); ++i)
+	{
+		math::float3 point(shape->points[i * 3], shape->points[i * 3 + 1], shape->points[i * 3 + 2]);
+		point = dst_mesh->transform.TransformPos(point);
+		for (unsigned j = 0; j < 3; ++j)
+		{
+			min_v[j] = min(min_v[j], point[i]);
+			max_v[j] = max(max_v[j], point[i]);
+		}
+	}
+
+	unsigned offset_acc = sizeof(math::float3);
+
+	if (shape->normals)
+	{
+		dst_mesh->normals_offset = offset_acc;
+		offset_acc += sizeof(math::float3);
+	}
+
+	dst_mesh->vertex_size = offset_acc;
+
+	glBufferData(GL_ARRAY_BUFFER, dst_mesh->vertex_size*shape->npoints, nullptr, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(math::float3)*shape->npoints, shape->points);
+
+	// normals
+
+	if (shape->normals)
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, dst_mesh->normals_offset*shape->npoints, sizeof(math::float3)*shape->npoints, shape->normals);
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// indices
+
+	glGenBuffers(1, &dst_mesh->EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh->EBO);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*shape->ntriangles * 3, nullptr, GL_STATIC_DRAW);
+
+	unsigned* indices = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0,
+		sizeof(unsigned)*shape->ntriangles * 3, GL_MAP_WRITE_BIT);
+
+	for (unsigned i = 0; i< unsigned(shape->ntriangles * 3); ++i)
+	{
+		*(indices++) = shape->triangles[i];
+	}
+
+	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	dst_mesh->material = 0;
+	dst_mesh->num_vertices = shape->npoints;
+	dst_mesh->num_indices = shape->ntriangles * 3;
+
+	//generate VAO
+
+	glGenVertexArrays(1, &dst_mesh->VAO);
+
+	glBindVertexArray(dst_mesh->VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, dst_mesh->VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dst_mesh->EBO);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	if (dst_mesh->normals_offset != 0)
+	{
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(dst_mesh->normals_offset*dst_mesh->num_vertices));
+	}
+
+	if (dst_mesh->texcoords_offset != 0)
+	{
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(dst_mesh->texcoords_offset*dst_mesh->num_vertices));
+	}
+
+	glBindVertexArray(0);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	
+	meshes.push_back(dst_mesh);
+	dst_mesh->hastext = false;
+
+	bsphere.center = (max_v + min_v)*0.5f;
+	bsphere.radius = (max_v - min_v).Length()*0.5f;
 }
 
 void ModuleModelLoader::emptyScene()

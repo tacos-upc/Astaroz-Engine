@@ -3,28 +3,81 @@
 #include "ModuleModelLoader.h"
 #include "ModuleScene.h"
 #include "ModuleInput.h"
+#include "ModuleEditor.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentCamera.h"
-
 #include "debugdraw.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "SDL.h"
 #include "IconsFontAwesome5.h"
+#include "Geometry/AABB.h"
+#include "ModuleSpacePartition.h"
 
 
-GameObject::GameObject()
-{}
+GameObject::GameObject() : Object::Object()
+{
+}
 
 GameObject::GameObject(const char* name)
 {
-	this->name = name;
+	this->myName = name;
 	CreateComponent(TRANSFORM);
 }
 
+GameObject::GameObject(const GameObject& go)
+{
+	//copy attributes
+	myName = go.myName;
+	parent = go.parent;
+
+	//copy components
+	for (auto cp : go.componentVector)
+	{
+		Component* aux;
+		switch (cp->myType)
+		{
+		case MESH:
+			aux = new ComponentMesh(this, (ComponentMesh*) cp);
+			break;
+		case MATERIAL:
+			aux = new ComponentMaterial(this, (ComponentMaterial*) cp);
+			break;
+		case TRANSFORM:
+			aux = new ComponentTransform(this, (ComponentTransform*) cp);
+			break;
+		case CAMERA:
+			aux = new ComponentCamera(this, (ComponentCamera*) cp);
+			break;
+		default:
+			break;
+		}
+		componentVector.push_back(aux);
+	}
+
+	for (auto myComp : componentVector)
+	{
+		if (myComp->myType == TRANSFORM)
+			myTransform = (ComponentTransform*)myComp;
+
+		if (myComp->myType == MESH)
+			myMesh = (ComponentMesh*)myComp;
+
+		if (myComp->myType == MATERIAL)
+			myMaterial = (ComponentMaterial*)myComp;
+	}
+
+	//copy children
+	for (const auto& child : go.childrenVector)
+	{
+		GameObject* childCopy = new GameObject(*child);
+		childCopy->parent = this;
+		childrenVector.push_back(childCopy);
+	}
+}
 
 GameObject::~GameObject()
 {
@@ -33,10 +86,15 @@ GameObject::~GameObject()
 
 void GameObject::Update()
 {
-	for(auto component : components)
+	for(auto component : componentVector)
 	{
 		if (component->myType != TRANSFORM)
 			component->Update();
+	}
+
+	if (boundingBox != nullptr)
+	{
+		createAABBs();
 	}
 }
 
@@ -51,7 +109,7 @@ void GameObject::SetParent(GameObject* newParent)
 	{
 		LOG("Setting new parent")
 		parent = newParent;
-		parent->children.push_back(this);
+		parent->childrenVector.push_back(this);
 	}
 	else
 	{
@@ -59,35 +117,41 @@ void GameObject::SetParent(GameObject* newParent)
 	}
 }
 
-void GameObject::RemoveChildren(GameObject* child)
-{
-	if(!children.empty())
-	{
-		children.erase(std::remove(children.begin(), children.end(), child), children.end());
-	}
-}
-
 void GameObject::DeleteGameObject()
 {
 	parent->RemoveChildren(this);
-	App->scene->RemoveGameObject(this);
+	App->scene->eraseGameObject(this);
+	for (int i = 0; i < childrenVector.size(); i++)
+	{
+		childrenVector[i]->DeleteGameObject();
+	}
+
 	CleanUp();
+}
+
+void GameObject::RemoveChildren(GameObject* child)
+{
+	if (!childrenVector.empty())
+	{
+		childrenVector.erase(std::remove(childrenVector.begin(), childrenVector.end(), child), childrenVector.end());
+	}
 }
 
 void GameObject::CleanUp()
 {
-	for(auto comp : components)
+	for(auto comp : componentVector)
 	{
 		delete comp;
 	}
 	delete boundingBox;
-	delete globalBoundingBox;
+	delete obb;
 	delete this;
 }
 
 Component* GameObject::CreateComponent(ComponentType type)
 {
-	Component* component = nullptr;
+	Component* component = GetComponent(type);
+	if (component != nullptr && !component->allowMany) return nullptr;
 
 	switch(type)
 	{
@@ -98,6 +162,7 @@ Component* GameObject::CreateComponent(ComponentType type)
 		case MESH:
 			component = new ComponentMesh();
 			myMesh = (ComponentMesh*)component;
+			createAABBs();
 			break;
 		case MATERIAL:
 			component = new ComponentMaterial();
@@ -113,7 +178,7 @@ Component* GameObject::CreateComponent(ComponentType type)
 			break;
 	}
 	component->myGameObject = this;
-	components.push_back(component);
+	componentVector.push_back(component);
 
 	return component;
 }
@@ -124,7 +189,7 @@ Component* GameObject::GetComponent(ComponentType type)
 
 	if (this != NULL)
 	{
-		for (auto comp : components)
+		for (auto comp : componentVector)
 		{
 			if (comp->myType == type) found = comp;
 		}
@@ -133,63 +198,55 @@ Component* GameObject::GetComponent(ComponentType type)
 }
 
 
-void GameObject::DrawHierarchy(GameObject * selected)
+void GameObject::DrawHierarchy(GameObject* selected)
 {
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selected == this ? ImGuiTreeNodeFlags_Selected : 0);
 
 	ImGui::PushID(this);
-	if (children.empty())
+	if (childrenVector.empty())
 	{
 		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
-	bool objOpen = ImGui::TreeNodeEx(this, flags, name.c_str());
 
-	if(ImGui::IsItemClicked())
+	if (App->scene->selectedByHierarchy == this)
 	{
-		App->scene->SelectObjectInHierarchy(this);
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.52f, 1.f));
 	}
-	if(App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN && ImGui::IsItemHovered()) // Could be also || ImGui::IsWindowHovered())
+	
+	bool objOpen = ImGui::TreeNodeEx(this, flags, myName.c_str());
+	if (App->scene->selectedByHierarchy == this)
 	{
-		ImGui::OpenPopup("Creation Popup");
+		ImGui::PopStyleColor();
 	}
-	if (ImGui::BeginPopup("Creation Popup"))
+	
+	if(ImGui::IsItemHovered() && ImGui::IsItemClicked())
 	{
-		if (ImGui::Selectable("Copy"))
+		if (App->scene->selectedByHierarchy == this)
 		{
-			//TODO: Copy gameobjects
+			App->scene->SelectGameObjectInHierarchy(nullptr);
 		}
-		if (ImGui::Selectable("Paste"))
+		else
 		{
-			//TODO: Paste gameobjects
+			App->scene->SelectGameObjectInHierarchy(this);
 		}
-		
-		ImGui::Separator();
+	}
 
-		if (ImGui::Selectable("Rename"))
+	if(ImGui::IsWindowHovered() && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
+	{
+		ImGui::OpenPopup("RightClick Popup");
+	}
+
+	if (ImGui::BeginPopup("RightClick Popup"))
+	{
+		if (ImGui::Selectable("Create Empty GameObject"))
 		{
-			//TODO: Rename gameobjects
-		}
-		if (ImGui::Selectable("Duplicate"))
-		{
-			//TODO: Duplicate gameobjects
-		}
-		if (ImGui::Selectable("Delete"))
-		{
-			//TODO: Delete gameobjects
-			//DeleteGameObject();
+			App->scene->CreateEmpty(this);	//'this' instance maybe not the one selected in hierarchy - we will only use it when 'selected' is nullptr
 		}
 
-		ImGui::Separator();
-
-		if(ImGui::Selectable("Create Empty"))
-		{
-			//Create empty gameobject
-			App->scene->CreateEmpty(this);
-		}
-
+		// TODO:Revise this menu
 		if (ImGui::BeginMenu("Create 3D Object"))
 		{
-			if(ImGui::MenuItem("Cube"))
+			if (ImGui::MenuItem("Cube"))
 			{
 				App->scene->CreateGameObjectShape(this, CUBE);
 			}
@@ -207,19 +264,28 @@ void GameObject::DrawHierarchy(GameObject * selected)
 			}
 			if (ImGui::MenuItem("Baker House"))
 			{
-				// TODO :CreateGameObjectBakerHouse();
 				App->scene->CreateGameObjectBakerHouse(this);
 			}
 			ImGui::EndMenu();
+		}
+		ImGui::Separator();
+
+		if (ImGui::Selectable("Duplicate"))
+		{
+			App->scene->DuplicateGameObject(this);
+		}
+
+		if (ImGui::Selectable("Delete"))
+		{
+			App->scene->RemoveSelectedGameObject();
 		}
 		ImGui::EndPopup();
 	}
 
 	CheckDragAndDrop(this);
-
 	if(objOpen)
 	{
-		for(auto child : children)
+		for(auto child : childrenVector)
 		{
 			child->DrawHierarchy(selected);
 		}
@@ -231,111 +297,48 @@ void GameObject::DrawHierarchy(GameObject * selected)
 	ImGui::PopID();
 }
 
-void GameObject::UpdateTransform()
-{
-	if(myTransform != nullptr)
-	{
-		if(parent != nullptr && parent->myTransform != nullptr)
-		{
-			myTransform->SetGlobalMatrix(parent->myTransform->globalModelMatrix);
-		}
-		myTransform->UpdateMatrices();
-
-		if(globalBoundingBox != nullptr && boundingBox != nullptr)
-		{
-			//AABB Global Update
-			//Compute globalBoundingBox
-
-			float3 globalPos, globalScale;
-			float3x3 globalRot;
-			myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-
-			globalBoundingBox->minPoint = (boundingBox->minPoint + globalPos);
-			globalBoundingBox->maxPoint = (boundingBox->maxPoint + globalPos);
-		}
-	}
-}
 
 void GameObject::SetName(const std::string &newName)
 {
-	name = newName;
+	myName = newName;
 }
 
 std::string GameObject::GetName() const
 {
-	return name;
+	return myName;
 }
 
-void GameObject::ComputeAABB()
+void GameObject::createAABBs()
 {
 	float3 min = float3::zero;
 	float3 max = float3::zero;
-
-	if(myMesh == nullptr)
-	{
-		LOG("This gameObject does not have a Mesh thus we compute the AABB from his childs.");
-
-		if(children.size() == 0)
-		{
-			LOG("Cannot compute the AABB because gameObject does not have children.");
-			return;	//leave at this point
-		}
-
-		for(auto child : children)
-		{
-			if(child->boundingBox != nullptr)
-			{
-				//Min vertex
-				if (child->boundingBox->minPoint.x < min.x)
-					min.x = child->boundingBox->minPoint.x;
-				if (child->boundingBox->minPoint.y < min.y)
-					min.y = child->boundingBox->minPoint.y;
-				if (child->boundingBox->minPoint.z < min.z)
-					min.z = child->boundingBox->minPoint.z;
-				//Max vertex
-				if (child->boundingBox->maxPoint.x > max.x)
-					max.x = child->boundingBox->maxPoint.x;
-				if (child->boundingBox->maxPoint.y > max.y)
-					max.y = child->boundingBox->maxPoint.y;
-				if (child->boundingBox->maxPoint.z > max.z)
-					max.z = child->boundingBox->maxPoint.z;
-			}
-		}
-
-		boundingBox = new AABB(min, max);
-		//Compute globalBoundingBox
-		float3 globalPos, globalScale;
-		float3x3 globalRot;
-		myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-		globalBoundingBox = new AABB(min + globalPos, max + globalPos);
-	}
-		
-
-	for (auto vertex : myMesh->myMesh->vertices)
-	{
-		//Min vertex
-		if (vertex.Position.x < min.x)
-			min.x = vertex.Position.x;
-		if (vertex.Position.y < min.y)
-			min.y = vertex.Position.y;
-		if (vertex.Position.z < min.z)
-			min.z = vertex.Position.z;
-		//Max vertex
-		if (vertex.Position.x > max.x)
-			max.x = vertex.Position.x;
-		if (vertex.Position.y > max.y)
-			max.y = vertex.Position.y;
-		if (vertex.Position.z > max.z)
-			max.z = vertex.Position.z;
-	}
-	
 	boundingBox = new AABB(min, max);
+	obb = new OBB(*boundingBox);
+		
+	if (myMesh != nullptr && myMesh->myMesh != nullptr)
+	{
+		for (Vertex vertex : myMesh->myMesh->vertices)
+		{
+			float3 v = float3(vertex.Position.x, vertex.Position.y, vertex.Position.z);
+			obb->Enclose(v);
+		}
+	}
 
-	//Compute globalBoundingBox
-	float3 globalPos, globalScale;
-	float3x3 globalRot;
-	myTransform->globalModelMatrix.Decompose(globalPos, globalRot, globalScale);
-	globalBoundingBox = new AABB(min + globalPos, max + globalPos);
+	findOBBPoints();
+	boundingBox->Enclose(obbPoints, 8);
+	boundingBox->TransformAsAABB(myTransform->getGlobalMatrix());
+	obb->Transform(myTransform->getGlobalMatrix());
+
+	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox) || isfatBoxTooFat())
+	{
+		fatBoundingBox = new AABB(*boundingBox);
+		fatBoundingBox->Scale(boundingBox->CenterPoint(), float3(1.5f, 1.5f, 1.5f));
+
+		if (boundingBox->SurfaceArea() > 0)
+		{
+			App->spacePartition->recalculateTree(this);
+		}
+	}
 }
 
 void GameObject::DrawAABB()
@@ -347,11 +350,25 @@ void GameObject::DrawAABB()
 	glColor4f(0.6f, 0.6f, 0.6f, 1.0f);
 
 	ComponentCamera* cam = (ComponentCamera*) GetComponent(CAMERA);
-	if (cam != nullptr) cam->DrawFrustum();
+	if (cam != nullptr) cam->DrawFrustum(float3(0.f, 0.02f, 0.7f));
 
-	if(boundingBox != NULL) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
-
+	if (obb != nullptr)
+	{
+		findOBBPointsForRender();
+		dd::box(obbPoints, float3(0.7f, 0.7f, 0.7f));
+	}
+	if (boundingBox != nullptr) dd::aabb(boundingBox->minPoint, boundingBox->maxPoint, float3(0.6f, 0.6f, 0.6f));
+	//if (fatBoundingBox != nullptr) dd::aabb(fatBoundingBox->minPoint, fatBoundingBox->maxPoint, float3(0.8f, 0.8f, 0.8f));
 	glEnd();
+}
+
+void GameObject::Draw(GLuint program)
+{
+	if (myMesh != nullptr)
+	{
+		myMesh->Draw(program);
+		DrawAABB();
+	}
 }
 
 void GameObject::DrawInspector()
@@ -359,42 +376,95 @@ void GameObject::DrawInspector()
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();
 	
 	char* go_name = new char[64];
-	strcpy(go_name, name.c_str());
+	strcpy(go_name, myName.c_str());
 	if(ImGui::InputText("##Name", go_name, 64))
 	{
-		name = std::string(go_name);
+		myName = std::string(go_name);
 	}
 	ImGui::SameLine();
 
-	delete[] go_name;
+	delete go_name;
 
 	ImGui::Checkbox("Static", &isStatic);
 
 	//Components
-	for (size_t i = 0; i < components.size(); i++)
+	for (size_t i = 0; i < componentVector.size(); i++)
 	{
-		components[i]->DrawInspector();
+		componentVector[i]->DrawInspector();
 	}
-
-	//Change EulerRotation to Quat
-	myTransform->EulerToQuat();
 }
 
 void GameObject::CheckDragAndDrop(GameObject* go)
 {
+	//Drag source
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-		ImGui::SetDragDropPayload("DRAG", &go, sizeof(GameObject*));
+		ImGui::SetDragDropPayload("dragGO", &go, sizeof(GameObject*));
 		ImGui::EndDragDropSource();
 	}
 
+	//Drag target
 	if (ImGui::BeginDragDropTarget()) {
-		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DRAG");
-		if (payload != nullptr) {
-			GameObject* newChild = *reinterpret_cast<GameObject**>(payload->Data);
+		const ImGuiPayload* itemDragged = ImGui::AcceptDragDropPayload("dragGO");
+		if (itemDragged != nullptr) {
+			GameObject* newChild = *reinterpret_cast<GameObject**>(itemDragged->Data);
 			newChild->SetParent(go);
 			if(newChild->parent->myTransform != nullptr)
-				newChild->myTransform->SetLocalMatrix(newChild->parent->myTransform->globalModelMatrix);
+				newChild->myTransform->setLocalMatrix(newChild->parent->myTransform->getGlobalMatrix());
 		}
 		ImGui::EndDragDropTarget();
 	}
+}
+
+bool GameObject::isfatBoxTooFat()
+{
+	return (
+		fatBoundingBox->Size().x > boundingBox->Size().x *1.5f ||
+		fatBoundingBox->Size().y > boundingBox->Size().y *1.5f ||
+		fatBoundingBox->Size().z > boundingBox->Size().z * 1.5f
+		);
+}
+
+void GameObject::drawGizmo()
+{
+	if (App->scene->selectedByHierarchy == this && this != App->scene->getRoot() && isEnabled)
+	{
+		ImGuizmo::Enable(true);
+
+		float4x4 modelMatrixTransposed = myTransform->getGlobalMatrix().Transposed();		
+		ImGuizmo::Manipulate(&App->editorCamera->cam->viewMatrix.Transposed()[0][0], &App->editorCamera->cam->projectionMatrix.Transposed()[0][0], App->scene->preferedOperation, ImGuizmo::WORLD, &modelMatrixTransposed[0][0]);
+		
+		if (ImGuizmo::IsUsing())
+		{		
+			myTransform->setGlobalMatrix(modelMatrixTransposed.Transposed());
+			App->scene->SelectGameObjectInHierarchy(this);
+		}
+	}
+	else
+	{
+		ImGuizmo::Enable(false);
+	}
+}
+
+void GameObject::findOBBPointsForRender()
+{
+	obbPoints[0] = obb->CornerPoint(0);
+	obbPoints[1] = obb->CornerPoint(1);
+	obbPoints[2] = obb->CornerPoint(3);
+	obbPoints[3] = obb->CornerPoint(2);
+	obbPoints[4] = obb->CornerPoint(4);
+	obbPoints[5] = obb->CornerPoint(5);
+	obbPoints[6] = obb->CornerPoint(7);
+	obbPoints[7] = obb->CornerPoint(6);
+}
+
+void GameObject::findOBBPoints()
+{
+	obbPoints[0] = obb->CornerPoint(0);
+	obbPoints[1] = obb->CornerPoint(1);
+	obbPoints[2] = obb->CornerPoint(2);
+	obbPoints[3] = obb->CornerPoint(3);
+	obbPoints[4] = obb->CornerPoint(4);
+	obbPoints[5] = obb->CornerPoint(5);
+	obbPoints[6] = obb->CornerPoint(6);
+	obbPoints[7] = obb->CornerPoint(7);
 }

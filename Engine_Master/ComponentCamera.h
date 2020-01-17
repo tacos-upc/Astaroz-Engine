@@ -8,6 +8,7 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "AABBTree.h"
 
 
 enum FrustumCollisionMode { OUTSIDE, INSIDE, BETWEEN };
@@ -22,6 +23,7 @@ class ComponentCamera : public Component
 {
 public:
 	ComponentCamera();
+	ComponentCamera(GameObject* gameObject, ComponentCamera* componentCamera);
 	~ComponentCamera();
 
 	void Update() override;
@@ -30,7 +32,7 @@ public:
 	void SetAspectRatio(float);
 	void SetPlaneDistances(float, float);
 	bool sideOfPlane(float3 &point, Plane &plane);
-	void DrawFrustum();
+	void DrawFrustum(float3);
 	void DrawInspector() override;
 
 	int AABBWithinFrustum(const AABB &aabb);
@@ -46,8 +48,18 @@ public:
 	ImVec4 clearColor;
 	int selectedClearMode;
 
+	LineSegment raycast(float3);
+	void drawRaycast(LineSegment*);
+	void transformFrustum();
+
+	GameObject* getTouchedGameObject(AABBTreeNode*, LineSegment*);
+
 private:
 	int selectedProjectionMode;
+
+	vector<GameObject*> touchedCandidates;
+	void findTouchedCandidates(AABBTreeNode*, LineSegment*);
+
 };
 
 #endif __ComponentCamera_H__

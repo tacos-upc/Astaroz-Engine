@@ -18,7 +18,6 @@ public:
 	bool Init();
 	update_status PreUpdate();
 	update_status Update();
-	update_status PostUpdate();
 	bool CleanUp();
 
 	bool getWindowEvent(EventWindow code) const;
@@ -27,7 +26,22 @@ public:
 
 	bool GetMouseButtonDown(int id) const
 	{
-		return mouseButtons[id - 1] == KEY_DOWN || mouseButtons[id - 1] == KEY_REPEAT;
+		return mouseButtons[id - 1] == KEY_DOWN;
+	}
+
+	bool GetMouseButtonHold(int id) const
+	{
+		return mouseButtons[id - 1] == KEY_REPEAT;
+	}
+
+	bool GetMouseButtonDownOrHold(int id) const
+	{
+		return GetMouseButtonDown(id) || GetMouseButtonHold(id);
+	}
+
+	bool GetMouseButtonUp(int id) const
+	{
+		return mouseButtons[id - 1] == KEY_UP;
 	}
 
 	float getWheelSpeed()
@@ -44,11 +58,10 @@ private:
 	const Uint8 *keyboard = NULL;
 	bool windowEvents[WE_COUNT];
 	KeyState* keys = NULL;
-
 	KeyState mouseButtons[NUM_MOUSE_BUTTONS];
-
 	fPoint mouseMotion;
 	iPoint mouse;
+
 	float mouseWheel = 0.0f;
 };
 

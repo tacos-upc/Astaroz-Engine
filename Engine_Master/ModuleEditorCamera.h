@@ -18,10 +18,10 @@
 enum MovementMode
 {
 	MOVEMENT_ERROR = -1,
-	NONE,
+	MOVEMENT_MODE_NONE,
 	FREE,
 	ORBIT,
-	COUNT
+	MOVEMENT_MODE_COUNT
 };
 
 class ModuleEditorCamera :
@@ -35,11 +35,9 @@ public:
 
 	bool Init();
 	bool Start();
-
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
-
 	bool CleanUp();
 
 	void SetPosition(float, float, float);
@@ -52,7 +50,7 @@ public:
 
 private:
 
-	MovementMode navigationMode = NONE;
+	MovementMode navigationMode = MOVEMENT_MODE_NONE;
 	bool isFastMode = false;
 	float orbitAngleX = 0.0f;
 	float orbitAngleY = 0.0f;
@@ -73,6 +71,9 @@ private:
 
 	float2 polarToCartesian(float2);
 	float2 cartesianToPolar(float2, float2);
+
+	void raycast();
+	float3 getMouseToViewportPosition();
 };
 
 #endif __ModuleEditorCamera_H__

@@ -54,7 +54,6 @@ bool ModuleTime::Init()
 update_status ModuleTime::Update()
 {
 	drawTimeControls();
-	//drawTimeData();
 
 	return UPDATE_CONTINUE;
 }

@@ -5,8 +5,6 @@
 #include "ModuleEditor.h"
 #include "ModuleTexture.h"
 #include "ModuleModelLoader.h"
-#include "Point.h"
-
 
 #include "SDL/include/SDL.h"
 
@@ -15,8 +13,6 @@ ModuleInput::ModuleInput()
 {
 	keys = new KeyState[MAX_KEYS];
 	memset(keys, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
-
-	memset(mouseButtons, KEY_UP, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 }
 
 // Destructor
@@ -65,18 +61,11 @@ update_status ModuleInput::PreUpdate()
 		}
 	}
 
-	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
-	{
-		if (mouseButtons[i] == KEY_DOWN)
-			mouseButtons[i] = KEY_REPEAT;
-	}
-
 	mouseWheel = 0.0f;
+
 
 	while (SDL_PollEvent(&event))
 	{
-		ImGui_ImplSDL2_ProcessEvent(&event);
-
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -96,12 +85,8 @@ update_status ModuleInput::PreUpdate()
 			}
 			break;
 
-		case SDL_MOUSEBUTTONDOWN:
-			mouseButtons[event.button.button - 1] = KEY_DOWN;
-			break;
-
-		case SDL_MOUSEBUTTONUP:
-			mouseButtons[event.button.button - 1] = KEY_UP;
+		case SDL_MOUSEWHEEL:
+			mouseWheel = event.wheel.y;
 			break;
 
 		case SDL_MOUSEMOTION:
@@ -110,9 +95,11 @@ update_status ModuleInput::PreUpdate()
 			mouse.x = event.motion.x / SCREEN_SIZE;
 			mouse.y = event.motion.y / SCREEN_SIZE;
 			break;
-
-		case SDL_MOUSEWHEEL:
-			mouseWheel = event.wheel.y;
+		case SDL_MOUSEBUTTONUP:
+			mouseButtons[event.button.button - 1] = KEY_UP;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			mouseButtons[event.button.button - 1] = KEY_DOWN;
 			break;
 
 		case SDL_DROPFILE:
@@ -121,7 +108,7 @@ update_status ModuleInput::PreUpdate()
 
 			//We need to know if it's a model or a texture using the file extension
 			std::string ext(file);
-			std::size_t lastPoint = ext.find_last_of(".");
+			std::size_t lastPoint = ext.find_last_of(".");	
 			ext = ext.substr(lastPoint + 1, ext.length());	//from last point in the name we can get the (ext)ension
 
 			//Model
@@ -152,13 +139,6 @@ update_status ModuleInput::PreUpdate()
 // Called every draw update
 update_status ModuleInput::Update()
 {
-	mouseWheel = 0.0f;
-	return UPDATE_CONTINUE;
-}
-
-update_status ModuleInput::PostUpdate()
-{
-	//memset(mouseButtons, KEY_UP, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 	return UPDATE_CONTINUE;
 }
 

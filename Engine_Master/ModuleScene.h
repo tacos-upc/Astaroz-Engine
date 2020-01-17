@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Module.h"
 #include "GameObject.h"
+#include "ImGUI/ImGuizmo.h"
 
 
 enum ShapeType
@@ -28,14 +29,19 @@ public:
 	//public methods
 	GameObject* CreateGameObject();
 	GameObject* CreateGameObject(const char* name, GameObject* parent);
+	GameObject* getRoot();
+	GameObject* findById(std::string id);
+	void selectRoot();
 	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);
 	void CreateGameObjectBakerHouse(GameObject* parent);
 	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
-	void RemoveGameObject(GameObject* go);
-	void SelectObjectInHierarchy(GameObject* selected);
+	void RemoveSelectedGameObject();
+	void DuplicateGameObject(GameObject* go);
+	void SelectGameObjectInHierarchy(GameObject* selected);
 	void drawHierarchy();
 	void drawAllBoundingBoxes();
+	void eraseGameObject(GameObject* go);
 
 	//public variables
 	std::vector<GameObject*> gameObjects;
@@ -43,6 +49,7 @@ public:
 	bool showInspector;
 	GameObject* mainCamera;
 	GameObject* selectedByHierarchy = nullptr;
+	ImGuizmo::OPERATION preferedOperation;
 
 private:
 	//private variables

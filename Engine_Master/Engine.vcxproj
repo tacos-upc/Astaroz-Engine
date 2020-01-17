@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>EngineMaster</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -40,7 +40,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Game</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -49,11 +51,12 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <AdditionalIncludeDirectories>.\glew-2.1.0\include\GL;.\SDL\include;.\MathGeoLib\include;.\DevIL Windows SDK\include;.\Assimp\include\assimp</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>.\Assimp\lib;.\DevIL Windows SDK\lib_notignore\x86_notignore\Release_notignore;.\glew-2.1.0\lib_notignore\Release_notignore\Win32_notignore</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\DevIL Windows SDK\lib_notignore\x86_notignore\Release_notignore;.\Assimp\lib;.\glew-2.1.0\lib_notignore\Release_notignore\Win32_notignore</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp.lib;DevIL.lib;ILU.lib;ILUT.lib;opengl32.lib;glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -78,26 +81,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AABBTree.h" />
+    <ClInclude Include="AABBTreeNode.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentCamera.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="Dummy.h" />
-    <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="IconsFontAwesome5.h" />
     <ClInclude Include="IconsFontAwesome5Brands.h" />
     <ClInclude Include="ImGUI\imconfig.h" />
+    <ClInclude Include="ImGUI\ImCurveEdit.h" />
+    <ClInclude Include="ImGUI\ImGradient.h" />
     <ClInclude Include="ImGUI\imgui.h" />
+    <ClInclude Include="ImGUI\ImGuizmo.h" />
     <ClInclude Include="ImGUI\imgui_impl_opengl3.h" />
     <ClInclude Include="ImGUI\imgui_impl_sdl.h" />
     <ClInclude Include="ImGUI\imgui_internal.h" />
+    <ClInclude Include="ImGUI\ImSequencer.h" />
     <ClInclude Include="ImGUI\imstb_rectpack.h" />
     <ClInclude Include="ImGUI\imstb_textedit.h" />
     <ClInclude Include="ImGUI\imstb_truetype.h" />
+    <ClInclude Include="LoadModels.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MathGeoLib\include\Algorithm\Random\LCG.h" />
     <ClInclude Include="MathGeoLib\include\Geometry\AABB.h" />
     <ClInclude Include="MathGeoLib\include\Geometry\AABB2D.h" />
@@ -169,29 +180,46 @@
     <ClInclude Include="ModuleProgramShader.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
+    <ClInclude Include="ModuleSpacePartition.h" />
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleTriangle.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MsTimer.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Util\debug_draw.hpp" />
+    <ClInclude Include="Util\par_shapes.h" />
+    <ClInclude Include="Util\uuid\export.h" />
+    <ClInclude Include="Util\uuid\uuid-io.h" />
+    <ClInclude Include="Util\uuid\uuid.h" />
+    <ClInclude Include="Util\uuid\version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AABBTree.cpp" />
+    <ClCompile Include="AABBTreeNode.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ImGUI\ImCurveEdit.cpp" />
+    <ClCompile Include="ImGUI\ImGradient.cpp" />
     <ClCompile Include="ImGUI\imgui.cpp" />
+    <ClCompile Include="ImGUI\ImGuizmo.cpp" />
     <ClCompile Include="ImGUI\imgui_demo.cpp" />
     <ClCompile Include="ImGUI\imgui_draw.cpp" />
     <ClCompile Include="ImGUI\imgui_impl_opengl3.cpp" />
     <ClCompile Include="ImGUI\imgui_impl_sdl.cpp" />
     <ClCompile Include="ImGUI\imgui_widgets.cpp" />
+    <ClCompile Include="ImGUI\ImSequencer.cpp" />
+    <ClCompile Include="LoadModels.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MathGeoLib\include\Algorithm\Random\LCG.cpp" />
     <ClCompile Include="MathGeoLib\include\Geometry\AABB.cpp" />
     <ClCompile Include="MathGeoLib\include\Geometry\Capsule.cpp" />
@@ -234,12 +262,17 @@
     <ClCompile Include="ModuleProgramShader.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
+    <ClCompile Include="ModuleSpacePartition.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleTriangle.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MsTimer.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Util\uuid\uuid-io.cpp" />
+    <ClCompile Include="Util\uuid\uuid-windows.cpp" />
+    <ClCompile Include="Util\uuid\uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Geometry\KDTree.inl" />
@@ -248,6 +281,7 @@
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+    <None Include="Util\uuid\uuid.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

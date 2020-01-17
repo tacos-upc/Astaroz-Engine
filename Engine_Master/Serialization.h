@@ -8,51 +8,42 @@ class Serialization
 {
 public:
 	Serialization();
-	Serialization(const rapidjson::Value& object_value);
-	Serialization(const std::string& serialized_scene_string);
+	Serialization(const std::string& serializedScene);
+	Serialization(const rapidjson::Value& value);
+	Serialization(const Serialization& serial);
+	
 	~Serialization() = default;
 
-	Serialization(const Serialization& other);
-	Serialization& operator=(const Serialization& other);
+	Serialization& operator = (const Serialization& serial);
 
-	rapidjson::Document::AllocatorType& GetAllocator() const;
+	//public methods
+	rapidjson::Document::AllocatorType& GetAllocatorType() const;
+	void GetSerializedScene(std::string& serializedScene);
 
-	void AddInt(int value_to_add, const std::string &name);
-	int GetInt(const std::string &name, int opt_value) const;
+	void AddInt(int value, const std::string& name);
+	int GetInt(const std::string& name, int value) const;
+	void AddBool(bool value, const std::string& name);
+	bool GetBool(const std::string& name, bool value) const;
+	void AddUInt(uint64_t value, const std::string& name);
+	uint64_t GetUInt(const std::string& name, unsigned int value) const;
+	void AddFloat(float value, const std::string& name);
+	float GetFloat(const std::string& name, float value) const;
+	void AddFloat3(const float3& value, const std::string& name);
+	void GetFloat3(const std::string& name, float3& returnValue, const float3& optValue) const;
+	void AddString(const std::string value, const std::string& name);
+	void GetString(const std::string& name, std::string& returnValue, const std::string& optValue) const;
+	void AddQuat(const Quat& value, const std::string& name);
+	void GetQuat(const std::string& name, Quat& returnValue, const Quat& optValue) const;
+	void AddColor(const float4& value, const std::string& name);
+	void GetColor(const std::string& name, float4& returnValue, const float4& optValue) const;
+	void AddChildConfig(Serialization& value, const std::string& name);
+	void GetChildConfig(const std::string& name, Serialization& value) const;
+	void AddChildrenSerial(std::vector<Serialization>& value, const std::string& name);
+	void GetChildrenSerial(const std::string& name, std::vector<Serialization>& value) const;
 
-	void AddUInt(uint64_t value_to_add, const std::string& name);
-	uint64_t GetUInt(const std::string& name, unsigned int opt_value) const;
-
-	void AddFloat(float value_to_add, const std::string& name);
-	float GetFloat(const std::string &name, float opt_value) const;
-
-	void AddBool(bool value_to_add, const std::string& name);
-	bool GetBool(const std::string& name, bool opt_value) const;
-
-	void AddString(const std::string value_to_add, const std::string& name);
-	void GetString(const std::string& name, std::string& return_value, const std::string& opt_value) const;
-
-	void AddFloat3(const float3 &value_to_addvalue_to_add, const std::string& name);
-	void GetFloat3(const std::string &name, float3 &return_value, const float3 &opt_value) const;
-
-	void AddQuat(const Quat & value_to_add, const std::string& name);
-	void GetQuat(const std::string& name, Quat& return_value, const Quat& opt_value) const;
-
-	void AddColor(const float4& value_to_add, const std::string& name);
-	void GetColor(const std::string& name, float4& return_value, const float4& opt_value) const;
-
-	void AddChildConfig(Serialization& value_to_add, const std::string& name);
-	void GetChildConfig(const std::string& name, Serialization& value_to_add) const;
-
-	void AddChildrenConfig(std::vector<Serialization>& value_to_add, const std::string& name);
-	void GetChildrenConfig(const std::string& name, std::vector<Serialization>& return_value) const;
-
-	void GetSerializedString(std::string& return_string);
-
-public:
-	   rapidjson::Document config_document;
-	   rapidjson::Document::AllocatorType* allocator;
-
+	//public variables
+	rapidjson::Document document;
+	rapidjson::Document::AllocatorType* allocatorType;
 };
 
 #endif //_SERIALIZATION_H_

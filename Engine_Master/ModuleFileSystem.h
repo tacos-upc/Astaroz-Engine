@@ -7,3 +7,11 @@ public:
 	~ModuleFileSystem();
 };
 
+class ModuleFileSystem :
+	public Module
+{
+public:
+	ModuleFileSystem();
+	~ModuleFileSystem();
+};
+

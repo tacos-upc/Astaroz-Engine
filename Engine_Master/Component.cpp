@@ -14,6 +14,9 @@ const char* Component::typeToString(int type)
 			case CAMERA:
 				name = "Camera";
 				break;
+			case LIGHT:
+				name = "Light";
+				break;
 			default:
 				break;
 	}

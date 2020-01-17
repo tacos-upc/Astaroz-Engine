@@ -11,6 +11,7 @@ enum ComponentType
 	TRANSFORM = 0,
 	MESH,
 	CAMERA,
+	LIGHT,
 
 	//Don't add anything below here
 	COMPONENT_TYPE_COUNT

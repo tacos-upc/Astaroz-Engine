@@ -16,6 +16,12 @@
 
 struct par_shapes_mesh_s;
 
+struct Light
+{
+	float3 light_dir;
+	float3 color;
+};
+
 class ModuleModelLoader : public Module
 {
 public:
@@ -63,8 +69,11 @@ public:
 		float        radius = 0.0f;
 	};
 	
-
-	math::float3 light_pos = math::float3(1.0f, 1.0f, 1.0f);
+	//Light
+	struct Light light;
+	
+	
+	
 	float ambient = 0.3f;
 	Sphere bsphere;
 

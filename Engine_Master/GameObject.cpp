@@ -6,6 +6,7 @@
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentCamera.h"
+#include "ComponentLight.h"
 #include "debugdraw.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -156,6 +157,9 @@ Component* GameObject::CreateComponent(ComponentType type)
 
 		case CAMERA:
 			component = new ComponentCamera();
+			break;
+		case LIGHT:
+			component = new ComponentLight();
 			break;
 		default:
 			LOG("ERROR: INVALID TYPE OF COMPONENT");

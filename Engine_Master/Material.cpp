@@ -35,8 +35,9 @@ void Material::SetUniforms()
 	glUniform1f(glGetUniformLocation(program,"material.k_diffuse"), k_diffuse);
 	glUniform1f(glGetUniformLocation(program,"material.k_specular"),k_specular);
 	glUniform1f(glGetUniformLocation(program,"material.shininess"), shininess);
-	glUniform3f(glGetUniformLocation(App->programShader->defaultProgram, "light_pos"), App->modelLoader->light_pos.x, App->modelLoader->light_pos.y, App->modelLoader->light_pos.z);
-	
+	glUniform3f(glGetUniformLocation(App->programShader->defaultProgram, "light.light_dir"), App->modelLoader->light.light_dir.x, App->modelLoader->light.light_dir.y, App->modelLoader->light.light_dir.z);
+	glUniform3f(glGetUniformLocation(App->programShader->defaultProgram, "light.color"), App->modelLoader->light.color.x, App->modelLoader->light.color.y, App->modelLoader->light.color.z);
+
 	
 
 }

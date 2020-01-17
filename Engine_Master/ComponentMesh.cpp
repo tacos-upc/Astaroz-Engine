@@ -67,12 +67,17 @@ void ComponentMesh::DrawInspector()
 void ComponentMesh::editMat()
 {
 	
-	ImGui::SliderFloat3("light position", (float*)&App->modelLoader->light_pos, -15.0f, 15.0f);
 	ImGui::SliderFloat("ambient", (float*)&App->modelLoader->materials[myMesh->material]->k_ambient, 0.0f, 1.0f);
 	ImGui::SliderFloat("diffuse", (float*)&App->modelLoader->materials[myMesh->material]->k_diffuse, 0.0f, 1.0f);
 	ImGui::SliderFloat("specular", (float*)&App->modelLoader->materials[myMesh->material]->k_specular, 0.0f, 1.0f);
 	ImGui::SliderFloat3("diffuse_color", (float*)&App->modelLoader->materials[myMesh->material]->diffuse_color, -1.0f, 1.0f);
 	ImGui::SliderFloat3("specular_color", (float*)&App->modelLoader->materials[myMesh->material]->specular_color, -1.0f, 1.0f);
 	ImGui::SliderFloat3("emissive_color", (float*)&App->modelLoader->materials[myMesh->material]->emissive_color, -1.0f, 1.0f);
+	
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->diffuse_texture, { 200.0f, 200.0f });
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->specular_texture, { 200.0f, 200.0f });
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->emissive_texture, { 200.0f, 200.0f });
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->occlusion_texture, { 200.0f, 200.0f });
+	
 		
 }

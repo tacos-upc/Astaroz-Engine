@@ -154,6 +154,7 @@
       <Filter>uuid</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ComponentLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -409,6 +410,7 @@
     <ClInclude Include="Util\debug_draw.hpp" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ComponentLight.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

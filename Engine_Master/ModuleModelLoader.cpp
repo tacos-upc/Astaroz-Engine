@@ -35,6 +35,9 @@ bool ModuleModelLoader::Init()
 	sLog.callback = addLog;
 	aiAttachLogStream(&sLog);
 
+	light = Light();
+
+
 	return true;
 }
 
@@ -172,6 +175,7 @@ void ModuleModelLoader::AddModel(const char * path, math::float3 scale)
 	for (int i = 0; i < myNewModel->meshes.size(); i++) {
 		myNewModel->meshes.at(i)->scale = scale;
 		meshes.push_back(myNewModel->meshes.at(i));
+		
 	}
 	models.push_back(myNewModel);
 }

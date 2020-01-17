@@ -24,7 +24,6 @@ public:
 	//material editor method
 	void editMat();
 
-public:
 	int selectedMesh;
 	bool isLoaded;
 };

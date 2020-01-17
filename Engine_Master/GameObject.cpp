@@ -122,11 +122,13 @@ Component* GameObject::GetComponent(ComponentType type)
 {
 	Component* found = nullptr;
 
-	for (auto comp : components)
+	if (this != NULL)
 	{
-		if (comp->myType == type) found = comp;
+		for (auto comp : components)
+		{
+			if (comp->myType == type) found = comp;
+		}
 	}
-	
 	return found;
 }
 

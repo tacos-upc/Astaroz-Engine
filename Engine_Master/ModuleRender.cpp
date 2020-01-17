@@ -257,7 +257,7 @@ void ModuleRender::drawGameView()
 
 	beginRenderTexture(size.x, size.y, &gameFBO, &gameTexture, &gameRBO);
 
-	glViewport(0, 0, App->window->width, App->window->height);
+	glViewport(0, 0, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 	glClearColor(cam->clearColor.x, cam->clearColor.y, cam->clearColor.z, cam->clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

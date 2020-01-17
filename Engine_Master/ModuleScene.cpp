@@ -55,8 +55,6 @@ update_status ModuleScene::Update()
 		gameObject->Update();
 	}
 	
-	drawHierarchy();
-
 	return UPDATE_CONTINUE;
 }
 

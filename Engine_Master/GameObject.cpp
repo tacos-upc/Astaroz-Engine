@@ -118,9 +118,10 @@ void GameObject::DeleteGameObject()
 	App->scene->eraseGameObject(this);
 	for (unsigned int i = 0; i < childrenVector.size(); i++)
 	{
-		childrenVector[i]->DeleteGameObject();
+		GameObject* temp = childrenVector[i];
+		childrenVector[i] = nullptr;
+		temp->DeleteGameObject();
 	}
-
 	CleanUp();
 }
 

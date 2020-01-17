@@ -4,8 +4,9 @@
 #include "Globals.h"
 #include "Component.h"
 #include "Mesh.h"
-
 #include "Geometry/AABB.h"
+#include "Geometry/Triangle.h"
+#include <vector>
 
 class ComponentMesh : public Component
 {
@@ -18,6 +19,7 @@ public:
 	void LoadMesh(Mesh* mesh);
 	void Draw(const unsigned int program) const;
 	void DrawInspector() override;
+
 	//public variables
 	Mesh* myMesh = nullptr;
 

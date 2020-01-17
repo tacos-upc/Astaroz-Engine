@@ -22,8 +22,8 @@ bool ModuleTexture::Init()
 	ilutRenderer(ILUT_OPENGL);
 
 	//Image
-	ilGenImages(1, &myTextureId);
-	ilBindImage(myTextureId);
+	//ilGenImages(1, &myTextureId);
+	//ilBindImage(myTextureId);
 
 	return true;
 }
@@ -131,9 +131,9 @@ Texture ModuleTexture::LoadTexture(const char* path)
 	texture.data = ilGetData();
 
 	//If loaded flag is false, we must asign a texture.path anyway so we will use the received as parameter in this method
-	if(!loaded)
+	if (!loaded)
 		texture.path = path;
-
+	
 	return texture;
 }
 

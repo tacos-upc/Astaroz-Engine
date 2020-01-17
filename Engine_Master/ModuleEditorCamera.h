@@ -35,11 +35,9 @@ public:
 
 	bool Init();
 	bool Start();
-
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
-
 	bool CleanUp();
 
 	void SetPosition(float, float, float);
@@ -73,6 +71,9 @@ private:
 
 	float2 polarToCartesian(float2);
 	float2 cartesianToPolar(float2, float2);
+
+	void raycast();
+	float3 getMouseToViewportPosition();
 };
 
 #endif __ModuleEditorCamera_H__

@@ -1,14 +1,17 @@
 #include "ComponentCamera.h"
 #include "ComponentTransform.h"
+#include "ComponentMesh.h"
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleProgramShader.h"
 #include "ModuleEditorCamera.h"
 #include "ModuleTime.h"
+#include "ModuleScene.h"
 #include "GameObject.h"
-
 #include <math.h>
+#include "MathGeoLib/include/Geometry/LineSegment.h"
 #include "Geometry/Plane.h"
+#include "Geometry/Triangle.h"
 #include "glew.h"
 #include "IconsFontAwesome5.h"
 #include "DebugDraw.h"
@@ -55,18 +58,13 @@ ComponentCamera::~ComponentCamera()
 
 void ComponentCamera::Update()
 {
-	frustum->pos = myGameObject->myTransform->position;
-	pitch(myGameObject->myTransform->deltaEulerRotation.x, App->time->getDeltaTime());
-	yaw(myGameObject->myTransform->deltaEulerRotation.y, App->time->getDeltaTime());
-	roll(myGameObject->myTransform->deltaEulerRotation.z, App->time->getDeltaTime());
-	
-	reloadMatrices();
+	transformFrustum();
 }
 
 void ComponentCamera::SetFOV(float fov)
 {
 	frustum->verticalFov = fov;
-	frustum->horizontalFov = 4.f * atanf(tanf(fov * 0.5f) * (SCREEN_WIDTH / SCREEN_HEIGHT));
+	frustum->horizontalFov = 3.f * atanf(tanf(fov * 0.5f) * (SCREEN_WIDTH / SCREEN_HEIGHT));
 }
 
 void ComponentCamera::SetAspectRatio(float h)
@@ -104,6 +102,83 @@ void ComponentCamera::roll(float direction, float dt)
 	frustum->up = rotationMatrix.Transform(frustum->up).Normalized();
 }
 
+LineSegment ComponentCamera::raycast(float3 position)
+{
+	LineSegment ray = frustum->UnProjectLineSegment(position.x, position.y);
+	return ray;
+}
+
+void ComponentCamera::drawRaycast(LineSegment* segment)
+{
+	dd::line((*segment).a, (*segment).b, float3(0.f, 1.f, 0.f));
+}
+
+void ComponentCamera::transformFrustum()
+{
+	frustum->pos = myGameObject->myTransform->position;
+	pitch(myGameObject->myTransform->eulerRotationInDeg.x, App->time->getDeltaTime());
+	yaw(myGameObject->myTransform->eulerRotationInDeg.y, App->time->getDeltaTime());
+	roll(myGameObject->myTransform->eulerRotationInDeg.z, App->time->getDeltaTime());
+
+	reloadMatrices();
+
+	myGameObject->myTransform->eulerRotationInDeg = float3::zero;
+	myGameObject->myTransform->eulerRotationInRad = float3::zero;
+}
+
+GameObject* ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegment* segment)
+{
+	touchedCandidates.clear();
+	findTouchedCandidates(node, segment);
+
+	GameObject* obj = nullptr;
+	float bestDistance = math::floatMax;
+
+	for (size_t i = 0; i < touchedCandidates.size(); i++)
+	{
+		ComponentMesh* mesh = (ComponentMesh*)touchedCandidates.at(i)->GetComponent(MESH);
+		if (mesh != nullptr)
+		{
+			float nearDistance;
+			float farDistance;
+			LineSegment transformedSegment = LineSegment(*segment);
+			transformedSegment.Transform(mesh->myGameObject->myTransform->getGlobalMatrix().Inverted());
+
+			OBB candidateOBB = OBB(*mesh->myGameObject->obb);
+			candidateOBB.Transform(mesh->myGameObject->myTransform->getGlobalMatrix().Inverted());
+
+			if (candidateOBB.Intersects(transformedSegment, nearDistance, farDistance))
+			{
+				if (nearDistance < bestDistance)
+				{
+					bestDistance = nearDistance;
+					obj = mesh->myGameObject;
+				}
+			}
+		}
+	}
+	return obj;
+}
+
+void ComponentCamera::findTouchedCandidates(AABBTreeNode* node, LineSegment* segment)
+{
+	if (node == nullptr) return;
+
+	if (segment->Intersects(*node->box))
+	{
+		//There's a gameobject here
+		if (node->gameObjectID != "")
+		{
+			touchedCandidates.push_back(App->scene->findById(node->gameObjectID));
+		}
+		else //Search on children
+		{
+			findTouchedCandidates(node->leftChild, segment);
+			findTouchedCandidates(node->rightChild, segment);
+		}
+	}
+}
+
 void ComponentCamera::reloadMatrices()
 {
 	projectionMatrix = frustum->ProjectionMatrix();
@@ -112,8 +187,6 @@ void ComponentCamera::reloadMatrices()
 
 int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 {
-	FrustumCollisionMode result;
-
 	float3 corners[8];
 	aabb.GetCornerPoints(corners);
 
@@ -131,14 +204,12 @@ int ComponentCamera::AABBWithinFrustum(const AABB &aabb)
 				--insideBuffer;
 			}
 		}
-		if (insideBuffer == 0) result = OUTSIDE;
+		if (insideBuffer == 0) return OUTSIDE;
 		totalWithin += pointsWithin;
 	}
 
-	if (totalWithin == 6) result = INSIDE;
-	else result = BETWEEN;
-
-	return result;
+	if (totalWithin == 6) return INSIDE;
+	return BETWEEN;
 }
 
 //True means the point is in front, otherwise it's at the back
@@ -150,9 +221,9 @@ bool ComponentCamera::sideOfPlane(float3 &point, Plane &plane)
 	return (value >= 0.0f) ? true : false;
 }
 
-void ComponentCamera::DrawFrustum()
+void ComponentCamera::DrawFrustum(float3 color = float3(1.f, 1.f, 1.f))
 {
-	dd::frustum(frustum->ViewProjMatrix().Inverted(), float3(0.f, 0.02f, 0.7f));
+	dd::frustum(frustum->ViewProjMatrix().Inverted(), color);
 }
 
 void ComponentCamera::DrawInspector()

@@ -19,24 +19,27 @@ public:
 	~ComponentTransform();
 
 	//public methods
-	void EulerToQuat();
-	void QuatToEuler();
-	void UpdateMatrices();
-	void SetGlobalMatrix(float4x4& parentGlobal);
-	void SetLocalMatrix(float4x4& newParentGlobalMatrix);
+	float4x4 getGlobalMatrix();
+	float4x4 getLocalMatrix();
+	void setGlobalMatrix(float4x4&);
+	void setLocalMatrix(float4x4&);
 	void DrawInspector() override;
 	void OnSave(Serialization& serial);
 	void OnLoad(const Serialization& serial);
+	void onTransformChanged();
 
-	//public variables
 	float3 position = float3(0.0f, 0.0f, 0.0f);
-	Quat rotation = Quat::identity;
-	float3 eulerRotation = float3(0.0f, 0.0f, 0.0f);
-	float3 deltaEulerRotation = float3(0.f, 0.f, 0.f);
+	float3 eulerRotationInDeg = float3(0.f, 0.f, 0.f);
+	float3 eulerRotationInRad = float3(0.f, 0.f, 0.f);
 
+private:
+	Quat rotation = Quat::identity;
 	float3 scale = float3(1.0f, 1.0f, 1.0f);
 	float4x4 localModelMatrix = float4x4::identity;
 	float4x4 globalModelMatrix = float4x4::identity;
+
+	void generateGlobalMatrix();
+	void setupEulerRotation(bool, float3);
 };
 
 #endif __ComponentTransform_H__

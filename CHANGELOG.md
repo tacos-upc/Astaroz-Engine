@@ -1,3 +1,7 @@
+* Game view is now rendered on a different window than the scene one
+* Mouse picking
+* Added material with texture types
+* Added shaders with Blin shading
 * Now each GameObject has a unique ID by way of inheritance from the Object class
 * Space partitioning
 * Debug draw correctly implemented

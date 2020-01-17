@@ -36,6 +36,8 @@ bool ModuleScene::Init()
 
 	gameObjects.push_back(mainCamera);
 
+	preferedOperation = ImGuizmo::TRANSLATE;
+
 	return true;
 }
 
@@ -48,12 +50,9 @@ update_status ModuleScene::Update()
 {
 	for(auto gameObject : gameObjects)
 	{
-		gameObject->UpdateTransform();
 		gameObject->Update();
 	}
 	
-	//drawHierarchy(); --> This is being done in ModuleEditor
-
 	return UPDATE_CONTINUE;
 }
 
@@ -214,7 +213,14 @@ void ModuleScene::eraseGameObject(GameObject* go)
 
 void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 {
-	selectedByHierarchy = selected;
+	if (selected != nullptr)
+	{
+		selectedByHierarchy = selected;
+	}
+	else
+	{
+		selectedByHierarchy = root;
+	}
 }
 
 void ModuleScene::OnSave(Serialization& serial)

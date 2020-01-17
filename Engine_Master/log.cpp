@@ -20,3 +20,5 @@ void log(const char file[], int line, const char* format, ...)
 		App->editor->myBuffer.append(tmp_string2);
 	}
 }
+
+

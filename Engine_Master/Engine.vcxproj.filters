@@ -130,6 +130,8 @@
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleModelLoader.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="LoadModels.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
@@ -154,6 +156,18 @@
       <Filter>uuid</Filter>
     </ClCompile>
     <ClCompile Include="Serialization.cpp" />
+    <ClCompile Include="ImGUI\ImCurveEdit.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\ImGradient.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\ImGuizmo.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\ImSequencer.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -375,10 +389,11 @@
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="LoadModels.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="IconsFontAwesome5.h" />
     <ClInclude Include="IconsFontAwesome5Brands.h" />
-    <ClInclude Include="Point.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ComponentTransform.h" />
@@ -387,13 +402,11 @@
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
-    <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="ModuleSpacePartition.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AABBTreeNode.h" />
-    <ClInclude Include="Util\debug_draw.hpp" />
     <ClInclude Include="Util\par_shapes.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Util\uuid\uuid-io.h">
@@ -409,6 +422,21 @@
       <Filter>uuid</Filter>
     </ClInclude>
     <ClInclude Include="Serialization.h" />
+    <ClInclude Include="ImGUI\ImCurveEdit.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImGradient.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImGuizmo.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImSequencer.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Util\debug_draw.hpp" />
+    <ClInclude Include="DebugDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

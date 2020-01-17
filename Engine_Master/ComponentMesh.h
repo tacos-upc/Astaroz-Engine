@@ -4,8 +4,9 @@
 #include "Globals.h"
 #include "Component.h"
 #include "Mesh.h"
-
 #include "Geometry/AABB.h"
+#include "Geometry/Triangle.h"
+#include <vector>
 
 class ComponentMesh : public Component
 {

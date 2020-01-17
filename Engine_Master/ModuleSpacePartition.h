@@ -4,6 +4,9 @@
 #include "Math/MathAll.h"
 #include "AABBTree.h"
 #include "GameObject.h"
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
 
 class ModuleSpacePartition : public Module
 {
@@ -20,9 +23,9 @@ public:
 
 	bool CleanUp() override;
 	void recalculateTree(GameObject*);
+	void drawTree(ImVec4);
+	AABBTree* tree;
 
 private:
-	void drawTree(int);
-	AABBTree* tree;
 };
 

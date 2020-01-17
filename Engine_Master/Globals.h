@@ -34,18 +34,25 @@ enum KeyState
 // Configuration -----------
 #define SCREEN_WIDTH 1024 //640 original
 #define SCREEN_HEIGHT 960 //480 original
-#define SCREEN_SIZE 2
 #define FULLSCREEN false
 #define RESIZABLE true
 #define VSYNC true
 #define TITLE "Super Awesome Engine"
 #define MAX_KEYS 300
+#define SCREEN_SIZE 2
+
 
 //Paths
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
 #define MODEL_BAKER_PATH "models/BakerHouse.fbx"
+#define MODEL_BUNNY "models/Zombunny.fbx"
 
 //Utils
 #define MAX(x,y) ((x>y) ? x:y)
 #define MIN(x,y) ((x<y) ? x:y)
+
+
+#define OPENGL_LOG_INIT(format, ...) log( __FILE__, __LINE__, format, __VA_ARGS__);
+#define OPENGL_LOG_ERROR(format, ...) log( __FILE__, __LINE__, format, __VA_ARGS__);
+void log( const char file[], const int line, const char* format, ...);

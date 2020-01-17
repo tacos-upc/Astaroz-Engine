@@ -155,71 +155,6 @@
     <ClCompile Include="Util\uuid\uuid.cpp">
       <Filter>uuid</Filter>
     </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_7z.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_dir.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_grp.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_hog.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_iso9660.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_mvl.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_qpak.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_slb.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_unpacked.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_vdf.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_wad.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_zip.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_byteorder.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_haiku.cpp">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_os2.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_posix.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_qnx.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_unix.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_windows.c">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_winrt.cpp">
-      <Filter>physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_unicode.c">
-      <Filter>physfs</Filter>
     <ClCompile Include="ImGUI\ImCurveEdit.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -485,24 +420,6 @@
     <ClInclude Include="Util\uuid\version.h">
       <Filter>uuid</Filter>
     </ClInclude>
-    <ClInclude Include="physfs-3.0.2\src\physfs.h">
-      <Filter>physfs</Filter>
-    </ClInclude>
-    <ClInclude Include="physfs-3.0.2\src\physfs_casefolding.h">
-      <Filter>physfs</Filter>
-    </ClInclude>
-    <ClInclude Include="physfs-3.0.2\src\physfs_internal.h">
-      <Filter>physfs</Filter>
-    </ClInclude>
-    <ClInclude Include="physfs-3.0.2\src\physfs_lzmasdk.h">
-      <Filter>physfs</Filter>
-    </ClInclude>
-    <ClInclude Include="physfs-3.0.2\src\physfs_miniz.h">
-      <Filter>physfs</Filter>
-    </ClInclude>
-    <ClInclude Include="physfs-3.0.2\src\physfs_platforms.h">
-      <Filter>physfs</Filter>
-    </ClInclude>
     <ClInclude Include="ImGUI\ImCurveEdit.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -529,9 +446,6 @@
     <Filter Include="uuid">
       <UniqueIdentifier>{18051d56-9fa0-4397-ac44-86ab3fbd809d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="physfs">
-      <UniqueIdentifier>{83746ae7-2788-4a41-9444-56ded762e83a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\include\Math\Matrix.inl">
@@ -554,9 +468,6 @@
     </None>
     <None Include="Util\uuid\uuid.ixx">
       <Filter>uuid</Filter>
-    </None>
-    <None Include="physfs-3.0.2\src\physfs_platform_apple.m">
-      <Filter>physfs</Filter>
     </None>
   </ItemGroup>
 </Project>

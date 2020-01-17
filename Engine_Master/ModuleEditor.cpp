@@ -274,7 +274,7 @@ void ModuleEditor::drawMainMenu()
 
 void ModuleEditor::drawHierarchyPanel()
 {
-	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height * 0.65f));
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.2f, App->window->height * 0.625f));
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 85.0f));
 	if (ImGui::Begin("Left panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
@@ -312,9 +312,9 @@ void ModuleEditor::drawHierarchyPanel()
 
 void ModuleEditor::drawScenePanel()
 {
-	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.6f, App->window->height * 0.65f));
-	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 50.0f));
-	if (ImGui::Begin(ICON_FA_FEATHER_ALT "Scene", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+	ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.6f, App->window->height * 0.625f));
+	ImGui::SetNextWindowPos(ImVec2(App->window->width * 0.2f, 85.0f));
+	if (ImGui::Begin(ICON_FA_FEATHER_ALT "Scene", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
 	{
 		App->renderer->drawSceneView();
 		ImGui::End();

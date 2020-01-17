@@ -45,7 +45,7 @@ enum KeyState
 //Paths
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
-#define MODEL_BAKER_PATH "models/BakerHouse.fbx"
+#define MODEL_BAKER_PATH "models/Player.fbx"
 #define MODEL_BUNNY "models/Zombunny.fbx"
 
 //Utils

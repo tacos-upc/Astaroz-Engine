@@ -118,7 +118,7 @@ void ModuleScene::selectRoot()
 void ModuleScene::LoadModel(const char* path, GameObject* parent)
 {
 	LOG("Trying to load model in path : %s", path);
-	//App->modelLoader->loadModel(path);
+	//App->modelLoader->LoadModel(path);
 
 	int numObject = 0;
 	std::string name = App->modelLoader->modelName;

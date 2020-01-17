@@ -167,6 +167,7 @@
     <ClInclude Include="MathGeoLib\include\Time\Clock.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MicroTimer.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="ModuleEditor.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MicroTimer.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleEditorCamera.cpp" />

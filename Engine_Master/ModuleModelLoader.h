@@ -12,6 +12,7 @@
 #include "postprocess.h"
 #include "Geometry/AABB.h"
 #include "Math/Quat.h"
+#include "Model.h"
 
 struct par_shapes_mesh_s;
 
@@ -26,15 +27,6 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	void LoadModel(const char*);
-
-
-	std::vector<Texture*> loadMaterialTextures(aiMaterial*, aiTextureType, char*);
-	void addTexture(Texture* texture);
-	void DrawAll(unsigned int program);
-	void processNode(aiNode*, const aiScene*, const char* path);
-	Mesh processMesh(aiMesh*, const aiScene*, const char* path);
-	void loadNewModel(const char* path);
 	void generateBoundingBox();
 	void emptyScene();
 
@@ -42,6 +34,10 @@ public:
 	bool LoadTorus(const char* name, const math::float3& pos, const math::Quat& rot, float inner_r, float outer_r, unsigned slices, unsigned stacks, const math::float4& color);
 	void GenerateMesh(const char * name, const math::float3 & pos, const math::Quat & rot, par_shapes_mesh_s * shape);
 	
+	//models
+	std::vector<Model*> models;
+	void AddModel(const char *path);
+
 	//Lists
 	std::vector<Texture*> texturesLoaded;
 	std::vector<Mesh*> meshes;

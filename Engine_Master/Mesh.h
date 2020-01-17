@@ -52,7 +52,7 @@ class Mesh
 public:
 	/*  Mesh Data  */
 
-	const char* name;
+	const char* name= "default name";
 	math::float4x4  transform = math::float4x4::identity;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;

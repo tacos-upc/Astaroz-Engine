@@ -99,6 +99,7 @@ void Mesh::Draw(unsigned int program) const
 	unsigned int heightNr = 1;
 
 	
+	App->modelLoader->materials[material]->SetUniforms();
 	//Assigning "ids" to textures
 
 	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.diffuse_texture"), 0);

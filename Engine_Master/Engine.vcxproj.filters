@@ -155,6 +155,7 @@
     <ClCompile Include="Util\uuid\uuid.cpp">
       <Filter>uuid</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -411,6 +412,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="Util\debug_draw.hpp" />
     <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="Model.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

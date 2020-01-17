@@ -45,8 +45,22 @@ enum KeyState
 //Paths
 #define TEXTURES_PATH "textures/"
 #define MODELS_PATH "models/"
-#define MODEL_BAKER_PATH "models/Player.fbx"
-#define MODEL_BUNNY "models/Zombunny.fbx"
+#define MODEL_BAKER_PATH "models/BakerHouse.fbx"
+#define MODEL_BUNNY "models/ZomBunny.fbx"
+#define MODEL_CLOCK "models/Clock.fbx"
+#define MODEL_DOLLHOUSE "models/Dollhouse.fbx"
+#define MODEL_DRAWERS "models/Drawers.fbx"
+#define MODEL_FIRETRUCK "models/Firetruck.fbx"
+#define MODEL_FLOOR "models/Floor.fbx"
+#define MODEL_HEARSE "models/Hearse.fbx"
+#define MODEL_PLAYER "models/Player.fbx"
+#define MODEL_ROBOT "models/Robot.fbx"
+#define MODEL_WALL "models/Wall.fbx"
+#define MODEL_SPINNINGTOP "models/SpinningTop.fbx"
+
+//help for texture paths
+#define DIFFUSE
+#define 
 
 //Utils
 #define MAX(x,y) ((x>y) ? x:y)

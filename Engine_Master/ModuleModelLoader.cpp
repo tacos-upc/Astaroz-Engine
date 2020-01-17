@@ -40,10 +40,22 @@ bool ModuleModelLoader::Init()
 
 bool ModuleModelLoader::Start()
 {
-	//Always start by loading the Baker house model
+	//Charge all the models
+	//AddModel(MODEL_BAKER_PATH);
+
+	//Assigment models
 
 	AddModel(MODEL_BUNNY);
-	AddModel(MODEL_BAKER_PATH);
+	AddModel(MODEL_CLOCK);
+	AddModel(MODEL_DOLLHOUSE);
+	AddModel(MODEL_DRAWERS);
+	AddModel(MODEL_FIRETRUCK);
+	AddModel(MODEL_FLOOR);
+	AddModel(MODEL_HEARSE);
+	AddModel(MODEL_PLAYER);
+	AddModel(MODEL_ROBOT);
+	AddModel(MODEL_WALL);
+	AddModel(MODEL_SPINNINGTOP);
 
 	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
 	//materials.back().k_specular = 0.9f;

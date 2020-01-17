@@ -39,7 +39,7 @@ void ComponentMesh::DrawInspector()
 	if (ImGui::CollapsingHeader(ICON_FA_HOME "Mesh"))
 	{
 		
-		const char* listbox_meshNames[4] = {};
+		const char* listbox_meshNames[17] = {};
 		static int selection;
 
 		for (size_t i = 0; i < App->modelLoader->meshes.size(); i++)
@@ -51,7 +51,6 @@ void ComponentMesh::DrawInspector()
 		if (myMesh != nullptr) {
 			ImGui::ListBox("listbox\n(single select)", &selection, listbox_meshNames, IM_ARRAYSIZE(listbox_meshNames), 4);
 		}
-
 		selectedMesh = selection;
 		if (selectedMesh >= 0 && myMesh != App->modelLoader->meshes.at(selectedMesh))
 		{

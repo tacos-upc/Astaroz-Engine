@@ -41,8 +41,8 @@ public:
 	virtual void OnLoad(const Serialization& serial) = 0;
 	
 	GameObject* myGameObject = nullptr;
-	ComponentType myType = TRANSFORM;
-	bool isActive = true;
+	ComponentType myType;
+	bool isEnabled = true;
 	bool allowMany;
 	std::string myName = "NewComponent";
 };

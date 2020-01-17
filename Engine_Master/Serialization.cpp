@@ -38,7 +38,7 @@ rapidjson::Document::AllocatorType& Serialization::GetAllocatorType() const
 	return *allocatorType;
 }
 
-void Serialization::AddInt(int value, const std::string& name)
+void Serialization::AddInt(const std::string& name, int value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	document.AddMember(memberName, value, *allocatorType);
@@ -57,7 +57,7 @@ int Serialization::GetInt(const std::string& name, int value) const
 	}
 }
 
-void Serialization::AddBool(bool value, const std::string& name)
+void Serialization::AddBool(const std::string& name, bool value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	document.AddMember(memberName, value, *allocatorType);
@@ -76,26 +76,7 @@ bool Serialization::GetBool(const std::string& name, bool value) const
 	}
 }
 
-void Serialization::AddUInt(uint64_t value, const std::string& name)
-{
-	rapidjson::Value memberName(name.c_str(), *allocatorType);
-	document.AddMember(memberName, value, *allocatorType);
-}
-
-uint64_t Serialization::GetUInt(const std::string& name, unsigned int value) const
-{
-	if (!document.HasMember(name.c_str()))
-	{
-		return value;
-	}
-	else
-	{
-		const rapidjson::Value& currentValue = document[name.c_str()];
-		return currentValue.GetUint64();
-	}
-}
-
-void Serialization::AddFloat(float value, const std::string& name)
+void Serialization::AddFloat(const std::string& name, float value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	document.AddMember(memberName, value, *allocatorType);
@@ -114,7 +95,7 @@ float Serialization::GetFloat(const std::string& name, float value) const
 	}
 }
 
-void Serialization::AddFloat3(const float3& value, const std::string& name)
+void Serialization::AddFloat3(const std::string& name, const float3& value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	rapidjson::Value array_value(rapidjson::kArrayType);
@@ -142,7 +123,7 @@ void Serialization::GetFloat3(const std::string& name, float3& returnValue, cons
 	}
 }
 
-void Serialization::AddString(const std::string value, const std::string& name)
+void Serialization::AddString(const std::string& name, const std::string value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	rapidjson::Value stringValue(value.c_str(), value.size(), *allocatorType);
@@ -201,7 +182,7 @@ void Serialization::GetColor(const std::string& name, float4& returnValue, const
 	}
 }
 
-void Serialization::AddQuat(const Quat& value, const std::string& name)
+void Serialization::AddQuat(const std::string& name, const Quat& value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	rapidjson::Value quat_value(rapidjson::kArrayType);
@@ -231,23 +212,7 @@ void Serialization::GetQuat(const std::string& name, Quat& returnValue, const Qu
 	}
 }
 
-void Serialization::AddChildConfig(Serialization& value, const std::string& name)
-{
-	rapidjson::Value memberName(name.c_str(), *allocatorType);
-	rapidjson::Value temp(rapidjson::kObjectType);
-	temp.CopyFrom(value.document, *allocatorType);
-	document.AddMember(memberName, temp, *allocatorType);
-}
-
-void Serialization::GetChildConfig(const std::string& name, Serialization& value) const
-{
-	//assert(document.HasMember(name.c_str()));
-
-	const rapidjson::Value& temp = document[name.c_str()];
-	value = Serialization(temp);
-}
-
-void Serialization::AddChildrenSerial(std::vector<Serialization>& value, const std::string& name)
+void Serialization::AddChildrenSerial(const std::string& name, std::vector<Serialization>& value)
 {
 	rapidjson::Value memberName(name.c_str(), *allocatorType);
 	rapidjson::Value childrenSerial(rapidjson::kArrayType);

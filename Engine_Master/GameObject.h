@@ -61,7 +61,6 @@ public:
 	bool isEnabled = true;
 	bool isRoot = false;
 	bool isParentOfMeshes = false;
-	bool isStatic = false;
 	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
 	AABB* fatBoundingBox = nullptr;//Used for AABB tree

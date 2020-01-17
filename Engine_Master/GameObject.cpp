@@ -163,7 +163,6 @@ Component* GameObject::CreateComponent(ComponentType type)
 			component = new ComponentMaterial();
 			myMaterial = (ComponentMaterial*)component;
 			break;
-
 		case CAMERA:
 			component = new ComponentCamera();
 			break;
@@ -369,8 +368,6 @@ void GameObject::DrawInspector()
 
 	delete go_name;
 
-	ImGui::Checkbox("Static", &isStatic);
-
 	//Components
 	for (size_t i = 0; i < componentVector.size(); i++)
 	{
@@ -404,12 +401,65 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 
 void GameObject::OnSave(Serialization& serial)
 {
+	serial.AddString("ID", id);
+	if (parent != nullptr)
+	{
+		serial.AddString("ParentID", parent->id);
+	}
+	serial.AddString("Name", myName);
+	serial.AddBool("Enabled", isEnabled);
+	serial.AddBool("IsRoot", isRoot);
+	 
+	//Serialization transform_config;
+	//myTransform->OnSave(transform_config);
+	//serial.AddChildSerial("Transform", transform_config);
 
+	std::vector<Serialization> gameobject_components_config(componentVector.size());
+	for (unsigned int i = 0; i < componentVector.size(); ++i)
+	{
+		componentVector[i]->OnSave(gameobject_components_config[i]);
+	}
+	serial.AddChildrenSerial("Components", gameobject_components_config);
 }
 
 void GameObject::OnLoad(const Serialization& serial)
 {
+	serial.GetString("ID", id, "0");
+	//assert(UUID != 0);
+	serial.GetString("ParentID", parent->id, "0");
+	serial.GetString("Name", myName, "LoadedGameObject");
 
+	//GameObject* game_object_parent = App->scene->findById(parent->id);
+	////assert(game_object_parent != nullptr);
+	//if (parent->id != "0")
+	//{
+	//	game_object_parent->AddChild(this); //TODO: This should be in scene. Probably D:
+	//}
+
+	isEnabled = serial.GetBool("Enabled", true);
+	isRoot = serial.GetBool("IsRoot", false);
+
+	//Config transform_config;
+	//config.GetChildConfig("Transform", transform_config);
+	//transform.Load(transform_config);
+
+	std::vector<Serialization> gameobject_components_config;
+	serial.GetChildrenSerial("Components", gameobject_components_config);
+	for (unsigned int i = 0; i < gameobject_components_config.size(); i++)
+	{
+		int component_type_int = gameobject_components_config[i].GetInt("Type", -1);
+		assert(component_type_int != -1);
+		if (component_type_int != -1)
+		{
+			Component* created_component = CreateComponent((ComponentType)component_type_int);
+			created_component->OnLoad(gameobject_components_config[i]);
+		}
+		else
+		{
+			LOG("Component type not recognized so it has been skipped!");
+		}
+
+	}
 }
 
 bool GameObject::isfatBoxTooFat()

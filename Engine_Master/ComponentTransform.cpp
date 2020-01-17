@@ -72,10 +72,19 @@ void ComponentTransform::DrawInspector()
 
 void ComponentTransform::OnSave(Serialization& serial)
 {
-
+	serial.AddInt("Type", myType);
+	serial.AddBool("Enabled", isEnabled);
+	serial.AddFloat3("Position", position);
+	serial.AddQuat("Rotation", rotation);
+	serial.AddFloat3("Scale", scale);
 }
 
 void ComponentTransform::OnLoad(const Serialization& serial)
 {
+	isEnabled = serial.GetBool("Enabled", true);
+	serial.GetFloat3("Position", position, float3::zero);
+	serial.GetQuat("Rotation", rotation, Quat::identity);
+	serial.GetFloat3("Scale", scale, float3::one);
 
+	//TODO: Update matrices
 }

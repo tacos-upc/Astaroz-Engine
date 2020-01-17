@@ -10,7 +10,6 @@
 #include "Math/float4.h"
 #include "IconsFontAwesome5.h"
 
-#include "Config.h"
 #include <stack>
 
 
@@ -220,12 +219,47 @@ void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 
 void ModuleScene::OnSave(Serialization& serial)
 {
+	std::vector<Serialization> game_objects_config(gameObjects.size());
+	std::stack<GameObject*> pending_objects;
+	unsigned int current_index = 0;
 
+	for (auto& child_game_object : root->childrenVector)
+	{
+		pending_objects.push(child_game_object);
+	}
+
+	while (!pending_objects.empty())
+	{
+		GameObject* current_game_object = pending_objects.top();
+		pending_objects.pop();
+
+		current_game_object->OnSave(game_objects_config[current_index]);
+		current_index++;
+
+		for (auto& child_game_object : current_game_object->childrenVector)
+		{
+			pending_objects.push(child_game_object);
+		}
+	}
+	//assert(current_index == game_objects_ownership.size());
+
+	serial.AddChildrenSerial("GameObjects", game_objects_config);
 }
 
 void ModuleScene::OnLoad(const Serialization& serial)
 {
+	//RemoveGameObject(root);
+	selectedByHierarchy = nullptr;
+	//root = new GameObject(0);
 
+	std::vector<Serialization> game_objects_config;
+	serial.GetChildrenSerial("GameObjects", game_objects_config);
+	for (unsigned int i = 0; i < game_objects_config.size(); ++i)
+	{
+		GameObject* created_game_object = CreateGameObject();
+		created_game_object->OnLoad(game_objects_config[i]);
+	}
+	//App->renderer->GenerateQuadTree();
 }
 
 void ModuleScene::drawHierarchy()

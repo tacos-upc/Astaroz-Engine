@@ -134,6 +134,32 @@ void ModuleEditor::drawMainMenu()
 	//Menu
 	if (ImGui::BeginMainMenuBar())
 	{
+		if (ImGui::BeginMenu("Scene"))
+		{
+			if (ImGui::MenuItem(ICON_FA_SAVE " Save Scene"))
+			{
+				Serialization sceneSerial;
+				App->scene->OnSave(sceneSerial);
+				std::string serializedScene;
+				sceneSerial.GetSerializedScene(serializedScene);
+
+				App->scene->sceneSerialized = serializedScene;	//test
+
+				//App->filesystem->Save(path.c_str(), serializedScene.c_str(), serializedScene.size() + 1);
+			}
+			if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Load Scene"))
+			{
+				//size_t readed_bytes;
+				//char* scene_file_data = App->filesystem->Load(path.c_str(), readed_bytes);
+				//std::string serialized_scene_string = scene_file_data;
+				//free(scene_file_data);
+
+				//Serialization sceneSerial(App->scene->sceneSerialized);
+				//App->scene->OnLoad(sceneSerial);
+				LOG(App->scene->sceneSerialized.c_str());
+			}
+			ImGui::EndMenu();
+		};
 		if (ImGui::BeginMenu("Tools"))
 		{
 			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);

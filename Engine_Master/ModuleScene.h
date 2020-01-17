@@ -50,6 +50,8 @@ public:
 	GameObject* mainCamera;
 	GameObject* selectedByHierarchy;
 
+	std::string sceneSerialized = "";	//test
+
 private:
 	//private variables
 	GameObject* root;

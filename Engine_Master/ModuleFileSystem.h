@@ -8,7 +8,7 @@ public:
 
 	bool Init() override;
 	bool Start() override;
-	void CleanUp() override;
+	bool CleanUp() override;
 
 	bool Exist(const char*);
 	unsigned int Size(const char*); 

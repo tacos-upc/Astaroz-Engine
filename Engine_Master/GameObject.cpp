@@ -239,7 +239,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 		}
 
 		// TODO:Revise this menu
-		if (ImGui::BeginMenu("Create 3D Object"))
+		/*if (ImGui::BeginMenu("Create 3D Object"))
 		{
 			if (ImGui::MenuItem("Cube"))
 			{
@@ -262,7 +262,7 @@ void GameObject::DrawHierarchy(GameObject* selected)
 				App->scene->CreateGameObjectBakerHouse(this);
 			}
 			ImGui::EndMenu();
-		}
+		}*/
 		ImGui::Separator();
 
 		if (ImGui::Selectable("Duplicate"))

@@ -20,7 +20,6 @@ public:
 
     void SetUniforms();
 
-public:
 	std::string name;
 	unsigned int program = 0;
 	math::float4 object_color = math::float4::zero;
@@ -39,6 +38,11 @@ public:
 	unsigned int specular_texture;
 	unsigned int occlusion_texture;
 	unsigned int emissive_texture;
+
+	bool hasdiff = false;
+	bool hasSpec = false;
+	bool hasEmi = false;
+	bool hasOcc = false;
 };
 
 #endif __Material_h__

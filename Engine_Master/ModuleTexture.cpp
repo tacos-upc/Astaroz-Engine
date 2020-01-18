@@ -57,7 +57,7 @@ Texture ModuleTexture::LoadTexture(const char* path)
 	Texture texture;
 
 	LOG("Trying to load a texture");
-	bool loaded = false;
+	loaded = false;
 
 	//Step 1 to find the texture
 	LOG("Step 1: Trying to load texture from path described in the FBX...");
@@ -129,7 +129,7 @@ Texture ModuleTexture::LoadTexture(const char* path)
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
 	texture.data = ilGetData();
-
+	texture.loaded = loaded;
 	//If loaded flag is false, we must asign a texture.path anyway so we will use the received as parameter in this method
 	if (!loaded)
 		texture.path = path;

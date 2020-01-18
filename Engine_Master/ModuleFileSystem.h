@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#define FILTERS ".fbx\0.png\0.ogg\0.mp3\0\0"
+#define LOADABLE_EXTENSIONS "fbx#png#ogg#mp3"
 #define PATH_SEP '\\'
 #define PATH_MAX 260
 
@@ -31,7 +31,7 @@ struct PathStruct
 
 	std::string fullpath()
 	{
-		return path == "" && name == ""? "" : "/" + path + "/" + name + ext;
+		return path == "" && name == ""? "" : "/" + path + "/" + name;
 	}
 };
 
@@ -51,6 +51,7 @@ public:
 	unsigned int Size(const char*); 
 	bool CreateDir(const char*);
 	bool IsDir(const char*);
+	bool IsFile(const char*);
 	bool Delete(const char*);
 
 	bool openFileBrowser(FileBrowsingMode);
@@ -64,12 +65,15 @@ private:
 	const char* fileSystemPath;
 	int searchPathPriority = 1;
 	PathStruct selectedDir = PathStruct();
+	PathStruct selectedFile = PathStruct();
 	std::vector<PathStruct> breadCrumbs;
+	std::vector<std::string> extensions;
 
 	void mount(const char*);
 	void enableWriteDir(const char*);
 	std::vector<std::string> splitStringToVector(std::string, char, bool);
 	PathStruct ParsePathFileName(const std::string& vPathFileName);
 	bool replaceString(std::string& str, const std::string& oldStr, const std::string& newStr);
+	bool isLoadableFile(std::string);
 };
 

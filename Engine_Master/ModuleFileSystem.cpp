@@ -24,6 +24,11 @@ bool ModuleFileSystem::Init()
 	PHYSFS_init(NULL);	
 	enableWriteDir(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
 	mount(PHYSFS_getBaseDir());
+
+	extensions.push_back("fbx");
+	extensions.push_back("png");
+	extensions.push_back("ogg");
+	extensions.push_back("mp3");
 	return true;
 }
 
@@ -73,6 +78,14 @@ bool ModuleFileSystem::IsDir(const char* path)
 	PHYSFS_stat(path, &fileData);
 
 	return fileData.filetype == PHYSFS_FILETYPE_DIRECTORY;
+}
+
+bool ModuleFileSystem::IsFile(const char* path)
+{
+	PHYSFS_Stat fileData;
+	PHYSFS_stat(path, &fileData);
+
+	return fileData.filetype == PHYSFS_FILETYPE_REGULAR;
 }
 
 bool ModuleFileSystem::Delete(const char* filePathAndName)
@@ -135,12 +148,30 @@ bool ModuleFileSystem::openFileBrowser(FileBrowsingMode mode)
 						selectedDir = pathStruct;
 						breadCrumbs.push_back(pathStruct);
 					}
+					else if (IsFile(pathStruct.fullpath().c_str()))
+					{
+						pathStruct.ext = pathStruct.name.substr(pathStruct.name.find_last_of(".") + 1);
+						selectedFile = pathStruct;
+					}
+
 				}
 			}
 			PHYSFS_freeList(files);
 		}
+
+		if (isLoadableFile(selectedFile.ext))
+		{
+			ImGui::SetCursorPosY(ImGui::GetWindowHeight() +115);
+			ImGui::Separator();
+			if (ImGui::Button("Load"))
+			{
+			}
+		}
+
 		ImGui::End();
 	}
+
+
 	
 	return keepAlive;
 }
@@ -252,4 +283,19 @@ bool ModuleFileSystem::replaceString(std::string& str, const std::string& oldStr
 		pos += newStr.length();
 	}
 	return found;
+}
+
+bool ModuleFileSystem::isLoadableFile(std::string ext)
+{
+	bool canI = false;
+
+	for (size_t i = 0; i < extensions.size(); i++)
+	{
+		if (ext == extensions.at(i).c_str())
+		{
+			canI |= true;
+		}
+	}
+
+	return canI;
 }

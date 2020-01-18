@@ -86,13 +86,16 @@ bool ModuleFileSystem::openFileBrowser()
 	if (ImGuiFileDialog::Instance()->FileDialog("fileBrowser"))
 	{
 		// action if OK
-		if (ImGuiFileDialog::Instance()->IsOk == true)
+		if (ImGuiFileDialog::Instance()->IsOk)
 		{
 			std::string filePathName = ImGuiFileDialog::Instance()->GetFilepathName();
 			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 			// action
+
+			keepAlive = false;
 		}
-		else if (!ImGuiFileDialog::Instance()->m_CreateDirectoryMode)
+
+		if (! keepAlive || !ImGuiFileDialog::Instance()->m_CreateDirectoryMode)
 		{
 			//Cancel button, close
 			keepAlive = false;

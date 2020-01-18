@@ -3,6 +3,8 @@
 
 #include "ImGuiFileDialog.h"
 #include "imgui.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_opengl3.h"
 
 #define WIN32
 #ifdef WIN32
@@ -17,7 +19,6 @@
 #define PATH_SEP '/'
 #endif
 
-#include "imgui.h"
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif

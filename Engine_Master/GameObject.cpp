@@ -42,6 +42,7 @@ GameObject::GameObject(const GameObject& go)
 		{
 		case MESH:
 			aux = new ComponentMesh(this, (ComponentMesh*) cp);
+			
 			break;
 
 		case TRANSFORM:
@@ -115,13 +116,17 @@ void GameObject::SetParent(GameObject* newParent)
 
 void GameObject::DeleteGameObject()
 {
-	parent->RemoveChildren(this);
-	App->scene->eraseGameObject(this);
-	for (int i = 0; i < childrenVector.size(); i++)
+	if (this->id != App->scene->getRoot()->id)	//root has no parent
 	{
-		childrenVector[i]->DeleteGameObject();
+		parent->RemoveChildren(this);
 	}
-
+	App->scene->eraseGameObject(this);
+	for (unsigned int i = 0; i < childrenVector.size(); i++)
+	{
+		GameObject* temp = childrenVector[i];
+		childrenVector[i] = nullptr;
+		temp->DeleteGameObject();
+	}
 	CleanUp();
 }
 
@@ -147,7 +152,10 @@ void GameObject::CleanUp()
 Component* GameObject::CreateComponent(ComponentType type)
 {
 	Component* component = GetComponent(type);
-	if (component != nullptr && !component->allowMany) return nullptr;
+	if (component != nullptr && !component->allowMany)
+	{
+		return component;	//component already existing
+	}
 
 	switch(type)
 	{
@@ -160,7 +168,6 @@ Component* GameObject::CreateComponent(ComponentType type)
 			myMesh = (ComponentMesh*)component;
 			createAABBs();
 			break;
-
 		case CAMERA:
 			component = new ComponentCamera();
 			break;
@@ -237,37 +244,12 @@ void GameObject::DrawHierarchy(GameObject* selected)
 		{
 			App->scene->CreateEmpty(this);	//'this' instance maybe not the one selected in hierarchy - we will only use it when 'selected' is nullptr
 		}
-
-		// TODO:Revise this menu
-		if (ImGui::BeginMenu("Create 3D Object"))
-		{
-			if (ImGui::MenuItem("Cube"))
-			{
-				App->scene->CreateGameObjectShape(this, CUBE);
-			}
-			if (ImGui::MenuItem("Sphere"))
-			{
-				App->scene->CreateGameObjectShape(this, SPHERE);
-			}
-			if (ImGui::MenuItem("Cylinder"))
-			{
-				App->scene->CreateGameObjectShape(this, CYLINDER);
-			}
-			if (ImGui::MenuItem("Torus"))
-			{
-				App->scene->CreateGameObjectShape(this, TORUS);
-			}
-			if (ImGui::MenuItem("Baker House"))
-			{
-				App->scene->CreateGameObjectBakerHouse(this);
-			}
-			ImGui::EndMenu();
-		}
+		
 		ImGui::Separator();
 
 		if (ImGui::Selectable("Duplicate"))
 		{
-			App->scene->DuplicateGameObject(this);
+			App->scene->DuplicateSelectedGameObject();
 		}
 
 		if (ImGui::Selectable("Delete"))
@@ -376,11 +358,7 @@ void GameObject::DrawInspector()
 	{
 		myName = std::string(go_name);
 	}
-	ImGui::SameLine();
-
 	delete go_name;
-
-	ImGui::Checkbox("Static", &isStatic);
 
 	//Components
 	for (size_t i = 0; i < componentVector.size(); i++)
@@ -407,6 +385,64 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 				newChild->myTransform->setLocalMatrix(newChild->parent->myTransform->getGlobalMatrix());
 		}
 		ImGui::EndDragDropTarget();
+	}
+}
+
+void GameObject::OnSave(Serialization& serial)
+{
+	serial.AddString("ID", id);
+	if (parent != nullptr)
+	{
+		serial.AddString("ParentID", parent->id);
+	}
+	serial.AddString("Name", myName);
+	serial.AddBool("Enabled", isEnabled);
+	serial.AddBool("IsRoot", isRoot);
+	 
+	//Serialization transform_config;
+	//myTransform->OnSave(transform_config);
+	//serial.AddChildSerial("Transform", transform_config);
+
+	std::vector<Serialization> gameobject_components_config(componentVector.size());
+	for (unsigned int i = 0; i < componentVector.size(); ++i)
+	{
+		componentVector[i]->OnSave(gameobject_components_config[i]);
+	}
+	serial.AddChildrenSerial("Components", gameobject_components_config);
+}
+
+void GameObject::OnLoad(const Serialization& serial)
+{
+	id = serial.GetString("ID", "0");
+	myName = serial.GetString("Name", "LoadedGameObject");
+	std::string parentID = serial.GetString("ParentID", "0");
+	if (parentID != "0" && parentID != App->scene->getRoot()->id && parentID != App->scene->savedRootID)	//ensure root was not the parent on the current object
+	{
+		SetParent(App->scene->findById(parentID));
+	}
+
+	isEnabled = serial.GetBool("Enabled", true);
+	isRoot = serial.GetBool("IsRoot", false);
+
+	//Config transform_config;
+	//config.GetChildConfig("Transform", transform_config);
+	//transform.Load(transform_config);
+
+	std::vector<Serialization> gameobject_components_config;
+	serial.GetChildrenSerial("Components", gameobject_components_config);
+	for (unsigned int i = 0; i < gameobject_components_config.size(); i++)
+	{
+		int component_type_int = gameobject_components_config[i].GetInt("Type", -1);
+		if (component_type_int != -1)
+		{
+			Component* created_component = CreateComponent((ComponentType)component_type_int);
+			created_component->OnLoad(gameobject_components_config[i]);
+		}
+		else
+		{
+			LOG("Component type not recognized so it has been skipped!");
+		}
+
 	}
 }
 

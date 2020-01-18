@@ -51,8 +51,10 @@ void Model::processNode(aiNode *node, const aiScene *scene, const char* path)
 
 	LOG("Before Meshes: %d", meshes.size());
 	LOG("------------------------------------------")
+		
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
+
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			meshes.push_back(new Mesh(processMesh(mesh, scene, path)));
 			LOG("After Meshes: %d", meshes.size());
@@ -122,6 +124,12 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+	if (path == MESH_PLAYER) {
+		if (meshes.size() == 0) {
+			path = MESH_GUN;
+		}
+	}
+
 	std::string diffusePath = path;
 	diffusePath += DIFFUSE;
 	diffusePath += PNG;
@@ -160,6 +168,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, const char* path)
 	texturesLoaded.push_back(&texture4);
 
 	Material* myMaterial = new Material(textures, texture.id, texture2.id, texture4.id, texture3.id);
+	myMaterial->hasdiff = texture.loaded;
+	myMaterial->hasSpec = texture2.loaded;
+	myMaterial->hasEmi = texture3.loaded;
+	myMaterial->hasOcc = texture4.loaded;
 	myMaterial->program = App->programShader->defaultProgram;
 	materials.push_back(myMaterial);
 	App->modelLoader->materials.push_back(myMaterial);

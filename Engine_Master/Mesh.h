@@ -28,7 +28,7 @@ struct Texture
 	unsigned id = 0;
 	unsigned width = 0;
 	unsigned height = 0;
-	
+	bool loaded = false;
 	Texture() 
 	{}
 

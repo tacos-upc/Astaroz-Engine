@@ -18,7 +18,7 @@ ComponentMesh::ComponentMesh(GameObject* gameObject, ComponentMesh* componentMes
 {
 	myType = MESH;
 	myGameObject = gameObject;
-	myMesh = componentMesh->myMesh;
+	myMesh = new Mesh(componentMesh->myMesh->vertices, componentMesh->myMesh->indices, componentMesh->myMesh->textures, componentMesh->myMesh->material, componentMesh->myMesh->name );
 }
 
 ComponentMesh::~ComponentMesh()
@@ -76,10 +76,33 @@ void ComponentMesh::editMat()
 	ImGui::SliderFloat3("specular_color", (float*)&App->modelLoader->materials[myMesh->material]->specular_color, -1.0f, 1.0f);
 	ImGui::SliderFloat3("emissive_color", (float*)&App->modelLoader->materials[myMesh->material]->emissive_color, -1.0f, 1.0f);
 	
-	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->diffuse_texture, { 200.0f, 200.0f });
-	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->specular_texture, { 200.0f, 200.0f });
-	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->emissive_texture, { 200.0f, 200.0f });
-	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->occlusion_texture, { 200.0f, 200.0f });
-	
+	if(ImGui::CollapsingHeader(ICON_FA_PAINT_BRUSH "Textures applied")){
+		if (App->modelLoader->materials[myMesh->material]->hasdiff) {
+			ImGui::Text("Texture diffuse");
+			ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->diffuse_texture, { 200.0f, 200.0f });
+		}
+		if (App->modelLoader->materials[myMesh->material]->hasSpec) {
+			ImGui::Text("Texture specular");
+			ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->specular_texture, { 200.0f, 200.0f });
+		}
+		if (App->modelLoader->materials[myMesh->material]->hasEmi) {
+			ImGui::Text("Texture emissive");
+			ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->emissive_texture, { 200.0f, 200.0f });
+		}
+		if (App->modelLoader->materials[myMesh->material]->hasOcc) {
+			ImGui::Text("Texture occlusion");
+			ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->occlusion_texture, { 200.0f, 200.0f });
+		}
+	}
 		
+}
+
+void ComponentMesh::OnSave(Serialization& serial)
+{
+
+}
+
+void ComponentMesh::OnLoad(const Serialization& serial)
+{
+
 }

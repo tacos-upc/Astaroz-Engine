@@ -73,7 +73,7 @@ void ComponentTransform::DrawInspector()
 			setupEulerRotation(true, eulerRotationInDeg);
 			onTransformChanged();
 		}
-		if (ImGui::DragFloat3("Scale", &scale.x)) 
+		if (ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.0f, 2.f))
 		{
 			onTransformChanged();
 		}
@@ -84,13 +84,35 @@ void ComponentTransform::DrawInspector()
 
 void ComponentTransform::onTransformChanged()
 {
+	rotation = Quat::FromEulerXYZ(eulerRotationInDeg.x, eulerRotationInDeg.y, eulerRotationInDeg.z );
 	localModelMatrix = float4x4::FromTRS(position, rotation, scale);
 	generateGlobalMatrix();
 
+	//deltaEulerRotation = float3(eulerRotation.x - lastEulerRotation.x, eulerRotation.y - lastEulerRotation.y, eulerRotation.z - lastEulerRotation.z);
+	
 	for (size_t i = 0; i < myGameObject->childrenVector.size(); i++)
 	{
 		myGameObject->childrenVector.at(i)->myTransform->onTransformChanged();
 	}
+}
+
+void ComponentTransform::OnSave(Serialization& serial)
+{
+	serial.AddInt("Type", myType);
+	serial.AddBool("Enabled", isEnabled);
+	serial.AddFloat3("Position", position);
+	serial.AddQuat("Rotation", rotation);
+	serial.AddFloat3("Scale", scale);
+}
+
+void ComponentTransform::OnLoad(const Serialization& serial)
+{
+	isEnabled = serial.GetBool("Enabled", true);
+	serial.GetFloat3("Position", position, float3::zero);
+	serial.GetQuat("Rotation", rotation, Quat::identity);
+	serial.GetFloat3("Scale", scale, float3::one);
+
+	onTransformChanged();
 }
 
 void ComponentTransform::generateGlobalMatrix()

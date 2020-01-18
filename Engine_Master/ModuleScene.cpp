@@ -10,6 +10,8 @@
 #include "Math/float4.h"
 #include "IconsFontAwesome5.h"
 
+#include <stack>
+
 
 ModuleScene::ModuleScene()
 {}
@@ -25,19 +27,14 @@ bool ModuleScene::Init()
 	showInspector = true;
 	selectedByHierarchy = nullptr;
 	nGameObjects = 0;
-	numberOfBakerHouse = 0;
-	numberOfSphere = 0;
-	numberOfCube = 0;
-	numberOfTorus = 0;
-	numberOfCylinder = 0;
+	sceneSerialized = "";
+	savedRootID = "";
 
-	root = new GameObject("World");
+	root = new GameObject("Root");
 	root->isRoot = true;
 
-	mainCamera = CreateGameObject("Main Camera (root)", root);
+	mainCamera = CreateGameObject("Main Camera", root);
 	mainCamera->CreateComponent(CAMERA);
-
-	gameObjects.push_back(mainCamera);
 
 	preferedOperation = ImGuizmo::TRANSLATE;
 
@@ -65,19 +62,17 @@ bool ModuleScene::CleanUp()
 	{
 		delete GO;
 	}
-
 	delete root;
+
 	return true;
 }
 
 GameObject* ModuleScene::CreateGameObject()
 {
-	std::string defaultName = "NewGameObject" + gameObjects.size(); //toString() ??
+	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* gameObject = new GameObject(defaultName.c_str());
 	gameObject->SetParent(root);
-
-	LOG("Creating new GameObject with name: %s", defaultName);
-
+	gameObjects.push_back(gameObject);
 	nGameObjects++;
 
 	return gameObject;
@@ -87,8 +82,7 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent)
 {
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
-
-	LOG("Creating new GameObject with name: %s", name);
+	gameObjects.push_back(gameObject);
 	nGameObjects++;
 
 	return gameObject;
@@ -99,13 +93,14 @@ GameObject* ModuleScene::getRoot()
 	return root;
 }
 
-GameObject * ModuleScene::findById(std::string id)
+GameObject* ModuleScene::findById(std::string id)
 {
 	GameObject* found = nullptr;
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
 		if (gameObjects.at(i)->id == id) found = gameObjects.at(i);
 	}
+
 	return found;
 }
 
@@ -150,159 +145,62 @@ void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string tempName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* gameObject = nullptr;
-	if (selectedByHierarchy != nullptr)	//TODO: It's never null - every frame points to ROOT if ever gets nullptr
+	if (selectedByHierarchy != nullptr)
 	{
 		gameObject = CreateGameObject(tempName.c_str(), selectedByHierarchy);
 	}
 	else
 	{
-		gameObject = CreateGameObject(tempName.c_str(), parent);	//we use the parameter as parent only when 'selected' is nullptr
+		gameObject = CreateGameObject(tempName.c_str(), parent);	//only when 'selected' is nullptr, we use the parameter as parent
 	}
-	
-	gameObjects.push_back(gameObject);
 }
 
-void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
-{
-	if(parent == nullptr)
-	{
-		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
-		return; //leave
-	}
-
-	LOG("Creating a GameObject with Baker House Mesh.");
-	std::string defaultName = "BakerHouse" + std::to_string(numberOfBakerHouse + 1);
-	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
-	LoadModel("../Models/baker_house/BakerHouse.fbx", newGameObject);
-	++numberOfBakerHouse;
-
-	gameObjects.push_back(newGameObject);
-	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
-}
-
-void ModuleScene::CreateGameObjectShape(GameObject* parent, ShapeType shape)
-{
-	/*
-	if (parent == nullptr)
-	{
-		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
-		return;
-	}
-
-	std::string defaultName;
-	bool correct;
-	switch (shape)
-	{
-	case SPHERE:
-		LOG("Creating a GameObject with Sphere Mesh.");
-		defaultName = "Sphere" + std::to_string(numberOfSphere + 1);
-		correct = App->modelLoader->LoadSphere(defaultName.c_str(), math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(0.4f, 0.4f, 0.4f, 0.4f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the sphere mesh correctly.");
-			return;
-		}
-		++numberOfSphere;
-		break;
-	case CUBE:
-		LOG("Creating a GameObject with cube Mesh.");
-		defaultName = "Cube" + std::to_string(numberOfCube + 1);
-		correct = App->modelLoader->LoadCube("cube0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, float4(0.4f, 0.4f, 0.4f, 0.4f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the cube mesh correctly.");
-			return;
-		}
-		++numberOfCube;
-		break;
-	case CYLINDER:
-		LOG("Creating a GameObject with Cylinder Mesh.");
-		defaultName = "Cylinder" + std::to_string(numberOfCylinder + 1);
-		correct = App->modelLoader->LoadCylinder(defaultName.c_str(), math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 2.0f, 1.0f, 30, 30, float4(0.4f, 0.4f, 0.4f, 0.4f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the cylinder mesh correctly.");
-			return;
-		}
-		++numberOfCylinder;
-		break;
-	case TORUS:
-		LOG("Creating a GameObject with torus Mesh.");
-		defaultName = "Torus" + std::to_string(numberOfTorus + 1);
-		correct = App->modelLoader->LoadTorus(defaultName.c_str(), math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 0.5f, 0.67f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-		if (!correct)
-		{
-			LOG("ERROR: Cannot load the torus mesh correctly.");
-			return;
-		}
-		++numberOfTorus;
-		break;
-	default:
-		break;
-	}
-
-
-	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
-	
-
-	if(!App->modelLoader->meshes.size() == 1)
-	{
-		LOG("ERROR: Sphere model cannot have more than one mesh. ");
-		delete newGameObject;
-		return;
-	}
-
-
-
-	ComponentMesh* myMeshCreated = (ComponentMesh*)newGameObject->CreateComponent(MESH);
-	myMeshCreated->LoadMesh(App->modelLoader->meshes[0]);
-	newGameObject->ComputeAABB();
-	gameObjects.push_back(newGameObject);
-
-	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
-	//Deleting model loader information
-	App->modelLoader->emptyScene();
-	*/
-}
+//void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
+//{
+//	if(parent == nullptr)
+//	{
+//		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
+//		return; //leave
+//	}
+//
+//	LOG("Creating a GameObject with Baker House Mesh.");
+//	std::string defaultName = "BakerHouse" + std::to_string(numberOfBakerHouse + 1);
+//	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
+//	LoadModel("../Models/baker_house/BakerHouse.fbx", newGameObject);
+//	++numberOfBakerHouse;
+//
+//	gameObjects.push_back(newGameObject);
+//	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
+//}
 
 void ModuleScene::RemoveSelectedGameObject()
 {
 	if (!gameObjects.empty())
 	{
-		//TODO: Don't allow to delete ROOT (World) through its UID
-		GameObject* toBeDeleted = nullptr;
-
-		if (selectedByHierarchy != nullptr)
+		if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id)
 		{
-			toBeDeleted = selectedByHierarchy;	//prioritize selected over param if not nullptr
+			selectedByHierarchy->DeleteGameObject();
 			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be unasigned (will be pointing to ROOT next frame)
 		}
 		else
 		{
-			toBeDeleted = root;
+			LOG("You are trying to delete ROOT GameObject and it is not allowed! Please select an object in the hierarchy to delete.");
 		}
-
-		toBeDeleted->DeleteGameObject();
 	}
 }
 
-void ModuleScene::DuplicateGameObject(GameObject* go)
+void ModuleScene::DuplicateSelectedGameObject()
 {
-	//TODO: Don't allow to duplicate ROOT (World) through its UID
-	GameObject* duplicate = nullptr;
-
-	if (selectedByHierarchy != nullptr && selectedByHierarchy->GetName() != "World")
+	if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id && selectedByHierarchy->id != mainCamera->id)
 	{
-		duplicate = new GameObject(*selectedByHierarchy);
+		GameObject* duplicate = new GameObject(*selectedByHierarchy);
 		selectedByHierarchy->parent->childrenVector.push_back(duplicate);
+		gameObjects.push_back(duplicate);
 	}
 	else
 	{
-		duplicate = new GameObject(*go);
-		go->parent->childrenVector.push_back(duplicate);
+		LOG("You are trying to duplicate ROOT GameObject or MainCamera and it is not allowed! Please select an object in the hierarchy to duplicate.");
 	}
-
-	gameObjects.push_back(duplicate);
 }
 
 void ModuleScene::eraseGameObject(GameObject* go)
@@ -323,6 +221,53 @@ void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 	{
 		selectedByHierarchy = root;
 	}
+}
+
+void ModuleScene::OnSave(Serialization& serial)
+{
+	std::vector<Serialization> game_objects_config(gameObjects.size());
+	std::stack<GameObject*> pending_objects;
+	unsigned int current_index = 0;
+
+	for (auto& child_game_object : root->childrenVector)
+	{
+		pending_objects.push(child_game_object);
+	}
+
+	while (!pending_objects.empty())
+	{
+		GameObject* current_game_object = pending_objects.top();
+		pending_objects.pop();
+
+		current_game_object->OnSave(game_objects_config[current_index]);
+		current_index++;
+
+		for (auto& child_game_object : current_game_object->childrenVector)
+		{
+			pending_objects.push(child_game_object);
+		}
+	}
+	//assert(current_index == game_objects_ownership.size());
+
+	serial.AddChildrenSerial("GameObjects", game_objects_config);
+}
+
+void ModuleScene::OnLoad(const Serialization& serial)
+{
+	selectedByHierarchy = nullptr;
+	savedRootID = root->id;
+	root->DeleteGameObject();
+	root = new GameObject("Root");
+	root->isRoot = true;
+
+	std::vector<Serialization> game_objects_config;
+	serial.GetChildrenSerial("GameObjects", game_objects_config);
+	for (unsigned int i = 0; i < game_objects_config.size(); ++i)
+	{
+		GameObject* created_game_object = CreateGameObject();
+		created_game_object->OnLoad(game_objects_config[i]);
+	}
+	//App->renderer->GenerateQuadTree();
 }
 
 void ModuleScene::drawHierarchy()

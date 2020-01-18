@@ -153,6 +153,7 @@
     <ClCompile Include="Util\uuid\uuid.cpp">
       <Filter>uuid</Filter>
     </ClCompile>
+    <ClCompile Include="Serialization.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ComponentLight.cpp" />
     <ClCompile Include="ImGUI\ImCurveEdit.cpp">
@@ -469,6 +470,7 @@
     <ClInclude Include="Util\uuid\version.h">
       <Filter>uuid</Filter>
     </ClInclude>
+    <ClInclude Include="Serialization.h" />
     <ClInclude Include="ImGUI\ImCurveEdit.h">
       <Filter>ImGui</Filter>
     </ClInclude>

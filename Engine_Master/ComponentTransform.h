@@ -24,6 +24,8 @@ public:
 	void setGlobalMatrix(float4x4&);
 	void setLocalMatrix(float4x4&);
 	void DrawInspector() override;
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
 	void onTransformChanged();
 
 	float3 position = float3(0.0f, 0.0f, 0.0f);

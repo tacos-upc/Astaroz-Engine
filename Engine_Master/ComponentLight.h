@@ -15,8 +15,10 @@ public:
 
 	//public methods
 	void DrawInspector() override;
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
 	//public variables
-	
 	struct Light light;
 
 };

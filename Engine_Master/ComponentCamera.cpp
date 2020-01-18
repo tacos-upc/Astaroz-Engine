@@ -251,3 +251,13 @@ void ComponentCamera::DrawInspector()
 		ImGui::Separator();
 	}
 }
+
+void ComponentCamera::OnSave(Serialization& serial)
+{
+	
+}
+
+void ComponentCamera::OnLoad(const Serialization& serial)
+{
+	
+}

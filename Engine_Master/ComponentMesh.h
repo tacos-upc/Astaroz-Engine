@@ -20,6 +20,10 @@ public:
 	void Draw(const unsigned int program) const;
 	void DrawInspector() override;
 
+	//serialization
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
 	//public variables
 	Mesh* myMesh = nullptr;
 

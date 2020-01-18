@@ -47,7 +47,7 @@ bool ModuleModelLoader::Start()
 	//AddModel(MODEL_BAKER_PATH);
 
 	//Assigment models
-
+	AddModel(MESH_PLAYER, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_BUNNY, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_CLOCK, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_DOLLHOUSE, float3(0.005f, 0.005f, 0.005));
@@ -55,7 +55,6 @@ bool ModuleModelLoader::Start()
 	AddModel(MODEL_FIRETRUCK, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_FLOOR, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_HEARSE, float3(0.01f, 0.01f, 0.01));
-	AddModel(MODEL_PLAYER, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_ROBOT, float3(0.01f, 0.01f, 0.01f));
 	AddModel(MODEL_WALL, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_SPINNINGTOP, float3(0.05f, 0.05f, 0.05));

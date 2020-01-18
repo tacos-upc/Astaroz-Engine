@@ -9,6 +9,7 @@
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
 #include "AABBTree.h"
+#include <vector>
 
 
 enum FrustumCollisionMode { OUTSIDE, INSIDE, BETWEEN };
@@ -42,6 +43,10 @@ public:
 	void yaw(float, float);
 	void roll(float, float);
 
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
+
 	Frustum* frustum;
 	float4x4 projectionMatrix = float4x4::zero;
 	float4x4 viewMatrix = float4x4::zero;
@@ -57,7 +62,7 @@ public:
 private:
 	int selectedProjectionMode;
 
-	vector<GameObject*> touchedCandidates;
+	std::vector<GameObject*> touchedCandidates;
 	void findTouchedCandidates(AABBTreeNode*, LineSegment*);
 
 };

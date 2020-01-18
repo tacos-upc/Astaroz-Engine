@@ -34,32 +34,31 @@ public:
 	void selectRoot();
 	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);
-	void CreateGameObjectBakerHouse(GameObject* parent);
-	void CreateGameObjectShape(GameObject* parent, ShapeType shape);
+	//void CreateGameObjectBakerHouse(GameObject* parent);
 	void RemoveSelectedGameObject();
-	void DuplicateGameObject(GameObject* go);
+	void DuplicateSelectedGameObject();
 	void SelectGameObjectInHierarchy(GameObject* selected);
 	void drawHierarchy();
 	void drawAllBoundingBoxes();
 	void eraseGameObject(GameObject* go);
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
 
 	//public variables
 	std::vector<GameObject*> gameObjects;
 	bool showHierarchy;
 	bool showInspector;
 	GameObject* mainCamera;
-	GameObject* selectedByHierarchy = nullptr;
+	GameObject* selectedByHierarchy;
 	ImGuizmo::OPERATION preferedOperation;
+
+	std::string sceneSerialized;
+	std::string savedRootID;
 
 private:
 	//private variables
 	GameObject* root;
 	unsigned int nGameObjects;
-	unsigned int numberOfBakerHouse;
-	unsigned int numberOfSphere;
-	unsigned int numberOfCube;
-	unsigned int numberOfTorus;
-	unsigned int numberOfCylinder;
 };
 
 #endif __ModuleScene_H__

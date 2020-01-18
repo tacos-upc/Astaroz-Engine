@@ -30,6 +30,8 @@ public:
 	ILuint myTextureId;
 	ILinfo myImageInfo;
 	GLuint myTexture;
+
+	bool loaded;
 };
 
 #endif __ModuleTexture_H__

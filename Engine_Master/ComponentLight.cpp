@@ -23,3 +23,11 @@ void ComponentLight::DrawInspector()
 		ImGui::SliderFloat3("light color", (float*)&App->modelLoader->light.color, -15.0f, 15.0f);
 	}
 }
+
+void ComponentLight::OnSave(Serialization & serial)
+{
+}
+
+void ComponentLight::OnLoad(const Serialization & serial)
+{
+}

@@ -47,6 +47,10 @@ public:
 	std::string GetName() const;
 	void drawGizmo();
 
+	//Serialization
+	void OnSave(Serialization& serial);
+	void OnLoad(const Serialization& serial);
+
 	//public variables
 	ComponentTransform* myTransform = nullptr;
 	ComponentMesh* myMesh = nullptr;
@@ -57,7 +61,6 @@ public:
 	bool isEnabled = true;
 	bool isRoot = false;
 	bool isParentOfMeshes = false;
-	bool isStatic = false;
 	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
 	AABB* fatBoundingBox = nullptr;//Used for AABB tree

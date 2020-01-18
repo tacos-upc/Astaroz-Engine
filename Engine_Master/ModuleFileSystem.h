@@ -12,20 +12,23 @@ public:
 
 	bool Exist(const char*);
 	unsigned int Size(const char*); 
-	bool CreateDir();
+	bool CreateDir(const char*);
 	bool IsDir(const char*);
-	bool Delete();
+	bool Delete(const char*);
 
 	bool openFileBrowser();
 	const char* selectFileInBrowser();
 
 	void save(const char*, const char*);
-	void load( const char*);
+	void load(const char*);
+
+	const char* getWritePath();
 
 private:
 	const char* fileSystemPath;
 	int searchPathPriority = 1;
 
-	void addToSearchPath(const char*);
+	void mount(const char*);
+	void enableWriteDir(const char*);
 };
 

@@ -13,7 +13,17 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
+#include "ImGUI/ImGuizmo.h"
 
+
+struct WindowData
+{
+	const char* name;
+	float posX;
+	float posY;
+	float width;
+	float height;
+};
 
 class ModuleEditor : public Module{
 public:
@@ -33,17 +43,29 @@ public:
 	bool scrollToBottom, show_about_window, show_configuration_window;
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
+	bool isFocused(const char*);
+	bool isHovered(const char*);
+	bool isFocusedAndHovered(const char*);
+	WindowData* getFocusedWindowData();
+	WindowData* getHoveredWindowData();
 
 private:
 	void loadIcons();
 	void drawMainMenu();
 	void drawHierarchyPanel();
-	void drawCameraPanel();
+	void drawScenePanel();
+	void drawGamePanel();
 	void drawInspectorPanel();
 	void drawComponentsMenu(float);
 	void drawLogPanel();
+	void drawGizmoControls();
+	void updateWindowData(const char*);
+	void updateFocusedWindowData(const char*);
+	void updateHoveredWindowData(const char*);
 
 	bool openComponentsMenu;
+	WindowData* focusedWindowData;
+	WindowData* hoveredWindowData;
 };
 
 #endif __ModuleEditor_H__

@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Module.h"
 #include "GameObject.h"
+#include "ImGUI/ImGuizmo.h"
 
 
 enum ShapeType
@@ -47,7 +48,8 @@ public:
 	bool showHierarchy;
 	bool showInspector;
 	GameObject* mainCamera;
-	GameObject* selectedByHierarchy;
+	GameObject* selectedByHierarchy = nullptr;
+	ImGuizmo::OPERATION preferedOperation;
 
 private:
 	//private variables

@@ -1,12 +1,20 @@
 #include "ModuleEditorCamera.h"
 #include "ModuleModelLoader.h"
+#include "ModuleProgramShader.h"
+#include "ModuleEditor.h"
+#include "ModuleScene.h"
 #include "ModuleTime.h"
+#include "ModuleSpacePartition.h"
 #include "ComponentCamera.h"
 #include "Point.h"
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
-
+#include "Math/MathAll.h"
+#include "MathGeoLib/include/Geometry/LineSegment.h"
+#include "AABBTree.h"
+#include "AABBTreeNode.h"
+#include "DebugDraw.h"
 
 ModuleEditorCamera::ModuleEditorCamera()
 
@@ -52,6 +60,7 @@ update_status ModuleEditorCamera::PreUpdate()
 	updateOrbit(dt);
 	updateFocus();
 	cam->reloadMatrices();
+	//cam->DrawFrustum(float3(1.f, 0.f, 0.f));
 
 
 
@@ -63,6 +72,8 @@ update_status ModuleEditorCamera::PreUpdate()
 
 update_status ModuleEditorCamera::Update()
 {
+	raycast();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -77,7 +88,7 @@ update_status ModuleEditorCamera::PostUpdate()
 
 bool ModuleEditorCamera::CleanUp()
 {
-
+	delete cam;
 	return true;
 }
 
@@ -166,20 +177,15 @@ void ModuleEditorCamera::updateNavModes()
 
 	isFastMode = App->input->isKeyDown(SDL_SCANCODE_LSHIFT);
 
-
-
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
-
+	if (App->input->GetMouseButtonDownOrHold(SDL_BUTTON_RIGHT))
 	{
-
 		navigationMode = MovementMode::FREE;
 		return;
 
 	}
-
-	else navigationMode = MovementMode::MOVEMENT_MODE_NONE;
-
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) navigationMode = MovementMode::ORBIT;
+	else navigationMode = MovementMode::MOVEMENT_MODE_NONE ;
+	
+	if (App->input->GetMouseButtonDownOrHold(SDL_BUTTON_LEFT)) navigationMode = MovementMode::ORBIT;
 	else navigationMode = MovementMode::MOVEMENT_MODE_NONE;
 }
 
@@ -346,5 +352,43 @@ float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
 	else theta = math::Atan(dY / dX);
 
 	return float2(r, theta);
+}
 
+void ModuleEditorCamera::raycast()
+{
+	if (App->editor->isFocusedAndHovered("Scene") && App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && !ImGuizmo::IsOver())
+	{
+		float3 mousePosition = getMouseToViewportPosition();
+		if (App->spacePartition->tree->root != nullptr)
+		{
+			LineSegment segment = cam->raycast(mousePosition);
+			bool hitsRoot = segment.Intersects(*App->spacePartition->tree->root->box);
+
+			GameObject* touched = cam->getTouchedGameObject(App->spacePartition->tree->root, &segment);
+
+			if (touched != nullptr)
+			{
+				App->scene->SelectGameObjectInHierarchy(touched);
+			}
+			else	
+			{
+				App->scene->SelectGameObjectInHierarchy(nullptr);
+			}
+
+		}
+	}
+}
+
+float3 ModuleEditorCamera::getMouseToViewportPosition()
+{
+	iPoint touch = App->input->GetMousePosition();
+	fPoint windowPos = fPoint(App->editor->getFocusedWindowData()->posX, App->editor->getFocusedWindowData()->posY);
+	fPoint windowSize = fPoint(App->editor->getFocusedWindowData()->width, App->editor->getFocusedWindowData()->height);
+
+	//Normalize point
+	float x = (touch.x - windowPos.x / 2 - windowSize.x / 4) / (windowSize.x / 4);
+	float y = -(touch.y - windowPos.y / 2 - windowSize.y / 4) / (windowSize.y / 4);
+	float z = 1.0f;
+
+	return float3(x, y, z);
 }

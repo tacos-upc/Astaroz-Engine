@@ -55,6 +55,7 @@ public:
 	const char* name= "default name";
 	math::float4x4  transform = math::float4x4::identity;
 	std::vector<Vertex> vertices;
+	std::vector<Triangle> triangles;
 	std::vector<unsigned int> indices;
 	std::vector<Texture*> textures;
 	
@@ -69,6 +70,7 @@ public:
 	void Draw(unsigned int program) const;
 	void updateTexture(Texture* texture);
 	void setUniforms();
+	void updateTriangles();
 	unsigned int material;
 	float3 scale;
 

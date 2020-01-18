@@ -37,7 +37,6 @@ public:
 	void DrawHierarchy(GameObject* selected);
 
 	//Update
-	void UpdateTransform();
 	void DrawInspector();
 	void createAABBs();
 	void findOBBPointsForRender();
@@ -46,6 +45,7 @@ public:
 	void Draw(GLuint program);
 	void SetName(const std::string &newName);
 	std::string GetName() const;
+	void drawGizmo();
 
 	//public variables
 	ComponentTransform* myTransform = nullptr;

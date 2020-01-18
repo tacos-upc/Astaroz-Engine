@@ -44,6 +44,7 @@ public:
 	void drawGameView();
 	void drawSceneRenderSettings();
 	void drawGameObjects(GLuint);
+	void drawGameObjectsByFrustumCulling(GLuint, ComponentCamera*);
 
 private:
 
@@ -61,6 +62,8 @@ private:
 	ImVec4 sceneClearColor;
 	bool usesGrid = true;
 	ImVec4 gridColor;
+	bool renderAABBTree = false;
+	ImVec4 AABBColor;
 	bool drawAll;
 	bool drawSpacePartition;
 
@@ -68,6 +71,8 @@ private:
 	bool beginRenderTexture(int, int, GLuint*, GLuint*, GLuint*);
 	bool endRenderTexture();
 	void drawAllBoundingBoxes();
+	void drawGizmos(float, float, float, float);
+	void drawTreeNodeByFrustumCulling(GLuint, ComponentCamera*, AABBTreeNode*);
 };
 
 #endif __ModuleRender_H__

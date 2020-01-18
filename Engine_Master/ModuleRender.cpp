@@ -4,11 +4,13 @@
 #include "ModuleWindow.h"
 #include "ModuleModelLoader.h"
 #include "ModuleProgramShader.h"
+#include "ModuleSpacePartition.h"
 #include "ModuleScene.h"
 #include "Skybox.h"
 #include "glew.h"
 #include "ModuleDebugDraw.h"
 #include "debugdraw.h"
+#include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentCamera.h"
 
@@ -169,6 +171,7 @@ bool ModuleRender::Init()
 	
 	sceneClearColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	gridColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	AABBColor = ImVec4(1.f, 1.f, 1.f, 1.0f);
 
 
 	glEnable(GL_DEBUG_OUTPUT);
@@ -296,17 +299,30 @@ void ModuleRender::drawAllBoundingBoxes()
 	glUseProgram(gridProgram);
 
 	App->scene->drawAllBoundingBoxes();
+	if (renderAABBTree) App->spacePartition->drawTree(AABBColor);
 
 	glUseProgram(0);
+}
+
+void ModuleRender::drawGizmos(float posX, float posY, float width, float height)
+{
+	ImGuizmo::SetRect(posX, posY, width, height);
+	ImGuizmo::SetDrawlist();
+
+	if (App->scene->selectedByHierarchy != nullptr)
+	{
+		App->scene->selectedByHierarchy->drawGizmo();
+	}
 }
 
 void ModuleRender::drawSceneView()
 {
 	ImVec2 size = ImGui::GetWindowSize();
+	ImVec2 pos = ImGui::GetWindowPos();
 
 	beginRenderTexture(size.x, size.y, &sceneFBO, &sceneTexture, &sceneRBO);
 
-	glViewport(0, 0, App->window->width, App->window->height);
+	glViewport(0, 0, size.x, size.y);
 	glClearColor(sceneClearColor.x, sceneClearColor.y, sceneClearColor.z, sceneClearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -316,11 +332,13 @@ void ModuleRender::drawSceneView()
 	//Todo: Update this thing with mesh gameobjects
 	//App->modelLoader->DrawAll(App->programShader->defaultProgram);
 
-	drawGameObjects(App->programShader->defaultProgram);
+	drawGameObjectsByFrustumCulling(App->programShader->defaultProgram, App->editorCamera->cam);
 
 	drawAllBoundingBoxes();
 	renderGrid(App->editorCamera->cam);
 	ImGui::Image((void*)sceneTexture, ImVec2(size.x, size.y - 40), ImVec2(0, 1), ImVec2(1, 0));
+
+	drawGizmos(pos.x, pos.y, size.x, size.y);
 
 	App->debugDraw->Draw(App->editorCamera->cam, sceneFBO, App->window->width, App->window->height);
 	endRenderTexture();
@@ -333,14 +351,14 @@ void ModuleRender::drawGameView()
 
 	beginRenderTexture(size.x, size.y, &gameFBO, &gameTexture, &gameRBO);
 
-	glViewport(0, 0, App->window->width, App->window->height);
+	glViewport(0, 0, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 	glClearColor(cam->clearColor.x, cam->clearColor.y, cam->clearColor.z, cam->clearColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "view"), 1, GL_TRUE, &cam->viewMatrix[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(App->programShader->defaultProgram, "proj"), 1, GL_TRUE, &cam->projectionMatrix[0][0]);
 
-	drawGameObjects(App->programShader->defaultProgram);
+	drawGameObjectsByFrustumCulling(App->programShader->defaultProgram, cam);
 
 	if(cam->selectedClearMode == SKYBOX) skybox->draw(cam);
 
@@ -356,6 +374,11 @@ void ModuleRender::drawSceneRenderSettings()
 
 	ImGui::Checkbox("Uses grid?", &usesGrid);
 	if (usesGrid) ImGui::ColorEdit3("Grid Color", &gridColor.x);
+
+	ImGui::Separator();
+
+	ImGui::Checkbox("Show AABB Tree?", &renderAABBTree);
+	if (renderAABBTree) ImGui::ColorEdit3("AABB Tree Color", &AABBColor.x);
 }
 
 //TODO: Update this method with proper gameobjects
@@ -366,9 +389,35 @@ void ModuleRender::drawGameObjects(GLuint program)
 		if (((ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA))->AABBWithinFrustum(App->modelLoader->myBoundingBox) != OUTSIDE)
 		{
 			ComponentTransform * transform = (ComponentTransform*)App->scene->gameObjects.at(i)->myTransform;
-			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->globalModelMatrix[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->getGlobalMatrix()[0][0]);
 
 			App->scene->gameObjects.at(i)->Draw(program);
+		}
+	}
+}
+
+void ModuleRender::drawGameObjectsByFrustumCulling(GLuint program, ComponentCamera* cam)
+{
+	drawTreeNodeByFrustumCulling(program, cam, App->spacePartition->tree->root);
+}
+
+void ModuleRender::drawTreeNodeByFrustumCulling(GLuint program, ComponentCamera* cam, AABBTreeNode* node)
+{
+	if (node == nullptr) return;
+
+	if (cam->AABBWithinFrustum(*node->box) != OUTSIDE)
+	{
+		if (node->gameObjectID != "")
+		{
+			ComponentTransform* transform = App->scene->findById(node->gameObjectID)->myTransform;
+
+			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &transform->getGlobalMatrix()[0][0]);
+			transform->myGameObject->Draw(program);
+		}
+		else
+		{
+			drawTreeNodeByFrustumCulling(program, cam, node->leftChild);
+			drawTreeNodeByFrustumCulling(program, cam, node->rightChild);
 		}
 	}
 }

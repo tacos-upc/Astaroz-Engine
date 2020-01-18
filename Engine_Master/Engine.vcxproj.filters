@@ -155,6 +155,18 @@
     </ClCompile>
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ComponentLight.cpp" />
+    <ClCompile Include="ImGUI\ImCurveEdit.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\ImGradient.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\ImGuizmo.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\ImSequencer.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -405,6 +417,18 @@
     </ClInclude>
     <ClInclude Include="Util\uuid\version.h">
       <Filter>uuid</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImCurveEdit.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImGradient.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImGuizmo.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\ImSequencer.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Point.h" />
     <ClInclude Include="Util\debug_draw.hpp" />

@@ -3,6 +3,7 @@
 #include "ModuleProgramShader.h"
 #include "ModuleModelLoader.h"
 #include "glew.h"
+#include "MathGeoLib/include/Geometry/Triangle.h"
 #include <string>
 
 Mesh::Mesh()
@@ -55,6 +56,8 @@ void Mesh::Init()
 
 void Mesh::setupMesh()
 {
+	updateTriangles();
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -181,6 +184,18 @@ void Mesh::updateTexture(Texture* texture)
 	for (auto &lastTexture : textures)
 	{
 		lastTexture = texture;
+	}
+}
+
+void Mesh::updateTriangles()
+{
+	triangles.clear();
+	for (size_t i = 0; i < indices.size(); i += 3)
+	{
+		float3 first = vertices[indices[i]].Position;
+		float3 second = vertices[indices[i + 1]].Position;
+		float3 third = vertices[indices[i + 2]].Position;
+		triangles.emplace_back(Triangle(first, second, third));
 	}
 }
 

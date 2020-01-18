@@ -9,6 +9,7 @@
 
 AABBTree::AABBTree()
 {
+	root = nullptr;
 }
 
 AABBTree::~AABBTree()

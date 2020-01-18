@@ -6,8 +6,8 @@
 #include "ModuleEditor.h"
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
-#include "ComponentMaterial.h"
 #include "ComponentCamera.h"
+#include "ComponentLight.h"
 #include "debugdraw.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -43,9 +43,7 @@ GameObject::GameObject(const GameObject& go)
 		case MESH:
 			aux = new ComponentMesh(this, (ComponentMesh*) cp);
 			break;
-		case MATERIAL:
-			aux = new ComponentMaterial(this, (ComponentMaterial*) cp);
-			break;
+
 		case TRANSFORM:
 			aux = new ComponentTransform(this, (ComponentTransform*) cp);
 			break;
@@ -66,8 +64,6 @@ GameObject::GameObject(const GameObject& go)
 		if (myComp->myType == MESH)
 			myMesh = (ComponentMesh*)myComp;
 
-		if (myComp->myType == MATERIAL)
-			myMaterial = (ComponentMaterial*)myComp;
 	}
 
 	//copy children
@@ -164,13 +160,12 @@ Component* GameObject::CreateComponent(ComponentType type)
 			myMesh = (ComponentMesh*)component;
 			createAABBs();
 			break;
-		case MATERIAL:
-			component = new ComponentMaterial();
-			myMaterial = (ComponentMaterial*)component;
-			break;
 
 		case CAMERA:
 			component = new ComponentCamera();
+			break;
+		case LIGHT:
+			component = new ComponentLight();
 			break;
 		default:
 			LOG("ERROR: INVALID TYPE OF COMPONENT");

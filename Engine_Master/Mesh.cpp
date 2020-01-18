@@ -11,7 +11,8 @@ Mesh::Mesh()
 	
 }
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material){
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, unsigned int material, const char* name){
+	this->name = name;
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;
@@ -102,43 +103,26 @@ void Mesh::Draw(unsigned int program) const
 	unsigned int heightNr = 1;
 
 	
-	//Assigning "ids" to textures
+	App->modelLoader->materials[material]->SetUniforms();
+	//Assig id to textures
 
 	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.diffuse_texture"), 0);
-
 	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.specular_texture"), 1);
-
 	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.occlusion_texture"), 2);
-
 	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.emissive_texture"), 3);
 
 
-
-	//applying textures to the variables deppending on its id
-
 	glActiveTexture(GL_TEXTURE0);
-
 	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->diffuse_texture);
-
-	glUniform1i(glGetUniformLocation(App->programShader->defaultProgram, "material.diffuse_texture"), 0);
-
+	
 	glActiveTexture(GL_TEXTURE1);
-
 	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->specular_texture);
-
-
-
+	
 	glActiveTexture(GL_TEXTURE2);
-
 	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->occlusion_texture);
 	
-
-
 	glActiveTexture(GL_TEXTURE3);
-
 	glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[material]->emissive_texture);
-	
-	
 	
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

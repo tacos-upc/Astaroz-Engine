@@ -38,23 +38,48 @@ void ComponentMesh::Draw(const unsigned int program) const
 
 void ComponentMesh::DrawInspector()
 {
-	if (ImGui::CollapsingHeader(ICON_FA_HOME " Mesh"))
+	if (ImGui::CollapsingHeader(ICON_FA_HOME "Mesh"))
 	{
-		std::string meshNames = "";
+		
+		const char* listbox_meshNames[17] = {};
+		static int selection;
+
 		for (size_t i = 0; i < App->modelLoader->meshes.size(); i++)
 		{
 			Mesh* mesh = App->modelLoader->meshes.at(i);
-			meshNames.append(mesh->name);
+			listbox_meshNames[i] = mesh->name;
 		}
 
-		ImGui::Combo("Target Mesh", &selectedMesh, meshNames.c_str(), 3);
-
+		if (myMesh != nullptr) {
+			ImGui::ListBox("listbox\n(single select)", &selection, listbox_meshNames, IM_ARRAYSIZE(listbox_meshNames), 4);
+		}
+		selectedMesh = selection;
 		if (selectedMesh >= 0 && myMesh != App->modelLoader->meshes.at(selectedMesh))
 		{
 			myMesh = App->modelLoader->meshes.at(selectedMesh);
 			myGameObject->createAABBs();
 		}
 
+		editMat();
 		ImGui::Separator();
+		
 	}
+}
+
+void ComponentMesh::editMat()
+{
+	
+	ImGui::SliderFloat("ambient", (float*)&App->modelLoader->materials[myMesh->material]->k_ambient, 0.0f, 1.0f);
+	ImGui::SliderFloat("diffuse", (float*)&App->modelLoader->materials[myMesh->material]->k_diffuse, 0.0f, 1.0f);
+	ImGui::SliderFloat("specular", (float*)&App->modelLoader->materials[myMesh->material]->k_specular, 0.0f, 1.0f);
+	ImGui::SliderFloat3("diffuse_color", (float*)&App->modelLoader->materials[myMesh->material]->diffuse_color, -1.0f, 1.0f);
+	ImGui::SliderFloat3("specular_color", (float*)&App->modelLoader->materials[myMesh->material]->specular_color, -1.0f, 1.0f);
+	ImGui::SliderFloat3("emissive_color", (float*)&App->modelLoader->materials[myMesh->material]->emissive_color, -1.0f, 1.0f);
+	
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->diffuse_texture, { 200.0f, 200.0f });
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->specular_texture, { 200.0f, 200.0f });
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->emissive_texture, { 200.0f, 200.0f });
+	ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->occlusion_texture, { 200.0f, 200.0f });
+	
+		
 }

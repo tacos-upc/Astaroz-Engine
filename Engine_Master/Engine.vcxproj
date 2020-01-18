@@ -90,6 +90,7 @@
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="dirent\dirent.h" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="ImGUI\ImCurveEdit.h" />
     <ClInclude Include="ImGUI\ImGradient.h" />
     <ClInclude Include="ImGUI\imgui.h" />
+    <ClInclude Include="ImGUI\ImGuiFileDialog.h" />
     <ClInclude Include="ImGUI\ImGuizmo.h" />
     <ClInclude Include="ImGUI\imgui_impl_opengl3.h" />
     <ClInclude Include="ImGUI\imgui_impl_sdl.h" />
@@ -216,6 +218,7 @@
     <ClCompile Include="ImGUI\ImCurveEdit.cpp" />
     <ClCompile Include="ImGUI\ImGradient.cpp" />
     <ClCompile Include="ImGUI\imgui.cpp" />
+    <ClCompile Include="ImGUI\ImGuiFileDialog.cpp" />
     <ClCompile Include="ImGUI\ImGuizmo.cpp" />
     <ClCompile Include="ImGUI\imgui_demo.cpp" />
     <ClCompile Include="ImGUI\imgui_draw.cpp" />

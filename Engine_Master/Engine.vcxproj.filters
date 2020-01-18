@@ -218,6 +218,9 @@
       <Filter>physfs</Filter>
     </ClCompile>
     <ClCompile Include="ModuleFileSystem.cpp" />
+    <ClCompile Include="ImGUI\ImGuiFileDialog.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -495,6 +498,12 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ComponentLight.h" />
+    <ClInclude Include="ImGUI\ImGuiFileDialog.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="dirent\dirent.h">
+      <Filter>dirent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
@@ -508,6 +517,9 @@
     </Filter>
     <Filter Include="physfs">
       <UniqueIdentifier>{9884344a-b61c-4758-bea8-6eb836077cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dirent">
+      <UniqueIdentifier>{84dad9f6-d24d-4ee3-837c-baa3271efa5a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

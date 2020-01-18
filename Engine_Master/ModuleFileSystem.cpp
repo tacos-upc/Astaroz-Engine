@@ -2,6 +2,10 @@
 #include "physfs-3.0.2/src/physfs.h"
 #include "SDL.h"
 #include "Globals.h"
+#include "ImGUI/imgui.h"
+#include "ImGUI/imgui_impl_sdl.h"
+#include "ImGUI/imgui_impl_opengl3.h"
+#include "ImGUI/ImGuiFileDialog.h"
 
 ModuleFileSystem::ModuleFileSystem()
 {
@@ -29,6 +33,11 @@ bool ModuleFileSystem::CleanUp()
 {
 	PHYSFS_deinit();
 	return true;
+}
+
+update_status ModuleFileSystem::Update()
+{
+	return UPDATE_CONTINUE;
 }
 
 bool ModuleFileSystem::Exist(const char* filePathAndName)
@@ -68,8 +77,51 @@ bool ModuleFileSystem::Delete(const char* filePathAndName)
 	return PHYSFS_delete(filePathAndName) != 0;
 }
 
+bool ModuleFileSystem::openFileBrowser()
+{
+	bool keepAlive = true;
+	ImGuiFileDialog::Instance()->OpenDialog("fileBrowser", "Choose File", ".cpp\0.h\0.hpp\0\0", ".");
+
+	// display
+	if (ImGuiFileDialog::Instance()->FileDialog("fileBrowser"))
+	{
+		// action if OK
+		if (ImGuiFileDialog::Instance()->IsOk == true)
+		{
+			std::string filePathName = ImGuiFileDialog::Instance()->GetFilepathName();
+			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+			// action
+		}
+		else if (!ImGuiFileDialog::Instance()->m_CreateDirectoryMode)
+		{
+			//Cancel button, close
+			keepAlive = false;
+			ImGuiFileDialog::Instance()->CloseDialog("fileBrowser");
+		}
+	}
+
+	return keepAlive;
+}
+
 void ModuleFileSystem::save(const char* dir, const char* fileName)
 {
+}
+
+char* ModuleFileSystem::load(const char* fullNameAndPath)
+{
+	PHYSFS_file* filePointer = nullptr;
+	char* fileBuffer;
+
+	if (Exist(fullNameAndPath))
+	{
+		filePointer = PHYSFS_openRead(fullNameAndPath);
+		unsigned int size = Size(fullNameAndPath);
+		fileBuffer = new char[size];
+		PHYSFS_read(filePointer, fileBuffer, 1, size);
+		PHYSFS_close(filePointer);
+	}
+
+	return fileBuffer;
 }
 
 const char * ModuleFileSystem::getWritePath()

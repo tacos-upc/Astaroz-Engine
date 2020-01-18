@@ -8,6 +8,7 @@
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleFileSystem.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -25,6 +26,7 @@ bool ModuleEditor::Init()
 	show_about_window = false;
 	show_configuration_window = false;
 	openComponentsMenu = false;
+	openFileDialog = false;
 	focusedWindowData = new WindowData();
 	hoveredWindowData = new WindowData();
 	return true;
@@ -79,12 +81,13 @@ update_status ModuleEditor::PreUpdate()
 update_status ModuleEditor::Update()
 {
 	drawMainMenu();
-	drawGizmoControls();
+	drawSubMenu();
 	drawHierarchyPanel();
 	drawGamePanel();
 	drawScenePanel();
 	drawInspectorPanel(); 
 	drawLogPanel();
+	drawFileBrowser();
 
 	return UPDATE_CONTINUE;
 }
@@ -411,11 +414,11 @@ void ModuleEditor::drawLogPanel()
 	}
 }
 
-void ModuleEditor::drawGizmoControls()
+void ModuleEditor::drawSubMenu()
 {
 	ImGui::SetNextWindowSize(ImVec2(App->window->width, 8.0f));
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
-	if (ImGui::Begin("Gizmo Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+	if (ImGui::Begin("Sub menu", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
 	{
 		if (ImGui::Button(ICON_FA_ARROWS_ALT, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::TRANSLATE;
 
@@ -424,8 +427,20 @@ void ModuleEditor::drawGizmoControls()
 
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_FA_EXPAND_ARROWS_ALT, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::SCALE;
+
+		ImGui::SameLine();
+		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 20.f, ImGui::GetCursorPosY()));
+		if (ImGui::Button(ICON_FA_FOLDER " Load")) openFileDialog = true;
 	}
 	ImGui::End();
+}
+
+void ModuleEditor::drawFileBrowser()
+{
+	if (openFileDialog)
+	{
+		openFileDialog = App->fileSystem->openFileBrowser();
+	}
 }
 
 void ModuleEditor::updateWindowData(const char* name)

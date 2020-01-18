@@ -37,7 +37,6 @@ bool ModuleEditorCamera::Init()
 	cam->reloadMatrices();
 
 	return true;
-
 }
 
 
@@ -50,9 +49,7 @@ bool ModuleEditorCamera::Start()
 
 
 update_status ModuleEditorCamera::PreUpdate()
-
 {
-
 	float dt = App->time->getDeltaTime();
 	updateNavModes();
 	updatePosition(dt);
@@ -60,12 +57,8 @@ update_status ModuleEditorCamera::PreUpdate()
 	updateOrbit(dt);
 	updateFocus();
 	cam->reloadMatrices();
-	//cam->DrawFrustum(float3(1.f, 0.f, 0.f));
-
-
 
 	return UPDATE_CONTINUE;
-
 }
 
 
@@ -95,7 +88,6 @@ bool ModuleEditorCamera::CleanUp()
 
 
 void ModuleEditorCamera::SetPosition(float x, float y, float z)
-
 {
 	cam->frustum->pos = float3(x, y, z);
 }
@@ -103,9 +95,7 @@ void ModuleEditorCamera::SetPosition(float x, float y, float z)
 
 
 void ModuleEditorCamera::updatePosition(float dt)
-
 {
-
 	if (App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
 	if (App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
 	if (!navigationMode == FREE) return;
@@ -115,28 +105,23 @@ void ModuleEditorCamera::updatePosition(float dt)
 	if (App->input->isKeyDown(SDL_SCANCODE_D)) moveRight(dt);
 	if (App->input->isKeyDown(SDL_SCANCODE_W) || App->input->getWheelSpeed() > 0.1f) moveForward(dt, App->input->getWheelSpeed());
 	if (App->input->isKeyDown(SDL_SCANCODE_S) || App->input->getWheelSpeed() < -0.1f) moveBackwards(dt, App->input->getWheelSpeed());
-
 }
 
 
 
 void ModuleEditorCamera::updateRotation(float dt)
-
 {
-
 	if (navigationMode != MovementMode::FREE) return;
 	fPoint mouseMotion = App->input->GetMouseMotion();
 
 	if (math::Abs(mouseMotion.x) > 10.0f) cam->yaw(mouseMotion.x, dt);
 	if (math::Abs(mouseMotion.y) > 5.0f) cam->pitch(mouseMotion.y, dt);
-
 }
 
 
 
 void ModuleEditorCamera::updateOrbit(float dt)
 {
-
 	if (navigationMode != MovementMode::ORBIT) return;
 
 	fPoint mouseMotion = App->input->GetMouseMotion();
@@ -145,7 +130,6 @@ void ModuleEditorCamera::updateOrbit(float dt)
 		orbitAngleX += mouseMotion.x;
 		orbitX(orbitAngleX, float3(0, 0, 0));
 	}
-
 
 
 	//I don't think we're doing anyone any favor by orbitting in Y
@@ -160,21 +144,17 @@ void ModuleEditorCamera::updateOrbit(float dt)
 
 void ModuleEditorCamera::updateFocus()
 {
-
 	if (App->input->isKeyDown(SDL_SCANCODE_F))
 	{
 		setDefaultPosition();
 		LookAt(float3::zero);
 	}
-
 }
 
 
 
 void ModuleEditorCamera::updateNavModes()
-
 {
-
 	isFastMode = App->input->isKeyDown(SDL_SCANCODE_LSHIFT);
 
 	if (App->input->GetMouseButtonDownOrHold(SDL_BUTTON_RIGHT))
@@ -197,7 +177,6 @@ void ModuleEditorCamera::LookAt(float3 target)
 	float3x3 rot = float3x3::LookAt(cam->frustum->front, dir, cam->frustum->up, float3::unitY);
 	cam->frustum->front = rot.Transform(cam->frustum->front).Normalized();
 	cam->frustum->up = rot.Transform(cam->frustum->up).Normalized();
-
 }
 
 
@@ -214,7 +193,6 @@ void ModuleEditorCamera::moveUp(float dt)
 	float3 newPosition = cam->frustum->pos;
 	newPosition.y = newPosition.y + (dt * getCamSpeed());
 	cam->frustum->pos = newPosition;
-
 }
 
 
@@ -224,7 +202,6 @@ void ModuleEditorCamera::moveDown(float dt)
 	float3 newPosition = cam->frustum->pos;
 	newPosition.y = newPosition.y - (dt * getCamSpeed());
 	cam->frustum->pos = newPosition;
-
 }
 
 
@@ -240,7 +217,6 @@ void ModuleEditorCamera::moveRight(float dt)
 }
 
 void ModuleEditorCamera::moveForward(float dt, float extraSpeed)
-
 {
 	cam->frustum->pos += cam->frustum->front.ScaledToLength(dt * getCamSpeed() * ((extraSpeed > 0) ? math::Abs(extraSpeed) : 1.0f));
 }
@@ -248,15 +224,12 @@ void ModuleEditorCamera::moveForward(float dt, float extraSpeed)
 
 
 void ModuleEditorCamera::moveBackwards(float dt, float extraSpeed)
-
 {
 	cam->frustum->pos -= cam->frustum->front.ScaledToLength(dt * getCamSpeed() * ((extraSpeed < 0) ? math::Abs(extraSpeed) : 1.0f));
 }
 
 void ModuleEditorCamera::orbitX(float angle, float3 target)
-
 {
-
 	float2 polar = cartesianToPolar(float2(cam->frustum->pos.x, cam->frustum->pos.z), float2(target.x, target.z));
 
 	if (polar.y >= 360.0f) polar.y = 0.0f;
@@ -266,27 +239,19 @@ void ModuleEditorCamera::orbitX(float angle, float3 target)
 	polar.y += angle;
 	polar.y = math::DegToRad(polar.y);
 
-
-
 	float2 newPos = polarToCartesian(polar);
 
 	cam->frustum->pos.x = newPos.x;
 	cam->frustum->pos.z = newPos.y;
 
-
-
 	LookAt(target);
-
-
 
 }
 
 
 
 void ModuleEditorCamera::orbitY(float angle, float3 target)
-
 {
-
 	float2 polar = cartesianToPolar(float2(cam->frustum->pos.z, cam->frustum->pos.y), float2(target.z, target.y));
 
 	if (polar.y >= 360.0f) polar.y = 0.0f;
@@ -294,50 +259,34 @@ void ModuleEditorCamera::orbitY(float angle, float3 target)
 	polar.y += angle;
 	polar.y = math::DegToRad(polar.y);
 
-
-
 	float2 newPos = polarToCartesian(polar);
 	cam->frustum->pos.z = newPos.x;
 	cam->frustum->pos.y = newPos.y;
 
-
-
 	LookAt(target);
-
 }
 
 
 
 void ModuleEditorCamera::setDefaultPosition()
-
 {
-
 	cam->frustum->pos = float3(0, 5.0f, 10.0f);
 	cam->frustum->front = -float3::unitZ;
 	cam->frustum->up = float3::unitY;
-
 }
-
 
 
 //x = distance, y = angle
-
 float2 ModuleEditorCamera::polarToCartesian(float2 polar)
-
 {
-
 	float y = polar.x * math::Cos(polar.y);
 	float x = polar.x * math::Sin(polar.y);
 	return float2(x, y);
-
 }
 
 
-
 float2 ModuleEditorCamera::cartesianToPolar(float2 cartesian, float2 target)
-
 {
-
 	float dX = cartesian.x - target.x;
 	float dY = cartesian.y - target.y;
 	float r = math::SqrtFast(math::Pow(dX, 2) + math::Pow(dY, 2));
@@ -374,7 +323,6 @@ void ModuleEditorCamera::raycast()
 			{
 				App->scene->SelectGameObjectInHierarchy(nullptr);
 			}
-
 		}
 	}
 }

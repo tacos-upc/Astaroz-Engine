@@ -323,14 +323,15 @@ void ModuleEditor::drawScenePanel()
 
 void ModuleEditor::drawGamePanel()
 {
-	if (App->scene->selectedByHierarchy->GetComponent(CAMERA) != nullptr)
+	ComponentCamera* activeCamera = (ComponentCamera*)App->scene->selectedByHierarchy->GetComponent(CAMERA);
+	if (activeCamera != nullptr)
 	{
 		ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.25f, App->window->height * 0.25f));
 
-		if (ImGui::Begin(ICON_FA_GAMEPAD " Game", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+		if (ImGui::Begin(ICON_FA_GAMEPAD " Game", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 		{
 			ImGui::SetWindowFocus();
-			App->renderer->drawGameView();
+			App->renderer->drawGameView(activeCamera);
 			ImGui::End();
 		}
 	}

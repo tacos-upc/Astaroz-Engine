@@ -344,9 +344,8 @@ void ModuleRender::drawSceneView()
 	endRenderTexture();
 }
 
-void ModuleRender::drawGameView()
+void ModuleRender::drawGameView(ComponentCamera* cam)
 {
-	ComponentCamera* cam = (ComponentCamera*)App->scene->mainCamera->GetComponent(CAMERA);
 	ImVec2 size = ImGui::GetWindowSize();
 
 	beginRenderTexture(size.x, size.y, &gameFBO, &gameTexture, &gameRBO);

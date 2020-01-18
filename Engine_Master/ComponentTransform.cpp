@@ -73,7 +73,7 @@ void ComponentTransform::DrawInspector()
 			setupEulerRotation(true, eulerRotationInDeg);
 			onTransformChanged();
 		}
-		if (ImGui::DragFloat3("Scale", &scale.x)) 
+		if (ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.0f, 2.f))
 		{
 			onTransformChanged();
 		}
@@ -84,6 +84,7 @@ void ComponentTransform::DrawInspector()
 
 void ComponentTransform::onTransformChanged()
 {
+	rotation = Quat::FromEulerXYZ(eulerRotationInDeg.x, eulerRotationInDeg.y, eulerRotationInDeg.z );
 	localModelMatrix = float4x4::FromTRS(position, rotation, scale);
 	generateGlobalMatrix();
 

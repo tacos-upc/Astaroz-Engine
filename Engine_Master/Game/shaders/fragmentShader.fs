@@ -19,6 +19,11 @@ struct Material
     float k_specular;
 };
 
+struct Light
+{
+	vec3 light_dir;
+	vec3 color;
+};
 
 in vec2 uv0;
 in vec3 normal;
@@ -28,7 +33,7 @@ in mat4 aView;
 out vec4 FragColor;
 
 uniform Material material;
-uniform vec3 light_pos;
+uniform Light light;
 
 
 void main()
@@ -51,11 +56,7 @@ vec3 norm = normalize(normal);
 
 	float specular= 0.0;
 
-
-
-	vec3 light_dir = normalize(light_pos-position);
-
-	float diffuse = max(0.0, dot(norm, light_dir));
+	float diffuse = max(0.0, dot(norm, light.light_dir));
 
 
 
@@ -65,7 +66,7 @@ vec3 norm = normalize(normal);
 
 		vec3 viewDir = normalize(viewPos-position);
 
-		vec3 reflect_dir = normalize(reflect(-light_dir, norm));
+		vec3 reflect_dir = normalize(reflect(-light.light_dir, norm));
 
         	float sp = max(dot(viewDir, reflect_dir), 0.0);
 
@@ -85,11 +86,8 @@ vec3 norm = normalize(normal);
 
 
 
-	vec3 color =diffuse_color.rgb * diffuse * material.k_diffuse + specular_color * specular * material.k_specular +emissive_color + diffuse_color.rgb * occlusion_color * material.k_ambient; 
+	vec3 color =light.color* (diffuse_color.rgb * diffuse * material.k_diffuse + specular_color * specular * material.k_specular) +emissive_color + diffuse_color.rgb * occlusion_color * material.k_ambient; 
 
-	
-
-	
 
 	FragColor = vec4(color, diffuse_color.a);
 

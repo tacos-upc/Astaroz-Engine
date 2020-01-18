@@ -27,7 +27,9 @@ public:
 	//public variables
 	Mesh* myMesh = nullptr;
 
-private:
+	//material editor method
+	void editMat();
+
 	int selectedMesh;
 	bool isLoaded;
 };

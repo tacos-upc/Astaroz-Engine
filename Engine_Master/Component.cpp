@@ -11,11 +11,11 @@ const char* Component::typeToString(int type)
 			case MESH:
 				name = "Mesh";
 				break;
-			case MATERIAL:
-				name = "Material";
-				break;
 			case CAMERA:
 				name = "Camera";
+				break;
+			case LIGHT:
+				name = "Light";
 				break;
 			default:
 				break;

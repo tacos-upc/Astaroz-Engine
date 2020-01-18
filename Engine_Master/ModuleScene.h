@@ -49,10 +49,11 @@ public:
 	bool showHierarchy;
 	bool showInspector;
 	GameObject* mainCamera;
-	GameObject* selectedByHierarchy = nullptr;
+	GameObject* selectedByHierarchy;
 	ImGuizmo::OPERATION preferedOperation;
 
-	std::string sceneSerialized = "";	//test
+	std::string sceneSerialized;
+	std::string savedRootID;
 
 private:
 	//private variables

@@ -130,8 +130,9 @@ void Serialization::AddString(const std::string& name, const std::string value)
 	document.AddMember(memberName, stringValue, *allocatorType);
 }
 
-void Serialization::GetString(const std::string& name, std::string& returnValue, const std::string& optValue) const
+std::string Serialization::GetString(const std::string& name, const std::string& optValue) const
 {
+	std::string returnValue;
 	if (!document.HasMember(name.c_str()))
 	{
 		returnValue = optValue;
@@ -141,6 +142,7 @@ void Serialization::GetString(const std::string& name, std::string& returnValue,
 		const rapidjson::Value& currentValue = document[name.c_str()];
 		returnValue = std::string(currentValue.GetString(), currentValue.GetStringLength());
 	}
+	return returnValue;
 }
 
 void Serialization::GetSerializedScene(std::string& serializedScene)

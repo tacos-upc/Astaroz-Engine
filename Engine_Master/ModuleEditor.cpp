@@ -175,7 +175,7 @@ void ModuleEditor::drawMainMenu()
 				std::string serializedScene;
 				sceneSerial.GetSerializedScene(serializedScene);
 
-				App->scene->sceneSerialized = serializedScene;	//test
+				App->scene->sceneSerialized = serializedScene;
 
 				//App->filesystem->Save(path.c_str(), serializedScene.c_str(), serializedScene.size() + 1);
 			}
@@ -186,9 +186,18 @@ void ModuleEditor::drawMainMenu()
 				//std::string serialized_scene_string = scene_file_data;
 				//free(scene_file_data);
 
-				//Serialization sceneSerial(App->scene->sceneSerialized);
-				//App->scene->OnLoad(sceneSerial);
-				LOG(App->scene->sceneSerialized.c_str());
+				Serialization sceneSerial(App->scene->sceneSerialized);
+				App->scene->OnLoad(sceneSerial);
+				//LOG(App->scene->sceneSerialized.c_str());		//Disable if BUFFER problems
+
+				Serialization sceneSerialSave;
+				App->scene->OnSave(sceneSerialSave);
+				std::string serializedScene;
+				sceneSerialSave.GetSerializedScene(serializedScene);
+				App->scene->sceneSerialized = serializedScene;
+
+				Serialization sceneSerialLoad(App->scene->sceneSerialized);
+				App->scene->OnLoad(sceneSerialLoad);
 			}
 			ImGui::EndMenu();
 		};

@@ -27,14 +27,14 @@ bool ModuleScene::Init()
 	showInspector = true;
 	selectedByHierarchy = nullptr;
 	nGameObjects = 0;
+	sceneSerialized = "";
+	savedRootID = "";
 
 	root = new GameObject("Root");
 	root->isRoot = true;
 
 	mainCamera = CreateGameObject("Main Camera", root);
 	mainCamera->CreateComponent(CAMERA);
-
-	gameObjects.push_back(mainCamera);
 
 	preferedOperation = ImGuizmo::TRANSLATE;
 
@@ -69,9 +69,10 @@ bool ModuleScene::CleanUp()
 
 GameObject* ModuleScene::CreateGameObject()
 {
-	std::string defaultName = "NewGameObject" + gameObjects.size();
+	std::string defaultName = "NewGameObject" + std::to_string(nGameObjects + 1);
 	GameObject* gameObject = new GameObject(defaultName.c_str());
 	gameObject->SetParent(root);
+	gameObjects.push_back(gameObject);
 	nGameObjects++;
 
 	return gameObject;
@@ -81,6 +82,7 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent)
 {
 	GameObject* gameObject = new GameObject(name);
 	gameObject->SetParent(parent);
+	gameObjects.push_back(gameObject);
 	nGameObjects++;
 
 	return gameObject;
@@ -151,8 +153,6 @@ void ModuleScene::CreateEmpty(GameObject* parent)
 	{
 		gameObject = CreateGameObject(tempName.c_str(), parent);	//only when 'selected' is nullptr, we use the parameter as parent
 	}
-
-	gameObjects.push_back(gameObject);
 }
 
 //void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
@@ -177,14 +177,14 @@ void ModuleScene::RemoveSelectedGameObject()
 {
 	if (!gameObjects.empty())
 	{
-		if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id && selectedByHierarchy->id != mainCamera->id)
+		if (selectedByHierarchy != nullptr && selectedByHierarchy->id != root->id)
 		{
 			selectedByHierarchy->DeleteGameObject();
 			selectedByHierarchy = nullptr;		//selected GO will be deleted so it must be unasigned (will be pointing to ROOT next frame)
 		}
 		else
 		{
-			LOG("You are trying to delete ROOT GameObject or MainCamera and it is not allowed! Please select another object in the hierarchy to delete.");
+			LOG("You are trying to delete ROOT GameObject and it is not allowed! Please select an object in the hierarchy to delete.");
 		}
 	}
 }
@@ -199,7 +199,7 @@ void ModuleScene::DuplicateSelectedGameObject()
 	}
 	else
 	{
-		LOG("You are trying to duplicate ROOT GameObject or MainCamera and it is not allowed! Please select another object in the hierarchy to duplicate.");
+		LOG("You are trying to duplicate ROOT GameObject or MainCamera and it is not allowed! Please select an object in the hierarchy to duplicate.");
 	}
 }
 
@@ -254,9 +254,11 @@ void ModuleScene::OnSave(Serialization& serial)
 
 void ModuleScene::OnLoad(const Serialization& serial)
 {
-	//RemoveGameObject(root);
 	selectedByHierarchy = nullptr;
-	//root = new GameObject(0);
+	savedRootID = root->id;
+	root->DeleteGameObject();
+	root = new GameObject("Root");
+	root->isRoot = true;
 
 	std::vector<Serialization> game_objects_config;
 	serial.GetChildrenSerial("GameObjects", game_objects_config);

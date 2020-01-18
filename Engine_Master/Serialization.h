@@ -29,7 +29,7 @@ public:
 	void AddFloat3(const std::string& name, const float3& value);
 	void GetFloat3(const std::string& name, float3& returnValue, const float3& optValue) const;
 	void AddString(const std::string& name, const std::string value);
-	void GetString(const std::string& name, std::string& returnValue, const std::string& optValue) const;
+	std::string GetString(const std::string& name, const std::string& optValue) const;
 	void AddQuat(const std::string& name, const Quat& value);
 	void GetQuat(const std::string& name, Quat& returnValue, const Quat& optValue) const;
 	void AddColor(const float4& value, const std::string& name);

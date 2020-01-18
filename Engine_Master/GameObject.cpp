@@ -119,7 +119,10 @@ void GameObject::SetParent(GameObject* newParent)
 
 void GameObject::DeleteGameObject()
 {
-	parent->RemoveChildren(this);
+	if (this->id != App->scene->getRoot()->id)	//root has no parent
+	{
+		parent->RemoveChildren(this);
+	}
 	App->scene->eraseGameObject(this);
 	for (unsigned int i = 0; i < childrenVector.size(); i++)
 	{
@@ -152,7 +155,10 @@ void GameObject::CleanUp()
 Component* GameObject::CreateComponent(ComponentType type)
 {
 	Component* component = GetComponent(type);
-	if (component != nullptr && !component->allowMany) return nullptr;
+	if (component != nullptr && !component->allowMany)
+	{
+		return component;	//component already existing
+	}
 
 	switch(type)
 	{
@@ -413,17 +419,13 @@ void GameObject::OnSave(Serialization& serial)
 
 void GameObject::OnLoad(const Serialization& serial)
 {
-	serial.GetString("ID", id, "0");
-	//assert(UUID != 0);
-	serial.GetString("ParentID", parent->id, "0");
-	serial.GetString("Name", myName, "LoadedGameObject");
-
-	//GameObject* game_object_parent = App->scene->findById(parent->id);
-	////assert(game_object_parent != nullptr);
-	//if (parent->id != "0")
-	//{
-	//	game_object_parent->AddChild(this); //TODO: This should be in scene. Probably D:
-	//}
+	id = serial.GetString("ID", "0");
+	myName = serial.GetString("Name", "LoadedGameObject");
+	std::string parentID = serial.GetString("ParentID", "0");
+	if (parentID != "0" && parentID != App->scene->getRoot()->id && parentID != App->scene->savedRootID)	//ensure root was not the parent on the current object
+	{
+		SetParent(App->scene->findById(parentID));
+	}
 
 	isEnabled = serial.GetBool("Enabled", true);
 	isRoot = serial.GetBool("IsRoot", false);
@@ -437,7 +439,6 @@ void GameObject::OnLoad(const Serialization& serial)
 	for (unsigned int i = 0; i < gameobject_components_config.size(); i++)
 	{
 		int component_type_int = gameobject_components_config[i].GetInt("Type", -1);
-		assert(component_type_int != -1);
 		if (component_type_int != -1)
 		{
 			Component* created_component = CreateComponent((ComponentType)component_type_int);

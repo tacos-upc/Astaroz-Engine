@@ -218,9 +218,6 @@
       <Filter>physfs</Filter>
     </ClCompile>
     <ClCompile Include="ModuleFileSystem.cpp" />
-    <ClCompile Include="ImGUI\ImGuiFileDialog.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -498,9 +495,6 @@
     <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ComponentLight.h" />
-    <ClInclude Include="ImGUI\ImGuiFileDialog.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="dirent\dirent.h">
       <Filter>dirent</Filter>
     </ClInclude>

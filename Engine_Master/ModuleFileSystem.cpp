@@ -5,7 +5,10 @@
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
-#include "ImGUI/ImGuiFileDialog.h"
+#include "IconsFontAwesome5.h"
+#include <vector>
+#include <string>
+
 
 ModuleFileSystem::ModuleFileSystem()
 {
@@ -20,7 +23,7 @@ bool ModuleFileSystem::Init()
 {
 	PHYSFS_init(NULL);	
 	enableWriteDir(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
-	
+	mount(PHYSFS_getBaseDir());
 	return true;
 }
 
@@ -77,32 +80,68 @@ bool ModuleFileSystem::Delete(const char* filePathAndName)
 	return PHYSFS_delete(filePathAndName) != 0;
 }
 
-bool ModuleFileSystem::openFileBrowser()
+bool ModuleFileSystem::openFileBrowser(FileBrowsingMode mode)
 {
 	bool keepAlive = true;
-	ImGuiFileDialog::Instance()->OpenDialog("fileBrowser", "Choose File", ".cpp\0.h\0.hpp\0\0", ".");
-
-	// display
-	if (ImGuiFileDialog::Instance()->FileDialog("fileBrowser"))
+	if (ImGui::Begin(mode == FILE_BROWSING_LOAD ? "Load..." : "Save...", &keepAlive, ImGuiWindowFlags_NoCollapse))
 	{
-		// action if OK
-		if (ImGuiFileDialog::Instance()->IsOk)
+		if (ImGui::Button(ICON_FA_FOLDER_PLUS " New Folder"))
 		{
-			std::string filePathName = ImGuiFileDialog::Instance()->GetFilepathName();
-			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-			// action
 
-			keepAlive = false;
 		}
 
-		if (! keepAlive || !ImGuiFileDialog::Instance()->m_CreateDirectoryMode)
+		ImGui::SameLine();
+		
+		if (ImGui::Button("Root"))
 		{
-			//Cancel button, close
-			keepAlive = false;
-			ImGuiFileDialog::Instance()->CloseDialog("fileBrowser");
+			selectedDir = PathStruct();
+			breadCrumbs.clear();
 		}
+
+		ImGui::SameLine();
+		ImGui::Text(": >");
+
+		for (size_t i = 0; i < breadCrumbs.size(); i++)
+		{
+			ImGui::SameLine();
+			if (ImGui::Button(breadCrumbs.at(i).name.c_str()))
+			{
+				selectedDir = breadCrumbs.at(i);
+				int size = breadCrumbs.size();
+				for (size_t j = i; j < size; j++)
+				{
+					breadCrumbs.pop_back();
+				}
+			}
+		}
+
+		ImGui::Separator();
+		ImGui::Separator();
+
+		char **files = PHYSFS_enumerateFiles(selectedDir.fullpath().c_str());
+		char **i;
+		if (files != nullptr)
+		{
+			for (i = files; *i != NULL; i++)
+			{
+				if (ImGui::Button(*i))
+				{
+					PathStruct pathStruct = PathStruct();
+					pathStruct.name = *i;
+					pathStruct.path = selectedDir.fullpath();
+
+					if (IsDir(pathStruct.fullpath().c_str()))
+					{
+						selectedDir = pathStruct;
+						breadCrumbs.push_back(pathStruct);
+					}
+				}
+			}
+			PHYSFS_freeList(files);
+		}
+		ImGui::End();
 	}
-
+	
 	return keepAlive;
 }
 
@@ -142,4 +181,75 @@ void ModuleFileSystem::mount(const char* path)
 void ModuleFileSystem::enableWriteDir(const char* writeDir)
 {
 	PHYSFS_setWriteDir(writeDir);
+}
+
+std::vector<std::string> ModuleFileSystem::splitStringToVector(std::string text, char delimiter, bool pushEmpty)
+{
+	std::vector<std::string> arr;
+	if (text.size() > 0)
+	{
+		std::string::size_type start = 0;
+		std::string::size_type end = text.find(delimiter, start);
+		while (end != std::string::npos)
+		{
+			std::string token = text.substr(start, end - start);
+			if (token.size() > 0 || (token.size() == 0 && pushEmpty))
+				arr.push_back(token);
+			start = end + 1;
+			end = text.find(delimiter, start);
+		}
+		arr.push_back(text.substr(start));
+	}
+	return arr;
+}
+
+PathStruct ModuleFileSystem::ParsePathFileName(const std::string& vPathFileName)
+{
+	PathStruct res;
+
+	if (vPathFileName.size() > 0)
+	{
+		std::string pfn = vPathFileName;
+		std::string separator(1u, PATH_SEP);
+		replaceString(pfn, "\\", separator);
+		replaceString(pfn, "/", separator);
+
+		size_t lastSlash = pfn.find_last_of(separator);
+		if (lastSlash != std::string::npos)
+		{
+			res.name = pfn.substr(lastSlash + 1);
+			res.path = pfn.substr(0, lastSlash);
+			res.isOk = true;
+		}
+
+		size_t lastPoint = pfn.find_last_of('.');
+		if (lastPoint != std::string::npos)
+		{
+			if (!res.isOk)
+			{
+				res.name = pfn;
+				res.isOk = true;
+			}
+			res.ext = pfn.substr(lastPoint + 1);
+			replaceString(res.name, "." + res.ext, "");
+		}
+		
+	}
+
+	if (res.path == "" && res.name == ""); res.path = vPathFileName; res.name = vPathFileName;
+
+	return res;
+}
+
+bool ModuleFileSystem::replaceString(std::string& str, const std::string& oldStr, const std::string& newStr)
+{
+	bool found = false;
+	size_t pos = 0;
+	while ((pos = str.find(oldStr, pos)) != ::std::string::npos)
+	{
+		found = true;
+		str.replace(pos, oldStr.length(), newStr);
+		pos += newStr.length();
+	}
+	return found;
 }

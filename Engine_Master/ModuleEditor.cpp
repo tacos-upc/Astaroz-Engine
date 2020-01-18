@@ -4,7 +4,6 @@
 #include "IL/il.h"
 #include "IconsFontAwesome5.h"
 #include "IconsFontAwesome5Brands.h"
-#include "IconsFontAwesome5.h"
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "ModuleEditorCamera.h"
@@ -438,7 +437,7 @@ void ModuleEditor::drawFileBrowser()
 {
 	if (openFileDialog)
 	{
-		openFileDialog = App->fileSystem->openFileBrowser();
+		openFileDialog = App->fileSystem->openFileBrowser(FILE_BROWSING_LOAD);
 	}
 }
 

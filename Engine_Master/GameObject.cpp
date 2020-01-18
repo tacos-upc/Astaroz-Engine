@@ -42,6 +42,7 @@ GameObject::GameObject(const GameObject& go)
 		{
 		case MESH:
 			aux = new ComponentMesh(this, (ComponentMesh*) cp);
+			
 			break;
 
 		case TRANSFORM:

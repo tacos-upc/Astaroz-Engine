@@ -18,7 +18,7 @@ ComponentMesh::ComponentMesh(GameObject* gameObject, ComponentMesh* componentMes
 {
 	myType = MESH;
 	myGameObject = gameObject;
-	myMesh = componentMesh->myMesh;
+	myMesh = new Mesh(componentMesh->myMesh->vertices, componentMesh->myMesh->indices, componentMesh->myMesh->textures, componentMesh->myMesh->material, componentMesh->myMesh->name );
 }
 
 ComponentMesh::~ComponentMesh()

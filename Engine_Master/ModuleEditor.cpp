@@ -333,7 +333,6 @@ void ModuleEditor::drawGamePanel()
 
 		if (ImGui::Begin(ICON_FA_GAMEPAD " Game", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 		{
-			ImGui::SetWindowFocus();
 			App->renderer->drawGameView(activeCamera);
 			ImGui::End();
 		}

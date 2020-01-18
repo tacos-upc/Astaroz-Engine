@@ -68,6 +68,7 @@ private:
 	PathStruct selectedFile = PathStruct();
 	std::vector<PathStruct> breadCrumbs;
 	std::vector<std::string> extensions;
+	std::vector<std::string> filteredExtensions;
 
 	void mount(const char*);
 	void enableWriteDir(const char*);
@@ -75,5 +76,6 @@ private:
 	PathStruct ParsePathFileName(const std::string& vPathFileName);
 	bool replaceString(std::string& str, const std::string& oldStr, const std::string& newStr);
 	bool isLoadableFile(std::string);
+	bool isAllowedForRender(const char*);
 };
 

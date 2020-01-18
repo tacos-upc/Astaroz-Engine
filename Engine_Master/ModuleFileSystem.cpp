@@ -25,10 +25,12 @@ bool ModuleFileSystem::Init()
 	enableWriteDir(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
 	mount(PHYSFS_getBaseDir());
 
-	extensions.push_back("fbx");
-	extensions.push_back("png");
-	extensions.push_back("ogg");
-	extensions.push_back("mp3");
+	extensions.push_back("sav");
+
+	filteredExtensions.push_back("ini");
+	filteredExtensions.push_back("dll");
+	filteredExtensions.push_back("exe");
+	filteredExtensions.push_back("pdb");
 	return true;
 }
 
@@ -137,23 +139,26 @@ bool ModuleFileSystem::openFileBrowser(FileBrowsingMode mode)
 		{
 			for (i = files; *i != NULL; i++)
 			{
-				if (ImGui::Button(*i))
+				PathStruct pathStruct = PathStruct();
+				pathStruct.name = *i;
+				pathStruct.path = selectedDir.fullpath();
+
+				if (IsFile(*i) && isAllowedForRender(*i))
 				{
-					PathStruct pathStruct = PathStruct();
-					pathStruct.name = *i;
-					pathStruct.path = selectedDir.fullpath();
-
-					if (IsDir(pathStruct.fullpath().c_str()))
+					if (ImGui::Button(*i))
 					{
-						selectedDir = pathStruct;
-						breadCrumbs.push_back(pathStruct);
-					}
-					else if (IsFile(pathStruct.fullpath().c_str()))
-					{
-						pathStruct.ext = pathStruct.name.substr(pathStruct.name.find_last_of(".") + 1);
-						selectedFile = pathStruct;
-					}
+						if (IsDir(pathStruct.fullpath().c_str()))
+						{
+							selectedDir = pathStruct;
+							breadCrumbs.push_back(pathStruct);
+						}
+						else if (IsFile(pathStruct.fullpath().c_str()))
+						{
+							pathStruct.ext = pathStruct.name.substr(pathStruct.name.find_last_of(".") + 1);
+							selectedFile = pathStruct;
+						}
 
+					}
 				}
 			}
 			PHYSFS_freeList(files);
@@ -161,17 +166,22 @@ bool ModuleFileSystem::openFileBrowser(FileBrowsingMode mode)
 
 		if (isLoadableFile(selectedFile.ext))
 		{
-			ImGui::SetCursorPosY(ImGui::GetWindowHeight() +115);
 			ImGui::Separator();
 			if (ImGui::Button("Load"))
 			{
+
 			}
 		}
 
 		ImGui::End();
 	}
 
-
+	if (!keepAlive)
+	{
+		//Cleanup
+		selectedDir = PathStruct();
+		selectedFile = PathStruct();
+	}
 	
 	return keepAlive;
 }
@@ -294,6 +304,24 @@ bool ModuleFileSystem::isLoadableFile(std::string ext)
 		if (ext == extensions.at(i).c_str())
 		{
 			canI |= true;
+		}
+	}
+
+	return canI;
+}
+
+bool ModuleFileSystem::isAllowedForRender(const char* file)
+{
+	std::string str = std::string(file);
+	const char* ext = str.substr(str.find_last_of(".") + 1).c_str();
+
+	bool canI = true;
+
+	for (size_t i = 0; i < filteredExtensions.size(); i++)
+	{
+		if (ext == filteredExtensions.at(i).c_str())
+		{
+			canI &= false;
 		}
 	}
 

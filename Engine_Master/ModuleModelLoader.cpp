@@ -48,29 +48,17 @@ bool ModuleModelLoader::Start()
 
 	//Assigment models
 
-	//AddModel(MODEL_BUNNY, float3(0.05f, 0.05f, 0.05));
-	//AddModel(MODEL_CLOCK, float3(0.05f, 0.05f, 0.05));
-	//AddModel(MODEL_DOLLHOUSE, float3(0.005f, 0.005f, 0.005));
-	//AddModel(MODEL_DRAWERS, float3(0.005f, 0.005f, 0.005));
-	//AddModel(MODEL_FIRETRUCK, float3(0.05f, 0.05f, 0.05));
-	//AddModel(MODEL_FLOOR, float3(0.05f, 0.05f, 0.05));
-	//AddModel(MODEL_HEARSE, float3(0.01f, 0.01f, 0.01));
-	//AddModel(MODEL_PLAYER, float3(0.05f, 0.05f, 0.05));
-	//AddModel(MODEL_ROBOT, float3(0.01f, 0.01f, 0.01f));
-	//AddModel(MODEL_WALL, float3(0.05f, 0.05f, 0.05));
-	//AddModel(MODEL_SPINNINGTOP, float3(0.05f, 0.05f, 0.05));
-
-	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	//materials.back().k_specular = 0.9f;
-	//materials.back().shininess = 64.0f;
-	//materials.back().k_diffuse = 0.5f;
-	//materials.back().k_ambient = 1.0f;
-	//
-	//LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	//materials.back().k_specular = 0.9f;
-	//materials.back().shininess = 20.0f;
-	//materials.back().k_diffuse = 0.5f;
-	//materials.back().k_ambient = 1.0f;
+	AddModel(MODEL_BUNNY, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_CLOCK, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_DOLLHOUSE, float3(0.005f, 0.005f, 0.005));
+	AddModel(MODEL_DRAWERS, float3(0.005f, 0.005f, 0.005));
+	AddModel(MODEL_FIRETRUCK, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_FLOOR, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_HEARSE, float3(0.01f, 0.01f, 0.01));
+	AddModel(MODEL_PLAYER, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_ROBOT, float3(0.01f, 0.01f, 0.01f));
+	AddModel(MODEL_WALL, float3(0.05f, 0.05f, 0.05));
+	AddModel(MODEL_SPINNINGTOP, float3(0.05f, 0.05f, 0.05));
 
 	//Init variables
 	numMeshes = 0;

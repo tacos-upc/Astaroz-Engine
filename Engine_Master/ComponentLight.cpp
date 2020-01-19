@@ -28,8 +28,8 @@ void ComponentLight::OnSave(Serialization& serial)
 {
 	serial.AddInt("Type", myType);
 	serial.AddBool("Enabled", isEnabled);
-	serial.AddFloat3("Light Direction", light.light_dir);
-	serial.AddFloat3("Light Color", light.color);
+	serial.AddFloat3("Light Direction", App->modelLoader->light.light_dir);
+	serial.AddFloat3("Light Color", App->modelLoader->light.color);
 }
 
 void ComponentLight::OnLoad(const Serialization& serial)
@@ -37,4 +37,5 @@ void ComponentLight::OnLoad(const Serialization& serial)
 	isEnabled = serial.GetBool("Enabled", true);
 	serial.GetFloat3("Light Direction", light.light_dir, math::float3(1.0f, 1.0f, 1.0f));
 	serial.GetFloat3("Light Color", light.color, math::float3(1.0f, 1.0f, 1.0f));
+	App->modelLoader->light = light;
 }

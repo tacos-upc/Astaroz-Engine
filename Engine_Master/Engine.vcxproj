@@ -91,6 +91,7 @@
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="dirent\dirent.h" />
     <ClInclude Include="Dummy.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleEditorCamera.h" />
+    <ClInclude Include="ModuleFileSystem.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleModelLoader.h" />
     <ClInclude Include="ModuleProgramShader.h" />
@@ -188,6 +190,12 @@
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MsTimer.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="physfs-3.0.2\src\physfs.h" />
+    <ClInclude Include="physfs-3.0.2\src\physfs_casefolding.h" />
+    <ClInclude Include="physfs-3.0.2\src\physfs_internal.h" />
+    <ClInclude Include="physfs-3.0.2\src\physfs_lzmasdk.h" />
+    <ClInclude Include="physfs-3.0.2\src\physfs_miniz.h" />
+    <ClInclude Include="physfs-3.0.2\src\physfs_platforms.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Util\debug_draw.hpp" />
@@ -259,6 +267,7 @@
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleEditorCamera.cpp" />
+    <ClCompile Include="ModuleFileSystem.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleModelLoader.cpp" />
     <ClCompile Include="ModuleProgramShader.cpp" />
@@ -271,6 +280,28 @@
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MsTimer.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="physfs-3.0.2\src\physfs.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_7z.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_dir.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_grp.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_hog.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_iso9660.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_mvl.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_qpak.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_slb.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_unpacked.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_vdf.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_wad.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_archiver_zip.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_byteorder.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_haiku.cpp" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_os2.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_posix.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_qnx.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_unix.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_windows.c" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_winrt.cpp" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_unicode.c" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Util\uuid\uuid-io.cpp" />
     <ClCompile Include="Util\uuid\uuid-windows.cpp" />
@@ -283,6 +314,7 @@
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+    <None Include="physfs-3.0.2\src\physfs_platform_apple.m" />
     <None Include="Util\uuid\uuid.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

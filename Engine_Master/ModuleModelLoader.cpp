@@ -59,18 +59,6 @@ bool ModuleModelLoader::Start()
 	AddModel(MODEL_WALL, float3(0.05f, 0.05f, 0.05));
 	AddModel(MODEL_SPINNINGTOP, float3(0.05f, 0.05f, 0.05));
 
-	//LoadSphere("sphere0", math::float3(2.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	//materials.back().k_specular = 0.9f;
-	//materials.back().shininess = 64.0f;
-	//materials.back().k_diffuse = 0.5f;
-	//materials.back().k_ambient = 1.0f;
-	//
-	//LoadSphere("sphere1", math::float3(5.0f, 2.0f, 0.0f), math::Quat::identity, 1.0f, 30, 30, float4(1.0f, 1.0f, 1.0f, 1.0f));
-	//materials.back().k_specular = 0.9f;
-	//materials.back().shininess = 20.0f;
-	//materials.back().k_diffuse = 0.5f;
-	//materials.back().k_ambient = 1.0f;
-
 	//Init variables
 	numMeshes = 0;
 	numVertices = 0;

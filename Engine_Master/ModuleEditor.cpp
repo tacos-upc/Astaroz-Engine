@@ -4,10 +4,10 @@
 #include "IL/il.h"
 #include "IconsFontAwesome5.h"
 #include "IconsFontAwesome5Brands.h"
-#include "IconsFontAwesome5.h"
 #include "ModuleTime.h"
 #include "ModuleScene.h"
 #include "ModuleEditorCamera.h"
+#include "ModuleFileSystem.h"
 
 ModuleEditor::ModuleEditor()
 {
@@ -25,6 +25,7 @@ bool ModuleEditor::Init()
 	show_about_window = false;
 	show_configuration_window = false;
 	openComponentsMenu = false;
+	openFileDialog = false;
 	focusedWindowData = new WindowData();
 	hoveredWindowData = new WindowData();
 	return true;
@@ -79,12 +80,13 @@ update_status ModuleEditor::PreUpdate()
 update_status ModuleEditor::Update()
 {
 	drawMainMenu();
-	drawGizmoControls();
+	drawSubMenu();
 	drawHierarchyPanel();
 	drawGamePanel();
 	drawScenePanel();
 	drawInspectorPanel(); 
 	drawLogPanel();
+	drawFileBrowser();
 
 	return UPDATE_CONTINUE;
 }
@@ -177,26 +179,14 @@ void ModuleEditor::drawMainMenu()
 
 				App->scene->sceneSerialized = serializedScene;
 
-				//App->filesystem->Save(path.c_str(), serializedScene.c_str(), serializedScene.size() + 1);
+				App->fileSystem->save(App->fileSystem->getWritePath().c_str(), "save.sav", &App->scene->sceneSerialized);
 			}
 			if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Load Scene"))
 			{
-				//size_t readed_bytes;
-				//char* scene_file_data = App->filesystem->Load(path.c_str(), readed_bytes);
-				//std::string serialized_scene_string = scene_file_data;
-				//free(scene_file_data);
+				App->scene->sceneSerialized = App->fileSystem->load("save.sav");
 
 				Serialization sceneSerial(App->scene->sceneSerialized);
 				App->scene->OnLoad(sceneSerial);
-				//LOG(App->scene->sceneSerialized.c_str());
-			}
-			ImGui::EndMenu();
-		};
-		if (ImGui::BeginMenu("GameObject"))
-		{
-			if (ImGui::MenuItem("Create Empty"))
-			{
-				App->scene->CreateGameObject();
 			}
 			ImGui::EndMenu();
 		};
@@ -357,14 +347,14 @@ void ModuleEditor::drawScenePanel()
 
 void ModuleEditor::drawGamePanel()
 {
-	if (App->scene->selectedByHierarchy->GetComponent(CAMERA) != nullptr)
+	ComponentCamera* activeCamera = (ComponentCamera*)App->scene->selectedByHierarchy->GetComponent(CAMERA);
+	if (activeCamera != nullptr)
 	{
 		ImGui::SetNextWindowSize(ImVec2(App->window->width * 0.25f, App->window->height * 0.25f));
 
-		if (ImGui::Begin(ICON_FA_GAMEPAD " Game", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+		if (ImGui::Begin(ICON_FA_GAMEPAD " Game", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 		{
-			ImGui::SetWindowFocus();
-			App->renderer->drawGameView();
+			App->renderer->drawGameView(activeCamera);
 			ImGui::End();
 		}
 	}
@@ -444,11 +434,11 @@ void ModuleEditor::drawLogPanel()
 	}
 }
 
-void ModuleEditor::drawGizmoControls()
+void ModuleEditor::drawSubMenu()
 {
 	ImGui::SetNextWindowSize(ImVec2(App->window->width, 8.0f));
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 50.0f));
-	if (ImGui::Begin("Gizmo Controls", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+	if (ImGui::Begin("Sub menu", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
 	{
 		if (ImGui::Button(ICON_FA_ARROWS_ALT, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::TRANSLATE;
 
@@ -457,8 +447,20 @@ void ModuleEditor::drawGizmoControls()
 
 		ImGui::SameLine();
 		if (ImGui::Button(ICON_FA_EXPAND_ARROWS_ALT, ImVec2(24, 24))) App->scene->preferedOperation = ImGuizmo::SCALE;
+
+		ImGui::SameLine();
+		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 20.f, ImGui::GetCursorPosY()));
+		if (ImGui::Button(ICON_FA_FOLDER " Load")) openFileDialog = true;
 	}
 	ImGui::End();
+}
+
+void ModuleEditor::drawFileBrowser()
+{
+	if (openFileDialog)
+	{
+		openFileDialog = App->fileSystem->openFileBrowser(FILE_BROWSING_LOAD);
+	}
 }
 
 void ModuleEditor::updateWindowData(const char* name)

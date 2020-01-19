@@ -260,7 +260,6 @@ void ModuleScene::OnLoad(const Serialization& serial)
 		GameObject* created_game_object = CreateGameObject();
 		created_game_object->OnLoad(game_objects_config[i]);
 	}
-	//App->renderer->GenerateQuadTree();
 	LOG("Scene loaded correctly");
 }
 

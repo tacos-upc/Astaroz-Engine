@@ -13,6 +13,7 @@
 #include "ModuleScene.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleSpacePartition.h"
+#include "ModuleFileSystem.h"
 #include "MsTimer.h"
 
 using namespace std;
@@ -21,6 +22,7 @@ Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
+	modules.push_back(fileSystem = new ModuleFileSystem());
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(time = new ModuleTime());
 	modules.push_back(texture = new ModuleTexture());

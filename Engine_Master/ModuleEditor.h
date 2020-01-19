@@ -40,7 +40,8 @@ public:
 	void processEvent(SDL_Event);
 
 public:
-	bool scrollToBottom, show_about_window, show_configuration_window;
+	bool scrollToBottom;
+
 	ImGuiTextBuffer myBuffer;
 	std::vector<float> fps_log;
 	bool isFocused(const char*);
@@ -50,6 +51,9 @@ public:
 	WindowData* getHoveredWindowData();
 
 private:
+	bool show_about_window, show_configuration_window;
+	bool openFileDialog;
+
 	void loadIcons();
 	void drawMainMenu();
 	void drawHierarchyPanel();
@@ -58,7 +62,8 @@ private:
 	void drawInspectorPanel();
 	void drawComponentsMenu(float);
 	void drawLogPanel();
-	void drawGizmoControls();
+	void drawSubMenu();
+	void drawFileBrowser();
 	void updateWindowData(const char*);
 	void updateFocusedWindowData(const char*);
 	void updateHoveredWindowData(const char*);

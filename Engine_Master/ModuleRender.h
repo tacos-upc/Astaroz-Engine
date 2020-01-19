@@ -41,7 +41,7 @@ public:
 
 	void renderGrid(ComponentCamera*);
 	void drawSceneView();
-	void drawGameView();
+	void drawGameView(ComponentCamera*);
 	void drawSceneRenderSettings();
 	void drawGameObjects(GLuint);
 	void drawGameObjectsByFrustumCulling(GLuint, ComponentCamera*);

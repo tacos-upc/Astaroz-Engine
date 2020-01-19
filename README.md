@@ -23,11 +23,26 @@
 | ---- | ---- | ---- |
 | [Pau Casas García](https://github.com/Pacasasgar) | [Vidal Melero](https://github.com/vidalmelero) | [Luis Moyano](https://github.com/luismoyano)
 
+## Instructions
+
+### How to boot?
+<p> Go to releases section under this page, doenload the latest release, unzip, and that's it! </p>
+
+### How to load scenes
+<p> The game's savefile is stored under the game directory by the name <strong>save.sav</strong> </p>
+<p> In order to make it work, go to <strong>Scene</strong> on the main menu and select <strong>Load Scene</strong>. In order to save your scene go to <strong>Scene</strong> under the main menu and select </strong>Save Scene</strong></p>
+
 ## Powered by
 
 * [SDL 2.0](https://www.libsdl.org/)
 * [assimp 5.0](https://github.com/assimp/assimp/)
 * [glew 2.1.0](http://glew.sourceforge.net/)
 * [Dear ImGui 1.73](https://github.com/ocornut/imgui/)
+* [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)
 * [MathGeoLib 3.0.0](https://github.com/juj/MathGeoLib/)
 * [DevIL 1.8](http://openil.sourceforge.net/)
+* [PhysFS 3.0.2](https://icculus.org/pipermail/physfs/2019-March/001280.html)
+* [libstud-uuid](https://github.com/libstud/libstud-uuid)
+* [dirent](https://github.com/tronkko/dirent)
+
+<a href="https://github.com/tacos-upc/Astaroz-Engine/blob/develop/CHANGELOG.md"> For details on what we've been doing, take a look at our changelog</a>

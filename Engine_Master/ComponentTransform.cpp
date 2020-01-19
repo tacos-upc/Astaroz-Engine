@@ -98,19 +98,19 @@ void ComponentTransform::onTransformChanged()
 
 void ComponentTransform::OnSave(Serialization& serial)
 {
-	serial.AddInt("Type", myType);
-	serial.AddBool("Enabled", isEnabled);
-	serial.AddFloat3("Position", position);
-	serial.AddQuat("Rotation", rotation);
-	serial.AddFloat3("Scale", scale);
+	serial.SaveInt("Type", myType);
+	serial.SaveBool("Enabled", isEnabled);
+	serial.SaveFloat3("Position", position);
+	serial.SaveQuat("Rotation", rotation);
+	serial.SaveFloat3("Scale", scale);
 }
 
 void ComponentTransform::OnLoad(const Serialization& serial)
 {
-	isEnabled = serial.GetBool("Enabled", true);
-	serial.GetFloat3("Position", position, float3::zero);
-	serial.GetQuat("Rotation", rotation, Quat::identity);
-	serial.GetFloat3("Scale", scale, float3::one);
+	isEnabled = serial.LoadBool("Enabled", true);
+	position = serial.LoadFloat3("Position", float3::zero);
+	rotation = serial.LoadQuat("Rotation", Quat::identity);
+	scale = serial.LoadFloat3("Scale", float3::one);
 
 	onTransformChanged();
 }

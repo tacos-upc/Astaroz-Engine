@@ -224,19 +224,19 @@ void ModuleEditor::drawMainMenu()
 		{
 			updateWindowData("About");
 			
-			ImGui::BulletText("Engine name: Astaroz engine");
+			ImGui::BulletText("Engine name: Astaroz Engine");
 			ImGui::Text("This engine was performed in UPC master - game programming");
-			ImGui::BulletText("Author: Pau Casas");
+			ImGui::BulletText("Authors: Vidal Melero, Luis Moyano, Pau Casas");
 			ImGui::BulletText("MIT License:"); ImGui::SameLine();
 			if (ImGui::SmallButton("License"))
 			{
-				ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine/blob/master/LICENSE", nullptr, nullptr, SW_SHOWNORMAL);
+				ShellExecuteA(nullptr, "open", "https://github.com/tacos-upc/Astaroz-Engine/blob/master/LICENSE", nullptr, nullptr, SW_SHOWNORMAL);
 			}
 			ImGui::Separator();
 			ImGui::Text("Github repository:"); ImGui::SameLine();
-			if (ImGui::SmallButton("Astaroz engine link github"))
+			if (ImGui::SmallButton("Astaroz Engine link github"))
 			{
-				ShellExecuteA(nullptr, "open", "https://github.com/Pacasasgar/Astaroz-Engine", nullptr, nullptr, SW_SHOWNORMAL);
+				ShellExecuteA(nullptr, "open", "https://github.com/tacos-upc/Astaroz-Engine", nullptr, nullptr, SW_SHOWNORMAL);
 			}
 			ImGui::End();
 		}

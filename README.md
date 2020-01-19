@@ -26,11 +26,16 @@
 ## Instructions
 
 ### How to boot?
-<p> Go to releases section under this page, doenload the latest release, unzip, and that's it! </p>
+<p> Go to releases section under this page, download the latest release, unzip, and that's it! </p>
 
 ### How to load scenes
 <p> The game's savefile is stored under the game directory by the name <strong>save.sav</strong> </p>
 <p> In order to make it work, go to <strong>Scene</strong> on the main menu and select <strong>Load Scene</strong>. In order to save your scene go to <strong>Scene</strong> under the main menu and select </strong>Save Scene</strong></p>
+
+###	Controls
+<p>While Right-clicking: WASDQE Unity-like movement and free look around</p>
+<p>Mouse Wheel to zoom in and out</p>
+<p>Hold shift to duplicate speed</p>
 
 ## Powered by
 

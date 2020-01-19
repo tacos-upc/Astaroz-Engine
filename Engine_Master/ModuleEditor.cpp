@@ -138,7 +138,7 @@ WindowData* ModuleEditor::getFocusedWindowData()
 	return focusedWindowData;
 }
 
-WindowData * ModuleEditor::getHoveredWindowData()
+WindowData* ModuleEditor::getHoveredWindowData()
 {
 	return hoveredWindowData;
 }
@@ -184,8 +184,15 @@ void ModuleEditor::drawMainMenu()
 			{
 				App->scene->sceneSerialized = App->fileSystem->load("save.sav");
 
-				Serialization sceneSerial(App->scene->sceneSerialized);
-				App->scene->OnLoad(sceneSerial);
+				if (App->scene->sceneSerialized != "")
+				{
+					Serialization sceneSerial(App->scene->sceneSerialized);
+					App->scene->OnLoad(sceneSerial);
+				}
+				else
+				{
+					LOG("Could not load the scene. File missing or file path wrong.")
+				}
 			}
 			ImGui::EndMenu();
 		};

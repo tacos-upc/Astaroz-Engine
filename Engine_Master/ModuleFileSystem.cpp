@@ -23,6 +23,7 @@ bool ModuleFileSystem::Init()
 {
 	PHYSFS_init(NULL);	
 	enableWriteDir(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
+	mount(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
 	mount(PHYSFS_getBaseDir());
 
 	extensions.push_back("sav");
@@ -186,8 +187,11 @@ bool ModuleFileSystem::openFileBrowser(FileBrowsingMode mode)
 	return keepAlive;
 }
 
-void ModuleFileSystem::save(const char* dir, const char* fileName)
+void ModuleFileSystem::save(const char* dir, const char* fileName, std::string* content)
 {
+	PHYSFS_file* file = PHYSFS_openWrite(fileName);
+	PHYSFS_writeBytes(file, content->c_str(), content->size());
+	PHYSFS_close(file);
 }
 
 char* ModuleFileSystem::load(const char* fullNameAndPath)
@@ -207,9 +211,11 @@ char* ModuleFileSystem::load(const char* fullNameAndPath)
 	return fileBuffer;
 }
 
-const char * ModuleFileSystem::getWritePath()
+std::string ModuleFileSystem::getWritePath()
 {
-	return PHYSFS_getWriteDir();
+	std::string writeDir = std::string(PHYSFS_getWriteDir());
+	replaceString(writeDir, std::string("\\"), std::string("/"));
+	return writeDir;
 }
 
 void ModuleFileSystem::mount(const char* path)

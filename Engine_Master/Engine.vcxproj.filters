@@ -168,14 +168,6 @@
     <ClCompile Include="ImGUI\ImSequencer.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_haiku.cpp" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_os2.c" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_posix.c" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_qnx.c" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_unix.c" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_windows.c" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_platform_winrt.cpp" />
-    <ClCompile Include="physfs-3.0.2\src\physfs_unicode.c" />
     <ClCompile Include="physfs-3.0.2\src\physfs.c">
       <Filter>physfs</Filter>
     </ClCompile>
@@ -219,6 +211,30 @@
       <Filter>physfs</Filter>
     </ClCompile>
     <ClCompile Include="ModuleFileSystem.cpp" />
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_haiku.cpp">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_os2.c">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_posix.c">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_qnx.c">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_unix.c">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_windows.c">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_platform_winrt.cpp">
+      <Filter>physfs</Filter>
+    </ClCompile>
+    <ClCompile Include="physfs-3.0.2\src\physfs_unicode.c">
+      <Filter>physfs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -486,11 +502,6 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="Util\debug_draw.hpp" />
     <ClInclude Include="DebugDraw.h" />
-    <ClInclude Include="physfs-3.0.2\src\physfs_casefolding.h" />
-    <ClInclude Include="physfs-3.0.2\src\physfs_internal.h" />
-    <ClInclude Include="physfs-3.0.2\src\physfs_lzmasdk.h" />
-    <ClInclude Include="physfs-3.0.2\src\physfs_miniz.h" />
-    <ClInclude Include="physfs-3.0.2\src\physfs_platforms.h" />
     <ClInclude Include="physfs-3.0.2\src\physfs.h">
       <Filter>physfs</Filter>
     </ClInclude>
@@ -499,6 +510,21 @@
     <ClInclude Include="ComponentLight.h" />
     <ClInclude Include="dirent\dirent.h">
       <Filter>dirent</Filter>
+    </ClInclude>
+    <ClInclude Include="physfs-3.0.2\src\physfs_casefolding.h">
+      <Filter>physfs</Filter>
+    </ClInclude>
+    <ClInclude Include="physfs-3.0.2\src\physfs_internal.h">
+      <Filter>physfs</Filter>
+    </ClInclude>
+    <ClInclude Include="physfs-3.0.2\src\physfs_lzmasdk.h">
+      <Filter>physfs</Filter>
+    </ClInclude>
+    <ClInclude Include="physfs-3.0.2\src\physfs_miniz.h">
+      <Filter>physfs</Filter>
+    </ClInclude>
+    <ClInclude Include="physfs-3.0.2\src\physfs_platforms.h">
+      <Filter>physfs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -540,6 +566,8 @@
     <None Include="Util\uuid\uuid.ixx">
       <Filter>uuid</Filter>
     </None>
-    <None Include="physfs-3.0.2\src\physfs_platform_apple.m" />
+    <None Include="physfs-3.0.2\src\physfs_platform_apple.m">
+      <Filter>physfs</Filter>
+    </None>
   </ItemGroup>
 </Project>

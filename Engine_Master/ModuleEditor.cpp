@@ -179,18 +179,15 @@ void ModuleEditor::drawMainMenu()
 
 				App->scene->sceneSerialized = serializedScene;
 
-				//App->filesystem->Save(path.c_str(), serializedScene.c_str(), serializedScene.size() + 1);
+				App->fileSystem->save(App->fileSystem->getWritePath().c_str(), "save.sav", &App->scene->sceneSerialized);
 			}
 			if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Load Scene"))
 			{
-				//size_t readed_bytes;
-				//char* scene_file_data = App->filesystem->Load(path.c_str(), readed_bytes);
-				//std::string serialized_scene_string = scene_file_data;
-				//free(scene_file_data);
+				char* save = App->fileSystem->load("save.sav");
+				App->scene->sceneSerialized = std::string().append(save);
 
 				Serialization sceneSerial(App->scene->sceneSerialized);
 				App->scene->OnLoad(sceneSerial);
-				//LOG(App->scene->sceneSerialized.c_str());		//Disable if BUFFER problems
 
 				Serialization sceneSerialSave;
 				App->scene->OnSave(sceneSerialSave);

@@ -56,10 +56,10 @@ public:
 
 	bool openFileBrowser(FileBrowsingMode);
 
-	void save(const char*, const char*);
+	void save(const char*, const char*, std::string*);
 	char* load(const char*);
 
-	const char* getWritePath();
+	std::string getWritePath();
 
 private:
 	const char* fileSystemPath;

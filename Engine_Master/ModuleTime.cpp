@@ -1,11 +1,11 @@
 #include "ModuleTime.h"
+#include "ModuleScene.h"
+
 #include "Math/MathAll.h"
 #include "ImGUI/imgui.h"
 #include "ImGUI/imgui_impl_sdl.h"
 #include "ImGUI/imgui_impl_opengl3.h"
 #include "IconsFontAwesome5.h"
-
-
 
 
 ModuleTime::ModuleTime()
@@ -62,12 +62,23 @@ void ModuleTime::play()
 {
 	if (state == PLAY) return;
 	state = PLAY;
+	
+	//Save scene
+	Serialization sceneSerial;
+	App->scene->OnSave(sceneSerial);
+	std::string serializedScene;
+	sceneSerial.GetSerializedScene(serializedScene);
+	App->scene->sceneSerialized = serializedScene;
 }
 
 void ModuleTime::pause()
 {
 	if (state != PLAY) return;
 	state = PAUSE;
+
+	//Load scene
+	Serialization sceneSerial(App->scene->sceneSerialized);
+	App->scene->OnLoad(sceneSerial);
 }
 
 void ModuleTime::tick()

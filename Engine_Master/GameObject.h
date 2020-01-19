@@ -71,5 +71,6 @@ private:
 	bool isfatBoxTooFat();							//Area diff between regular aabb and fat one
 	void recursiveEnable(std::vector<GameObject*> childrenVector);
 	bool isAncestor(GameObject*);					//Used for DragAndDrop to avoid dragging an ancestor to one of its children
+	bool isOBBEnclosing = false;
 };
 #endif __GameObject_H__

@@ -110,4 +110,6 @@ void ComponentMesh::OnLoad(const Serialization& serial)
 	selection = serial.LoadInt("Selection", 0);
 	selectedMesh = serial.LoadInt("Selected Mesh", 0);
 	myMesh = App->modelLoader->meshes.at(selectedMesh);
+
+	myGameObject->createAABBs();
 }

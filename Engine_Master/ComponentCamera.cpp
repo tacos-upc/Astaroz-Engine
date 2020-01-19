@@ -29,7 +29,8 @@ ComponentCamera::ComponentCamera()
 	frustum->type = FrustumType::PerspectiveFrustum;
 
 	SetPlaneDistances(0.1f, 50.0f);
-	SetFOV(math::pi / 4.0f);
+	fov = math::pi / 4.0f;
+	SetFOV(fov);
 
 	frustum->front = -float3::unitZ;
 	frustum->up = float3::unitY;
@@ -248,16 +249,44 @@ void ComponentCamera::DrawInspector()
 		{
 			frustum->type = FrustumType::OrthographicFrustum;
 		}
+
+		ImGui::DragFloat("Near plane", &frustum->nearPlaneDistance, 0.1f);
+		ImGui::DragFloat("Far plane", &frustum->farPlaneDistance, 0.1f);
+
+		if (ImGui::DragFloat("fov", &fov, 0.01f))
+		{
+			SetFOV(fov);
+		}
 		ImGui::Separator();
 	}
 }
 
 void ComponentCamera::OnSave(Serialization& serial)
 {
-	
+	serial.SaveInt("Type", myType);
+	serial.SaveInt("Clear", selectedClearMode);
+	serial.SaveFloat3("ClearColor", float3(clearColor.x, clearColor.y, clearColor.z));
+	serial.SaveInt("Projection", selectedProjectionMode);
+	serial.SaveFloat("near", frustum->nearPlaneDistance);
+	serial.SaveFloat("far", frustum->farPlaneDistance);
+	serial.SaveFloat("fov", frustum->verticalFov);
 }
 
 void ComponentCamera::OnLoad(const Serialization& serial)
 {
+	myType = (ComponentType)serial.LoadInt("Type", CAMERA);
 	
+	selectedClearMode = (ClearMode)serial.LoadInt("Clear", COLOR);
+	
+	float3 cColor = serial.LoadFloat3("ClearColor", float3(0.5, 0.5, 0.5));
+	clearColor = ImVec4(cColor.x, cColor.y, cColor.z, 1.f);
+
+	selectedProjectionMode = (ProjectionMode)serial.LoadInt("Projection", PERSPECTIVE);
+	
+	float nearPlane = serial.LoadFloat("near", 0.5f);
+	float farPlane = serial.LoadFloat("far", 1000.f);
+	SetPlaneDistances(nearPlane, farPlane);
+
+	float fov = serial.LoadFloat("fov", math::pi / 4.0f);
+	SetFOV(fov);
 }

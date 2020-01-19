@@ -52,8 +52,8 @@ int Serialization::LoadInt(const std::string& name, int defaultValue) const
 	}
 	else
 	{
-		const rapidjson::Value& currentValue = document[name.c_str()];
-		return currentValue.GetInt();
+		const rapidjson::Value& intValue = document[name.c_str()];
+		return intValue.GetInt();
 	}
 }
 
@@ -71,8 +71,27 @@ bool Serialization::LoadBool(const std::string& name, bool defaultValue) const
 	}
 	else
 	{
-		const rapidjson::Value& currentValue = document[name.c_str()];
-		return currentValue.GetBool();
+		const rapidjson::Value& boolValue = document[name.c_str()];
+		return boolValue.GetBool();
+	}
+}
+
+void Serialization::SaveFloat(const std::string & name, const float value)
+{
+	rapidjson::Value memberName(name.c_str(), *allocatorType);
+	document.AddMember(memberName, value, *allocatorType);
+}
+
+float Serialization::LoadFloat(const std::string & name, const float defaultValue) const
+{
+	if (!document.HasMember(name.c_str()))
+	{
+		return defaultValue;
+	}
+	else
+	{
+		const rapidjson::Value& floatValue = document[name.c_str()];
+		return floatValue.GetFloat();
 	}
 }
 
@@ -95,11 +114,11 @@ float3 Serialization::LoadFloat3(const std::string& name, const float3& defaultV
 	}
 	else
 	{
-		const rapidjson::Value& currentValue = document[name.c_str()];
+		const rapidjson::Value& floatValue = document[name.c_str()];
 		return float3(
-			currentValue[0].GetFloat(),
-			currentValue[1].GetFloat(),
-			currentValue[2].GetFloat()
+			floatValue[0].GetFloat(),
+			floatValue[1].GetFloat(),
+			floatValue[2].GetFloat()
 		);
 	}
 }

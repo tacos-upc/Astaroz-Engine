@@ -24,6 +24,8 @@ public:
 	int LoadInt(const std::string& name, int defaultValue) const;
 	void SaveBool(const std::string& name, bool value);
 	bool LoadBool(const std::string& name, bool defaultValue) const;
+	void SaveFloat(const std::string& name, const float value);
+	float LoadFloat(const std::string& name, const float defaultValue) const;
 	void SaveFloat3(const std::string& name, const float3& value);
 	float3 LoadFloat3(const std::string& name, const float3& defaultValue) const;
 	void SaveStringSerial(const std::string& name, const std::string& value);

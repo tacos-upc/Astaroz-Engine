@@ -384,9 +384,12 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 		const ImGuiPayload* itemDragged = ImGui::AcceptDragDropPayload("dragGO");
 		if (itemDragged != nullptr) {
 			GameObject* newChild = *reinterpret_cast<GameObject**>(itemDragged->Data);
-			newChild->SetParent(go);
-			if(newChild->parent->myTransform != nullptr)
-				newChild->myTransform->setLocalMatrix(newChild->parent->myTransform->getGlobalMatrix());
+			if (!isAncestor(newChild))
+			{
+				newChild->SetParent(go);
+				if (newChild->parent->myTransform != nullptr)
+					newChild->myTransform->setLocalMatrix(newChild->parent->myTransform->getGlobalMatrix());
+			}
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -457,6 +460,16 @@ void GameObject::recursiveEnable(std::vector<GameObject*> childrenVector)
 		if (childrenVector.at(i)->childrenVector.size() > 0) {
 			recursiveEnable(childrenVector.at(i)->childrenVector);
 		}
+	}
+}
+
+bool GameObject::isAncestor(GameObject* go)
+{
+	if (parent == go) return true;
+	else
+	{
+		if (parent == nullptr) return false;
+		else return parent->isAncestor(go);
 	}
 }
 

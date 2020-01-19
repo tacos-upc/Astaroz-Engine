@@ -1,3 +1,4 @@
+* FIX: On drag and drop, a gameobject can't accept any ancestor as children
 * Scene serialization is now implemented
 * Game view is now rendered on a different window than the scene one
 * Mouse picking

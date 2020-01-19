@@ -25,13 +25,15 @@ public:
 	void OnLoad(const Serialization& serial);
 
 	//public variables
-	Mesh* myMesh = nullptr;
+	Mesh* myMesh;
 
 	//material editor method
 	void editMat();
 
 	int selectedMesh;
-	bool isLoaded;
+	int selection;
+	
+
 };
 
 #endif __ComponentMesh_H__

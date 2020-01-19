@@ -156,17 +156,15 @@ bool ModuleModelLoader::LoadTorus(const char* name, const math::float3& pos, con
 	return false;
 }
 
-void ModuleModelLoader::AddModel(const char * path, math::float3 scale)
+void ModuleModelLoader::AddModel(const char* path, math::float3 scale)
 {
 	Model* myNewModel = new Model(path, scale);
 	for (int i = 0; i < myNewModel->meshes.size(); i++) {
 		myNewModel->meshes.at(i)->scale = scale;
 		meshes.push_back(myNewModel->meshes.at(i));
-		
 	}
 	models.push_back(myNewModel);
 }
-
 
 void ModuleModelLoader::GenerateMesh(const char* name, const math::float3& pos, const math::Quat& rot, par_shapes_mesh* shape)
 {

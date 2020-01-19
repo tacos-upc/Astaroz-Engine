@@ -71,9 +71,9 @@ public:
 	void updateTexture(Texture* texture);
 	void setUniforms();
 	void updateTriangles();
+
 	unsigned int material;
 	float3 scale;
-
 	unsigned int VAO = 0, VBO = 0, EBO = 0;
 	unsigned normals_offset = 0;
 	unsigned vertex_size = 0;

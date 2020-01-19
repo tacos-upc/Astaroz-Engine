@@ -84,7 +84,7 @@ void ComponentTransform::DrawInspector()
 
 void ComponentTransform::onTransformChanged()
 {
-	rotation = Quat::FromEulerXYZ(eulerRotationInDeg.x, eulerRotationInDeg.y, eulerRotationInDeg.z );
+	
 	localModelMatrix = float4x4::FromTRS(position, rotation, scale);
 	generateGlobalMatrix();
 
@@ -126,6 +126,7 @@ void ComponentTransform::setupEulerRotation(bool isDeg, float3 rot)
 	{
 		eulerRotationInDeg = rot;
 		eulerRotationInRad = float3(math::DegToRad(rot.x), math::DegToRad(rot.y), math::DegToRad(rot.z));
+		rotation = Quat::FromEulerXYZ(eulerRotationInDeg.x, eulerRotationInDeg.y, eulerRotationInDeg.z);
 	}
 	else
 	{

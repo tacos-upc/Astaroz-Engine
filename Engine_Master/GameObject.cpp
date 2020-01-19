@@ -104,7 +104,6 @@ void GameObject::SetParent(GameObject* newParent)
 		
 	if(newParent != nullptr)
 	{
-		LOG("Setting new parent")
 		parent = newParent;
 		parent->childrenVector.push_back(this);
 	}

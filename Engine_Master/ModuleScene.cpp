@@ -250,6 +250,7 @@ void ModuleScene::OnSave(Serialization& serial)
 	//assert(current_index == game_objects_ownership.size());
 
 	serial.AddChildrenSerial("GameObjects", game_objects_config);
+	LOG("Scene saved correctly");
 }
 
 void ModuleScene::OnLoad(const Serialization& serial)
@@ -268,6 +269,7 @@ void ModuleScene::OnLoad(const Serialization& serial)
 		created_game_object->OnLoad(game_objects_config[i]);
 	}
 	//App->renderer->GenerateQuadTree();
+	LOG("Scene loaded correctly");
 }
 
 void ModuleScene::drawHierarchy()

@@ -188,16 +188,15 @@ void ModuleEditor::drawMainMenu()
 
 				Serialization sceneSerial(App->scene->sceneSerialized);
 				App->scene->OnLoad(sceneSerial);
-				//LOG(App->scene->sceneSerialized.c_str());		//Disable if BUFFER problems
-
-				Serialization sceneSerialSave;
-				App->scene->OnSave(sceneSerialSave);
-				std::string serializedScene;
-				sceneSerialSave.GetSerializedScene(serializedScene);
-				App->scene->sceneSerialized = serializedScene;
-
-				Serialization sceneSerialLoad(App->scene->sceneSerialized);
-				App->scene->OnLoad(sceneSerialLoad);
+				//LOG(App->scene->sceneSerialized.c_str());
+			}
+			ImGui::EndMenu();
+		};
+		if (ImGui::BeginMenu("GameObject"))
+		{
+			if (ImGui::MenuItem("Create Empty"))
+			{
+				App->scene->CreateGameObject();
 			}
 			ImGui::EndMenu();
 		};

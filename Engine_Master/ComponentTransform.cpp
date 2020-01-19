@@ -9,8 +9,6 @@ ComponentTransform::ComponentTransform(GameObject* gameObject)
 	allowMany = false;
 	myGameObject = gameObject;
 	myType = TRANSFORM;
-
-	onTransformChanged();
 }
 
 ComponentTransform::ComponentTransform(GameObject* gameObject, ComponentTransform* componentTransform)
@@ -87,12 +85,16 @@ void ComponentTransform::onTransformChanged()
 	
 	localModelMatrix = float4x4::FromTRS(position, rotation, scale);
 	generateGlobalMatrix();
+	myGameObject->createAABBs();
 
 	//deltaEulerRotation = float3(eulerRotation.x - lastEulerRotation.x, eulerRotation.y - lastEulerRotation.y, eulerRotation.z - lastEulerRotation.z);
 	
-	for (size_t i = 0; i < myGameObject->childrenVector.size(); i++)
+	if (!myGameObject->childrenVector.empty())
 	{
-		myGameObject->childrenVector.at(i)->myTransform->onTransformChanged();
+		for (size_t i = 0; i < myGameObject->childrenVector.size(); i++)
+		{
+			myGameObject->childrenVector.at(i)->myTransform->onTransformChanged();
+		}
 	}
 }
 

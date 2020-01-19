@@ -88,11 +88,6 @@ void GameObject::Update()
 		if (component->myType != TRANSFORM)
 			component->Update();
 	}
-
-	if (boundingBox != nullptr)
-	{
-		createAABBs();
-	}
 }
 
 void GameObject::SetParent(GameObject* newParent)
@@ -162,11 +157,11 @@ Component* GameObject::CreateComponent(ComponentType type)
 		case TRANSFORM:
 			component = new ComponentTransform(this);
 			myTransform = (ComponentTransform*)component;
+			myTransform->onTransformChanged();
 			break;
 		case MESH:
 			component = new ComponentMesh();
 			myMesh = (ComponentMesh*)component;
-			createAABBs();
 			break;
 		case CAMERA:
 			component = new ComponentCamera();
@@ -290,8 +285,9 @@ void GameObject::createAABBs()
 	float3 min = float3::zero;
 	float3 max = float3::zero;
 	boundingBox = new AABB(min, max);
+
 	obb = new OBB(*boundingBox);
-		
+
 	if (myMesh != nullptr && myMesh->myMesh != nullptr)
 	{
 		for (Vertex vertex : myMesh->myMesh->vertices)
@@ -301,12 +297,14 @@ void GameObject::createAABBs()
 		}
 	}
 
+	if (myTransform == nullptr) return;
+
 	findOBBPoints();
 	boundingBox->Enclose(obbPoints, 8);
 	boundingBox->TransformAsAABB(myTransform->getGlobalMatrix());
 	obb->Transform(myTransform->getGlobalMatrix());
 
-	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox) || isfatBoxTooFat())
+	if (fatBoundingBox == nullptr || !fatBoundingBox->Contains(*boundingBox))
 	{
 		fatBoundingBox = new AABB(*boundingBox);
 		fatBoundingBox->Scale(boundingBox->CenterPoint(), float3(1.5f, 1.5f, 1.5f));

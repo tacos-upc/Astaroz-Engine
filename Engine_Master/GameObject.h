@@ -75,5 +75,7 @@ private:
 
 	void recursiveEnable(std::vector<GameObject*> childrenVector);
 	bool isAncestor(GameObject*);
+
+	bool isOBBEnclosing = false;
 };
 #endif __GameObject_H__

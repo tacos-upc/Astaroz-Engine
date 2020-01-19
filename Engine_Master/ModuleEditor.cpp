@@ -183,20 +183,10 @@ void ModuleEditor::drawMainMenu()
 			}
 			if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Load Scene"))
 			{
-				char* save = App->fileSystem->load("save.sav");
-				App->scene->sceneSerialized = std::string().append(save);
+				App->scene->sceneSerialized = App->fileSystem->load("save.sav");
 
 				Serialization sceneSerial(App->scene->sceneSerialized);
 				App->scene->OnLoad(sceneSerial);
-
-				Serialization sceneSerialSave;
-				App->scene->OnSave(sceneSerialSave);
-				std::string serializedScene;
-				sceneSerialSave.GetSerializedScene(serializedScene);
-				App->scene->sceneSerialized = serializedScene;
-
-				Serialization sceneSerialLoad(App->scene->sceneSerialized);
-				App->scene->OnLoad(sceneSerialLoad);
 			}
 			ImGui::EndMenu();
 		};

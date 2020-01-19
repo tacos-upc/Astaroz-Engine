@@ -48,7 +48,7 @@ public:
 	update_status Update() override;
 
 	bool Exist(const char*);
-	unsigned int Size(const char*); 
+	PHYSFS_sint64 Size(const char*); 
 	bool CreateDir(const char*);
 	bool IsDir(const char*);
 	bool IsFile(const char*);
@@ -57,7 +57,7 @@ public:
 	bool openFileBrowser(FileBrowsingMode);
 
 	void save(const char*, const char*, std::string*);
-	char* load(const char*);
+	std::string load(const char*);
 
 	std::string getWritePath();
 

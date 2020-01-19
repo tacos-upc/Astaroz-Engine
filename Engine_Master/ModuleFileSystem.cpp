@@ -56,9 +56,9 @@ bool ModuleFileSystem::Exist(const char* filePathAndName)
 	return PHYSFS_exists(filePathAndName);
 }
 
-unsigned int ModuleFileSystem::Size(const char* filePathAndName)
+PHYSFS_sint64 ModuleFileSystem::Size(const char* filePathAndName)
 {
-	unsigned int size = 0;
+	PHYSFS_sint64 size = 0;
 
 	if (Exist(filePathAndName))
 	{
@@ -194,10 +194,11 @@ void ModuleFileSystem::save(const char* dir, const char* fileName, std::string* 
 	PHYSFS_close(file);
 }
 
-char* ModuleFileSystem::load(const char* fullNameAndPath)
+std::string ModuleFileSystem::load(const char* fullNameAndPath)
 {
 	PHYSFS_file* filePointer = nullptr;
 	char* fileBuffer;
+	std::string data = std::string();
 
 	if (Exist(fullNameAndPath))
 	{
@@ -206,16 +207,17 @@ char* ModuleFileSystem::load(const char* fullNameAndPath)
 		fileBuffer = new char[size];
 		PHYSFS_read(filePointer, fileBuffer, 1, size);
 		PHYSFS_close(filePointer);
+
+		data.append(fileBuffer);
+		data = data.substr(0, data.find_last_of("}") + 1);
 	}
 
-	return fileBuffer;
+	return data;
 }
 
 std::string ModuleFileSystem::getWritePath()
 {
-	std::string writeDir = std::string(PHYSFS_getWriteDir());
-	replaceString(writeDir, std::string("\\"), std::string("/"));
-	return writeDir;
+	return PHYSFS_getWriteDir();
 }
 
 void ModuleFileSystem::mount(const char* path)

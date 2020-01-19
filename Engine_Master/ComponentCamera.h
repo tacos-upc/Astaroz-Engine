@@ -61,6 +61,7 @@ public:
 
 private:
 	int selectedProjectionMode;
+	float fov;
 
 	std::vector<GameObject*> touchedCandidates;
 	void findTouchedCandidates(AABBTreeNode*, LineSegment*);

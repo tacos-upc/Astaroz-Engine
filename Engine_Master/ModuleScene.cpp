@@ -225,31 +225,23 @@ void ModuleScene::SelectGameObjectInHierarchy(GameObject* selected)
 
 void ModuleScene::OnSave(Serialization& serial)
 {
-	std::vector<Serialization> game_objects_config(gameObjects.size());
-	std::stack<GameObject*> pending_objects;
-	unsigned int current_index = 0;
-
-	for (auto& child_game_object : root->childrenVector)
+	std::vector<Serialization> sceneSerial(gameObjects.size());
+	std::vector<GameObject*> gameObjectsTree;					//we need another list for all GameObjects in scene because *order* is very important to save all of them correctly
+	for (auto& childInRoot : root->childrenVector)
 	{
-		pending_objects.push(child_game_object);
+		gameObjectsTree.push_back(childInRoot);					//first fill the list with all game objects which direct parent is ROOT (posible parents of more GameObjects)
 	}
 
-	while (!pending_objects.empty())
+	for (unsigned int i = 0; i < gameObjectsTree.size(); ++i)
 	{
-		GameObject* current_game_object = pending_objects.top();
-		pending_objects.pop();
-
-		current_game_object->OnSave(game_objects_config[current_index]);
-		current_index++;
-
-		for (auto& child_game_object : current_game_object->childrenVector)
+		gameObjectsTree[i]->OnSave(sceneSerial[i]);				//start saving them
+		for (auto& child : gameObjectsTree[i]->childrenVector)	//check if the GameObject has children in a loop
 		{
-			pending_objects.push(child_game_object);
+			gameObjectsTree.push_back(child);					//add to the list all its children by iterating this loop
 		}
 	}
-	//assert(current_index == game_objects_ownership.size());
 
-	serial.AddChildrenSerial("GameObjects", game_objects_config);
+	serial.AddChildrenSerial("GameObjects", sceneSerial);
 	LOG("Scene saved correctly");
 }
 

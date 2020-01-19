@@ -263,31 +263,30 @@ void ComponentCamera::DrawInspector()
 
 void ComponentCamera::OnSave(Serialization& serial)
 {
-	serial.AddInt("Type", myType);
-	serial.AddInt("Clear", selectedClearMode);
-	serial.AddFloat3("ClearColor", float3(clearColor.x, clearColor.y, clearColor.z));
-	serial.AddInt("Projection", selectedProjectionMode);
-	serial.AddFloat("near", frustum->nearPlaneDistance);
-	serial.AddFloat("far", frustum->farPlaneDistance);
-	serial.AddFloat("fov", frustum->verticalFov);
+	serial.SaveInt("Type", myType);
+	serial.SaveInt("Clear", selectedClearMode);
+	serial.SaveFloat3("ClearColor", float3(clearColor.x, clearColor.y, clearColor.z));
+	serial.SaveInt("Projection", selectedProjectionMode);
+	serial.SaveFloat("near", frustum->nearPlaneDistance);
+	serial.SaveFloat("far", frustum->farPlaneDistance);
+	serial.SaveFloat("fov", frustum->verticalFov);
 }
 
 void ComponentCamera::OnLoad(const Serialization& serial)
 {
-	myType = (ComponentType)serial.GetInt("Type", CAMERA);
+	myType = (ComponentType)serial.LoadInt("Type", CAMERA);
 	
-	selectedClearMode = (ClearMode)serial.GetInt("Clear", COLOR);
+	selectedClearMode = (ClearMode)serial.LoadInt("Clear", COLOR);
 	
-	float3 cColor;
-	serial.GetFloat3("ClearColor", cColor, float3(0.5, 0.5, 0.5));
+	float3 cColor = serial.LoadFloat3("ClearColor", float3(0.5, 0.5, 0.5));
 	clearColor = ImVec4(cColor.x, cColor.y, cColor.z, 1.f);
 
-	selectedProjectionMode = (ProjectionMode)serial.GetInt("Projection", PERSPECTIVE);
+	selectedProjectionMode = (ProjectionMode)serial.LoadInt("Projection", PERSPECTIVE);
 	
-	float nearPlane = serial.GetFloat("near", 0.5f);
-	float farPlane = serial.GetFloat("far", 1000.f);
+	float nearPlane = serial.LoadFloat("near", 0.5f);
+	float farPlane = serial.LoadFloat("far", 1000.f);
 	SetPlaneDistances(nearPlane, farPlane);
 
-	float fov = serial.GetFloat("fov", math::pi / 4.0f);
+	float fov = serial.LoadFloat("fov", math::pi / 4.0f);
 	SetFOV(fov);
 }

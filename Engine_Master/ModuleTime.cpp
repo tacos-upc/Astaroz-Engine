@@ -66,8 +66,8 @@ void ModuleTime::play()
 	//Save scene
 	Serialization sceneSerial;
 	App->scene->OnSave(sceneSerial);
-	std::string serializedScene;
-	sceneSerial.GetSerializedScene(serializedScene);
+
+	std::string serializedScene = sceneSerial.LoadSerializedScene();
 	App->scene->sceneSerialized = serializedScene;
 }
 

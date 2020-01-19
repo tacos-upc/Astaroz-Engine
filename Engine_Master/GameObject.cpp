@@ -394,59 +394,49 @@ void GameObject::CheckDragAndDrop(GameObject* go)
 
 void GameObject::OnSave(Serialization& serial)
 {
-	serial.AddString("ID", id);
+	serial.SaveStringSerial("ID", id);
 	if (parent != nullptr)
 	{
-		serial.AddString("ParentID", parent->id);
+		serial.SaveStringSerial("ParentID", parent->id);
 	}
-	serial.AddString("Name", myName);
-	serial.AddBool("Enabled", isEnabled);
-	serial.AddBool("IsRoot", isRoot);
-	 
-	//Serialization transform_config;
-	//myTransform->OnSave(transform_config);
-	//serial.AddChildSerial("Transform", transform_config);
+	serial.SaveStringSerial("Name", myName);
+	serial.SaveBool("Enabled", isEnabled);
+	serial.SaveBool("IsRoot", isRoot);
 
-	std::vector<Serialization> gameobject_components_config(componentVector.size());
+	std::vector<Serialization> componentsSerial(componentVector.size());
 	for (unsigned int i = 0; i < componentVector.size(); ++i)
 	{
-		componentVector[i]->OnSave(gameobject_components_config[i]);
+		componentVector[i]->OnSave(componentsSerial[i]);
 	}
-	serial.AddChildrenSerial("Components", gameobject_components_config);
+	serial.SaveChildrenSerial("Components", componentsSerial);
 }
 
 void GameObject::OnLoad(const Serialization& serial)
 {
-	id = serial.GetString("ID", "0");
-	myName = serial.GetString("Name", "LoadedGameObject");
-	std::string parentID = serial.GetString("ParentID", "0");
+	id = serial.LoadStringSerial("ID", "0");
+	myName = serial.LoadStringSerial("Name", "LoadedGameObject");
+	std::string parentID = serial.LoadStringSerial("ParentID", "0");
 	if (parentID != "0" && parentID != App->scene->getRoot()->id && parentID != App->scene->savedRootID)	//ensure root was not the parent on the current object
 	{
 		SetParent(App->scene->findById(parentID));
 	}
 
-	isEnabled = serial.GetBool("Enabled", true);
-	isRoot = serial.GetBool("IsRoot", false);
+	isEnabled = serial.LoadBool("Enabled", true);
+	isRoot = serial.LoadBool("IsRoot", false);
 
-	//Config transform_config;
-	//config.GetChildConfig("Transform", transform_config);
-	//transform.Load(transform_config);
-
-	std::vector<Serialization> gameobject_components_config;
-	serial.GetChildrenSerial("Components", gameobject_components_config);
-	for (unsigned int i = 0; i < gameobject_components_config.size(); i++)
+	std::vector<Serialization> componentsSerial = serial.LoadChildrenSerial("Components");
+	for (unsigned int i = 0; i < componentsSerial.size(); i++)
 	{
-		int component_type_int = gameobject_components_config[i].GetInt("Type", -1);
+		int component_type_int = componentsSerial[i].LoadInt("Type", -1);
 		if (component_type_int != -1)
 		{
 			Component* created_component = CreateComponent((ComponentType)component_type_int);
-			created_component->OnLoad(gameobject_components_config[i]);
+			created_component->OnLoad(componentsSerial[i]);
 		}
 		else
 		{
-			LOG("Component type not recognized so it has been skipped!");
+			LOG("Component type not recognized when loading so it has been skipped!");
 		}
-
 	}
 }
 

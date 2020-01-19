@@ -18,24 +18,20 @@ public:
 
 	//public methods
 	rapidjson::Document::AllocatorType& GetAllocatorType() const;
-	void GetSerializedScene(std::string& serializedScene);
+	std::string LoadSerializedScene();
 
-	void AddInt(const std::string& name, int value);
-	int GetInt(const std::string& name, int value) const;
-	void AddBool(const std::string& name, bool value);
-	bool GetBool(const std::string& name, bool value) const;
-	void AddFloat(const std::string& name, float value);
-	float GetFloat(const std::string& name, float value) const;
-	void AddFloat3(const std::string& name, const float3& value);
-	void GetFloat3(const std::string& name, float3& returnValue, const float3& optValue) const;
-	void AddString(const std::string& name, const std::string value);
-	std::string GetString(const std::string& name, const std::string& optValue) const;
-	void AddQuat(const std::string& name, const Quat& value);
-	void GetQuat(const std::string& name, Quat& returnValue, const Quat& optValue) const;
-	void AddColor(const float4& value, const std::string& name);
-	void GetColor(const std::string& name, float4& returnValue, const float4& optValue) const;
-	void AddChildrenSerial(const std::string& name, std::vector<Serialization>& value);
-	void GetChildrenSerial(const std::string& name, std::vector<Serialization>& value) const;
+	void SaveInt(const std::string& name, int value);
+	int LoadInt(const std::string& name, int defaultValue) const;
+	void SaveBool(const std::string& name, bool value);
+	bool LoadBool(const std::string& name, bool defaultValue) const;
+	void SaveFloat3(const std::string& name, const float3& value);
+	float3 LoadFloat3(const std::string& name, const float3& defaultValue) const;
+	void SaveStringSerial(const std::string& name, const std::string& value);
+	std::string LoadStringSerial(const std::string& name, const std::string& defaultValue) const;
+	void SaveQuat(const std::string& name, const Quat& value);
+	Quat LoadQuat(const std::string& name, const Quat& defaultValue) const;
+	void SaveChildrenSerial(const std::string& name, std::vector<Serialization>& value);
+	std::vector<Serialization> LoadChildrenSerial(const std::string& name) const;
 
 	//public variables
 	rapidjson::Document document;

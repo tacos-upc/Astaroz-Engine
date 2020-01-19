@@ -241,7 +241,7 @@ void ModuleScene::OnSave(Serialization& serial)
 		}
 	}
 
-	serial.AddChildrenSerial("GameObjects", sceneSerial);
+	serial.SaveChildrenSerial("GameObjects", sceneSerial);
 	LOG("Scene saved correctly");
 }
 
@@ -253,12 +253,11 @@ void ModuleScene::OnLoad(const Serialization& serial)
 	root = new GameObject("Root");
 	root->isRoot = true;
 
-	std::vector<Serialization> game_objects_config;
-	serial.GetChildrenSerial("GameObjects", game_objects_config);
-	for (unsigned int i = 0; i < game_objects_config.size(); ++i)
+	std::vector<Serialization> gameObjectsSerial = serial.LoadChildrenSerial("GameObjects");
+	for (unsigned int i = 0; i < gameObjectsSerial.size(); ++i)
 	{
 		GameObject* created_game_object = CreateGameObject();
-		created_game_object->OnLoad(game_objects_config[i]);
+		created_game_object->OnLoad(gameObjectsSerial[i]);
 	}
 	LOG("Scene loaded correctly");
 }

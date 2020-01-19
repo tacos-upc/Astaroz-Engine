@@ -340,7 +340,7 @@ void GameObject::DrawAABB()
 
 void GameObject::Draw(GLuint program)
 {
-	if (myMesh != nullptr)
+	if (myMesh != nullptr && isEnabled)
 	{
 		myMesh->Draw(program);
 		DrawAABB();
@@ -349,7 +349,11 @@ void GameObject::Draw(GLuint program)
 
 void GameObject::DrawInspector()
 {
+	bool auxEnabled = isEnabled;
 	ImGui::Checkbox("", &isEnabled); ImGui::SameLine();
+	if (auxEnabled != isEnabled) {
+		recursiveEnable(childrenVector);
+	}
 	
 	char* go_name = new char[64];
 	strcpy(go_name, myName.c_str());
@@ -452,6 +456,17 @@ bool GameObject::isfatBoxTooFat()
 		fatBoundingBox->Size().y > boundingBox->Size().y *1.5f ||
 		fatBoundingBox->Size().z > boundingBox->Size().z * 1.5f
 		);
+}
+
+void GameObject::recursiveEnable(std::vector<GameObject*> childrenVector)
+{
+	for (size_t i = 0; i < childrenVector.size(); i++)
+	{
+		childrenVector.at(i)->isEnabled = isEnabled;
+		if (childrenVector.at(i)->childrenVector.size() > 0) {
+			recursiveEnable(childrenVector.at(i)->childrenVector);
+		}
+	}
 }
 
 void GameObject::drawGizmo()

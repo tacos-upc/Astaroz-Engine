@@ -73,5 +73,7 @@ private:
 	//private methods
 	void CheckDragAndDrop(GameObject* go);
 	bool isfatBoxTooFat();//Area diff between regular aabb and fat one
+
+	void recursiveEnable(std::vector<GameObject*> childrenVector);
 };
 #endif __GameObject_H__

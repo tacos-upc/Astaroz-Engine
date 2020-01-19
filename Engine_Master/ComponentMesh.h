@@ -32,6 +32,9 @@ public:
 
 	int selectedMesh;
 	bool isLoaded;
+	int selection = 0;
+	
+
 };
 
 #endif __ComponentMesh_H__

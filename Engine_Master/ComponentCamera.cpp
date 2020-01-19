@@ -265,6 +265,7 @@ void ComponentCamera::OnSave(Serialization& serial)
 {
 	serial.AddInt("Type", myType);
 	serial.AddInt("Clear", selectedClearMode);
+	serial.AddFloat3("ClearColor", float3(clearColor.x, clearColor.y, clearColor.z));
 	serial.AddInt("Projection", selectedProjectionMode);
 	serial.AddFloat("near", frustum->nearPlaneDistance);
 	serial.AddFloat("far", frustum->farPlaneDistance);
@@ -274,7 +275,13 @@ void ComponentCamera::OnSave(Serialization& serial)
 void ComponentCamera::OnLoad(const Serialization& serial)
 {
 	myType = (ComponentType)serial.GetInt("Type", CAMERA);
+	
 	selectedClearMode = (ClearMode)serial.GetInt("Clear", COLOR);
+	
+	float3 cColor;
+	serial.GetFloat3("ClearColor", cColor, float3(0.5, 0.5, 0.5));
+	clearColor = ImVec4(cColor.x, cColor.y, cColor.z, 1.f);
+
 	selectedProjectionMode = (ProjectionMode)serial.GetInt("Projection", PERSPECTIVE);
 	
 	float nearPlane = serial.GetFloat("near", 0.5f);

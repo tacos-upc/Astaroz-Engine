@@ -54,7 +54,6 @@ public:
 	//public variables
 	ComponentTransform* myTransform = nullptr;
 	ComponentMesh* myMesh = nullptr;
-	ComponentMaterial* myMaterial = nullptr;
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> childrenVector;
 	std::vector<Component*> componentVector;

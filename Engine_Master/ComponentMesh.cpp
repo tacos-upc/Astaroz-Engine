@@ -11,14 +11,17 @@ ComponentMesh::ComponentMesh()
 {
 	myType = MESH;
 	allowMany = false;
-	isLoaded = false;
+	selection = 0;
+	myMesh = nullptr;
 }
 
 ComponentMesh::ComponentMesh(GameObject* gameObject, ComponentMesh* componentMesh)
 {
 	myType = MESH;
 	myGameObject = gameObject;
-	myMesh = new Mesh(componentMesh->myMesh->vertices, componentMesh->myMesh->indices, componentMesh->myMesh->textures, componentMesh->myMesh->material, componentMesh->myMesh->name );
+	myMesh = new Mesh(componentMesh->myMesh->vertices, componentMesh->myMesh->indices, componentMesh->myMesh->textures, componentMesh->myMesh->material, componentMesh->myMesh->name);
+	allowMany = false;
+	selection = 0;
 }
 
 ComponentMesh::~ComponentMesh()
@@ -68,7 +71,6 @@ void ComponentMesh::DrawInspector()
 
 void ComponentMesh::editMat()
 {
-	
 	ImGui::SliderFloat("ambient", (float*)&App->modelLoader->materials[myMesh->material]->k_ambient, 0.0f, 1.0f);
 	ImGui::SliderFloat("diffuse", (float*)&App->modelLoader->materials[myMesh->material]->k_diffuse, 0.0f, 1.0f);
 	ImGui::SliderFloat("specular", (float*)&App->modelLoader->materials[myMesh->material]->k_specular, 0.0f, 1.0f);
@@ -94,19 +96,20 @@ void ComponentMesh::editMat()
 			ImGui::Image((ImTextureID)App->modelLoader->materials[myMesh->material]->occlusion_texture, { 200.0f, 200.0f });
 		}
 	}
-		
 }
 
 void ComponentMesh::OnSave(Serialization& serial)
 {
-
+	serial.AddInt("Type", myType);
+	serial.AddBool("Enabled", isEnabled);
+	serial.AddInt("Selection", selection);
+	serial.AddInt("Selected Mesh", selectedMesh);
 }
 
 void ComponentMesh::OnLoad(const Serialization& serial)
 {
-
+	isEnabled = serial.GetBool("Enabled", true);
+	selection = serial.GetInt("Selection", 0);
+	selectedMesh = serial.GetInt("Selected Mesh", 0);
+	myMesh = App->modelLoader->meshes.at(selectedMesh);
 }
-
-
-
-

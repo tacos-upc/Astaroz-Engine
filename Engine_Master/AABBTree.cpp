@@ -147,7 +147,7 @@ void AABBTree::removeLeaf(std::string id)
 
 			nodes[i] = nullptr;
 			if(parent != nullptr) nodes[parent->index] = nullptr;
-			
+			if (node == root)	root = nullptr;
 			delete node;
 			delete parent;
 			break;

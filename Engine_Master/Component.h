@@ -25,10 +25,6 @@ class Component
 {
 public:
 	Component(){};
-	Component(const char* componentName)
-	{
-		myName = componentName;
-	}
 
 	virtual void Enable(){}
 	virtual void Disable(){}
@@ -44,7 +40,6 @@ public:
 	ComponentType myType;
 	bool isEnabled = true;
 	bool allowMany;
-	std::string myName = "NewComponent";
 };
 
 #endif __Component_H__

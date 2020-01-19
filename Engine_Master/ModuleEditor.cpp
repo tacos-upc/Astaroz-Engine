@@ -190,6 +190,14 @@ void ModuleEditor::drawMainMenu()
 			}
 			ImGui::EndMenu();
 		};
+		if (ImGui::BeginMenu("GameObject"))
+		{
+			if (ImGui::MenuItem("Create Empty"))
+			{
+				App->scene->CreateGameObject();
+			}
+			ImGui::EndMenu();
+		};
 		if (ImGui::BeginMenu("Tools"))
 		{
 			ImGui::MenuItem("Configuration", NULL, &show_configuration_window);

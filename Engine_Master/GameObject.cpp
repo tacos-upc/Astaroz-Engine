@@ -78,7 +78,7 @@ GameObject::GameObject(const GameObject& go)
 
 GameObject::~GameObject()
 {
-	delete boundingBox;
+
 }
 
 void GameObject::Update()
@@ -120,6 +120,7 @@ void GameObject::DeleteGameObject()
 		parent->RemoveChildren(this);
 	}
 	App->scene->eraseGameObject(this);
+	App->spacePartition->tree->removeLeaf(id);
 	for (unsigned int i = 0; i < childrenVector.size(); i++)
 	{
 		GameObject* temp = childrenVector[i];

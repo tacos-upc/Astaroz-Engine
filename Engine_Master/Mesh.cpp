@@ -18,12 +18,9 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, st
 	this->textures = textures;
 	this->material = material;
 	
-
 	setupMesh();
-
-
-
 }
+
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture*>& textures, const char* name)
 {
 	this->vertices = vertices;

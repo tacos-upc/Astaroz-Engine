@@ -56,6 +56,9 @@ bool Application::Init()
 
 	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Start();
+	
+	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+		ret = (*it)->PostStart();
 
 	timer.stop();
 	LOG("init total time: %d ms", timer.read());

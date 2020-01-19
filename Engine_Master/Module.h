@@ -21,6 +21,11 @@ public:
 	virtual bool Start()
 	{
 		return true;
+	}	
+	
+	virtual bool PostStart()
+	{
+		return true;
 	}
 
 	virtual update_status PreUpdate()

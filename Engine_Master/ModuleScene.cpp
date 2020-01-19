@@ -9,7 +9,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "Math/float4.h"
 #include "IconsFontAwesome5.h"
-
+#include "ModuleFileSystem.h"
 #include <stack>
 
 
@@ -38,6 +38,22 @@ bool ModuleScene::Init()
 
 	preferedOperation = ImGuizmo::TRANSLATE;
 
+	return true;
+}
+
+bool ModuleScene::PostStart()
+{
+	//Load the scene pre-saved in 'save.sav' file if it exists
+	sceneSerialized = App->fileSystem->load("save.sav");
+	if (sceneSerialized != "")
+	{
+		Serialization sceneSerial(sceneSerialized);
+		App->scene->OnLoad(sceneSerial);
+	}
+	else
+	{
+		LOG("Could not load the scene. File missing or file path wrong.")
+	}
 	return true;
 }
 

@@ -1,4 +1,4 @@
-<h1 align="center">Astaroz Engine</h1>
+<h1 align="center"><a href="https://github.com/tacos-upc/Astaroz-Engine">Astaroz Engine</a></h1>
 <h3 align="center">Game Engine in development</h3>
 <p align="center">
   <a href="https://github.com/tacos-upc/Astaroz-Engine/releases">

@@ -73,6 +73,9 @@ enum KeyState
 #define MAX(x,y) ((x>y) ? x:y)
 #define MIN(x,y) ((x<y) ? x:y)
 
+//GameObjects
+#define ROOTID "rootID"
+
 
 #define OPENGL_LOG_INIT(format, ...) log( __FILE__, __LINE__, format, __VA_ARGS__);
 #define OPENGL_LOG_ERROR(format, ...) log( __FILE__, __LINE__, format, __VA_ARGS__);

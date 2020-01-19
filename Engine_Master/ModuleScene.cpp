@@ -26,12 +26,11 @@ bool ModuleScene::Init()
 	showHierarchy = true;
 	showInspector = true;
 	selectedByHierarchy = nullptr;
+	root = nullptr;
 	nGameObjects = 0;
 	sceneSerialized = "";
-	savedRootID = "";
 
-	root = new GameObject("Root");
-	root->isRoot = true;
+	GenerateRoot();
 
 	mainCamera = CreateGameObject("Main Camera", root);
 	mainCamera->CreateComponent(CAMERA);
@@ -91,6 +90,19 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent)
 GameObject* ModuleScene::getRoot()
 {
 	return root;
+}
+
+void ModuleScene::GenerateRoot()
+{
+	if (root != nullptr)
+	{
+		root->DeleteGameObject();
+		root = nullptr;
+	}
+	root = new GameObject("Root");
+	root->id = ROOTID;
+	root->isRoot = true;
+	nGameObjects = 0;
 }
 
 GameObject* ModuleScene::findById(std::string id)
@@ -248,10 +260,7 @@ void ModuleScene::OnSave(Serialization& serial)
 void ModuleScene::OnLoad(const Serialization& serial)
 {
 	selectedByHierarchy = nullptr;
-	savedRootID = root->id;
-	root->DeleteGameObject();
-	root = new GameObject("Root");
-	root->isRoot = true;
+	GenerateRoot();
 
 	std::vector<Serialization> gameObjectsSerial = serial.LoadChildrenSerial("GameObjects");
 	for (unsigned int i = 0; i < gameObjectsSerial.size(); ++i)

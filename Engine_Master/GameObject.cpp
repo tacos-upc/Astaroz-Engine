@@ -416,7 +416,7 @@ void GameObject::OnLoad(const Serialization& serial)
 	id = serial.LoadStringSerial("ID", "0");
 	myName = serial.LoadStringSerial("Name", "LoadedGameObject");
 	std::string parentID = serial.LoadStringSerial("ParentID", "0");
-	if (parentID != "0" && parentID != App->scene->getRoot()->id && parentID != App->scene->savedRootID)	//ensure root was not the parent on the current object
+	if (parentID != "0" && parentID != App->scene->getRoot()->id && parentID != ROOTID)	//ensure root was not the parent on the current object
 	{
 		SetParent(App->scene->findById(parentID));
 	}

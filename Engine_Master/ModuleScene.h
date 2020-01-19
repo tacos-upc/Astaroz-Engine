@@ -34,6 +34,7 @@ public:
 	void selectRoot();
 	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);
+	void GenerateRoot();
 	//void CreateGameObjectBakerHouse(GameObject* parent);
 	void RemoveSelectedGameObject();
 	void DuplicateSelectedGameObject();
@@ -53,7 +54,6 @@ public:
 	ImGuizmo::OPERATION preferedOperation;
 
 	std::string sceneSerialized;
-	std::string savedRootID;
 
 private:
 	//private variables

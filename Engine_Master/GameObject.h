@@ -74,5 +74,6 @@ private:
 	bool isfatBoxTooFat();//Area diff between regular aabb and fat one
 
 	void recursiveEnable(std::vector<GameObject*> childrenVector);
+	bool isAncestor(GameObject*);
 };
 #endif __GameObject_H__

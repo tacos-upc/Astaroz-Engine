@@ -1,0 +1,46 @@
+{
+    "GameObjects": [
+        {
+            "ID": "99bbeec4-264b-4181-8dba-844fd565013a",
+            "ParentID": "8da7b79d-2f42-4f4d-ab47-7321c1ecd5a9",
+            "Name": "Main Camera",
+            "Enabled": true,
+            "IsRoot": false,
+            "Components": [
+                {
+                    "Type": 0,
+                    "Enabled": true,
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Rotation": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "Type": 2,
+                    "Clear": 0,
+                    "ClearColor": [
+                        0.10000000149011612,
+                        0.0,
+                        0.019999999552965165
+                    ],
+                    "Projection": 0,
+                    "near": 0.10000000149011612,
+                    "far": 50.0,
+                    "fov": 0.7853981852531433
+                }
+            ]
+        }
+    ]
+}

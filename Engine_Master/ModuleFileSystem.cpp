@@ -22,8 +22,8 @@ ModuleFileSystem::~ModuleFileSystem()
 bool ModuleFileSystem::Init()
 {
 	PHYSFS_init(NULL);	
-	enableWriteDir(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
-	mount(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
+	enableWriteDir(PHYSFS_getBaseDir()); //Setting the dir on the base project to make savefiles portable
+	//mount(SDL_GetPrefPath("Astaroz", "AstarozEngine"));
 	mount(PHYSFS_getBaseDir());
 
 	extensions.push_back("sav");

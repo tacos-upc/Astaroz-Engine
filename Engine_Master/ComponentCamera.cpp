@@ -145,15 +145,19 @@ GameObject* ComponentCamera::getTouchedGameObject(AABBTreeNode* node, LineSegmen
 			LineSegment transformedSegment = LineSegment(*segment);
 			transformedSegment.Transform(mesh->myGameObject->myTransform->getGlobalMatrix().Inverted());
 
-			OBB candidateOBB = OBB(*mesh->myGameObject->obb);
-			candidateOBB.Transform(mesh->myGameObject->myTransform->getGlobalMatrix().Inverted());
-
-			if (candidateOBB.Intersects(transformedSegment, nearDistance, farDistance))
+			mesh->myMesh->updateTriangles();
+			for (size_t j = 0; j < mesh->myMesh->triangles.size(); j++)
 			{
-				if (nearDistance < bestDistance)
+				float distance;
+				float3 intersectionPoint;
+
+				if (transformedSegment.Intersects(mesh->myMesh->triangles.at(j), &distance, &intersectionPoint))
 				{
-					bestDistance = nearDistance;
-					obj = mesh->myGameObject;
+					if (distance < bestDistance)
+					{
+						bestDistance = distance;
+						obj = mesh->myGameObject;
+					}
 				}
 			}
 		}

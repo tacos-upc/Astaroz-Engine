@@ -23,31 +23,28 @@ public:
 	GameObject(const GameObject& go);
 	~GameObject();
 
+	//public methods 
 	void Update();
 	void SetParent(GameObject* newParent);
 	void RemoveChildren(GameObject* child);
 	void DeleteGameObject();
 	void CleanUp();
 
-	//public methods 
 	Component* CreateComponent(ComponentType type);
 	Component* GetComponent(ComponentType type);
 
-	//Hierarchy
 	void DrawHierarchy(GameObject* selected);
-
-	//Update
+	void drawGizmo();
 	void DrawInspector();
 	void createAABBs();
 	void findOBBPointsForRender();
 	void findOBBPoints();
 	void DrawAABB();
 	void Draw(GLuint program);
-	void SetName(const std::string &newName);
-	std::string GetName() const;
-	void drawGizmo();
 
-	//Serialization
+	std::string GetName() const;
+	void SetName(const std::string &newName);
+
 	void OnSave(Serialization& serial);
 	void OnLoad(const Serialization& serial);
 
@@ -62,7 +59,7 @@ public:
 	bool isParentOfMeshes = false;
 	OBB* obb = nullptr;
 	AABB* boundingBox = nullptr;
-	AABB* fatBoundingBox = nullptr;//Used for AABB tree
+	AABB* fatBoundingBox = nullptr;					//Used for AABB tree
 
 private:
 	//private variables
@@ -71,9 +68,8 @@ private:
 
 	//private methods
 	void CheckDragAndDrop(GameObject* go);
-	bool isfatBoxTooFat();//Area diff between regular aabb and fat one
-
+	bool isfatBoxTooFat();							//Area diff between regular aabb and fat one
 	void recursiveEnable(std::vector<GameObject*> childrenVector);
-	bool isAncestor(GameObject*);
+	bool isAncestor(GameObject*);					//Used for DragAndDrop to avoid dragging an ancestor to one of its children
 };
 #endif __GameObject_H__

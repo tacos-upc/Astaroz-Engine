@@ -38,7 +38,6 @@ public:
 	
 	GameObject* myGameObject = nullptr;
 	ComponentType myType;
-	bool isEnabled = true;
 	bool allowMany;
 };
 

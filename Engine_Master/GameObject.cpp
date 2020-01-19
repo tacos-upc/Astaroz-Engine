@@ -19,8 +19,7 @@
 
 
 GameObject::GameObject() : Object::Object()
-{
-}
+{}
 
 GameObject::GameObject(const char* name)
 {
@@ -42,9 +41,7 @@ GameObject::GameObject(const GameObject& go)
 		{
 		case MESH:
 			aux = new ComponentMesh(this, (ComponentMesh*) cp);
-			
 			break;
-
 		case TRANSFORM:
 			aux = new ComponentTransform(this, (ComponentTransform*) cp);
 			break;
@@ -77,9 +74,7 @@ GameObject::GameObject(const GameObject& go)
 }
 
 GameObject::~GameObject()
-{
-
-}
+{}
 
 void GameObject::Update()
 {
@@ -274,7 +269,6 @@ void GameObject::DrawHierarchy(GameObject* selected)
 	ImGui::PopID();
 }
 
-
 void GameObject::SetName(const std::string &newName)
 {
 	myName = newName;
@@ -430,11 +424,11 @@ void GameObject::OnLoad(const Serialization& serial)
 	std::vector<Serialization> componentsSerial = serial.LoadChildrenSerial("Components");
 	for (unsigned int i = 0; i < componentsSerial.size(); i++)
 	{
-		int component_type_int = componentsSerial[i].LoadInt("Type", -1);
-		if (component_type_int != -1)
+		int ComponentTypeInt = componentsSerial[i].LoadInt("Type", -1);
+		if (ComponentTypeInt != -1)
 		{
-			Component* created_component = CreateComponent((ComponentType)component_type_int);
-			created_component->OnLoad(componentsSerial[i]);
+			Component* component = CreateComponent((ComponentType)ComponentTypeInt);
+			component->OnLoad(componentsSerial[i]);
 		}
 		else
 		{

@@ -30,6 +30,7 @@ bool ModuleScene::Init()
 	nGameObjects = 0;
 	sceneSerialized = "";
 
+	//Begin generating a basic scene
 	GenerateRoot();
 
 	mainCamera = CreateGameObject("Main Camera", root);
@@ -121,38 +122,6 @@ void ModuleScene::selectRoot()
 	selectedByHierarchy = root;
 }
 
-void ModuleScene::LoadModel(const char* path, GameObject* parent)
-{
-	LOG("Trying to load model in path : %s", path);
-	//App->modelLoader->LoadModel(path);
-
-	int numObject = 0;
-	std::string name = App->modelLoader->modelName;
-	LOG("Creating parent gameObject %s", name.c_str());
-	parent->SetName(name);
-
-	LOG("For each mesh of the model we create a gameObject.");
-	for(auto mesh : App->modelLoader->meshes)
-	{
-		std::string newName = name + std::to_string(numObject);
-		GameObject* newMeshObject = CreateGameObject(newName.c_str(), parent);
-		ComponentMesh* myMeshCreated = (ComponentMesh*)newMeshObject->CreateComponent(MESH);
-		
-		myMeshCreated->LoadMesh(mesh);
-		newMeshObject->createAABBs();
-		gameObjects.push_back(newMeshObject);
-
-		numObject++;
-	}
-
-	LOG("Deleting info from ModelLoader");
-	App->modelLoader->emptyScene();
-	parent->createAABBs();
-
-	//Setting parent as a meshParent
-	parent->isParentOfMeshes = true;
-}
-
 void ModuleScene::CreateEmpty(GameObject* parent)
 {
 	std::string tempName = "NewGameObject" + std::to_string(nGameObjects + 1);
@@ -166,24 +135,6 @@ void ModuleScene::CreateEmpty(GameObject* parent)
 		gameObject = CreateGameObject(tempName.c_str(), parent);	//only when 'selected' is nullptr, we use the parameter as parent
 	}
 }
-
-//void ModuleScene::CreateGameObjectBakerHouse(GameObject* parent)
-//{
-//	if(parent == nullptr)
-//	{
-//		LOG("ERROR: Parent is nullptr, cannot create gameObject.");
-//		return; //leave
-//	}
-//
-//	LOG("Creating a GameObject with Baker House Mesh.");
-//	std::string defaultName = "BakerHouse" + std::to_string(numberOfBakerHouse + 1);
-//	GameObject* newGameObject = CreateGameObject(defaultName.c_str(), parent);
-//	LoadModel("../Models/baker_house/BakerHouse.fbx", newGameObject);
-//	++numberOfBakerHouse;
-//
-//	gameObjects.push_back(newGameObject);
-//	LOG("%s created with %s as parent.", defaultName.c_str(), parent->GetName());
-//}
 
 void ModuleScene::RemoveSelectedGameObject()
 {

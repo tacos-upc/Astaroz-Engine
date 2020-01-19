@@ -20,7 +20,6 @@ public:
 
 	//public variables
 	struct Light light;
-
 };
 
 #endif __ComponentLight_H__

@@ -101,14 +101,12 @@ void ComponentMesh::editMat()
 void ComponentMesh::OnSave(Serialization& serial)
 {
 	serial.SaveInt("Type", myType);
-	serial.SaveBool("Enabled", isEnabled);
 	serial.SaveInt("Selection", selection);
 	serial.SaveInt("Selected Mesh", selectedMesh);
 }
 
 void ComponentMesh::OnLoad(const Serialization& serial)
 {
-	isEnabled = serial.LoadBool("Enabled", true);
 	selection = serial.LoadInt("Selection", 0);
 	selectedMesh = serial.LoadInt("Selected Mesh", 0);
 	myMesh = App->modelLoader->meshes.at(selectedMesh);

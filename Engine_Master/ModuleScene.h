@@ -4,16 +4,9 @@
 #include "Globals.h"
 #include "Module.h"
 #include "GameObject.h"
+
 #include "ImGUI/ImGuizmo.h"
 
-
-enum ShapeType
-{
-	SPHERE = 0,
-	CUBE,
-	CYLINDER,
-	TORUS
-};
 
 class ModuleScene : public Module
 {
@@ -32,10 +25,8 @@ public:
 	GameObject* getRoot();
 	GameObject* findById(std::string id);
 	void selectRoot();
-	void LoadModel(const char* path, GameObject* parent);
 	void CreateEmpty(GameObject* parent);
 	void GenerateRoot();
-	//void CreateGameObjectBakerHouse(GameObject* parent);
 	void RemoveSelectedGameObject();
 	void DuplicateSelectedGameObject();
 	void SelectGameObjectInHierarchy(GameObject* selected);
@@ -52,7 +43,6 @@ public:
 	GameObject* mainCamera;
 	GameObject* selectedByHierarchy;
 	ImGuizmo::OPERATION preferedOperation;
-
 	std::string sceneSerialized;
 
 private:
